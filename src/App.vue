@@ -10,29 +10,48 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/plan">Plan</RouterLink>
       </nav>
   </header>
-
-  <RouterView />
+  <div id="content">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
-  max-height: 100vh;
-  border: 2px solid red;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 6rem;
+  border-right: 2px solid green;
+  padding-block: 2rem;
+  width: 6rem;
+}
+
+#content {
+  position: fixed;
+  left: 6rem;
+}
+
+@media(min-width: 420px) {
+  #content {
+    position: relative;
+  }
+}
+
+@media(max-width: 420px) {
+  header {
+    display: none;
+  }
 }
 
 nav {
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-  border-right: 2px solid green;
+  text-align: left;
   gap: 2rem;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  left: 1rem;
-  height: 100%;
-  width: 6rem;
+  font-size: 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -50,27 +69,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>
