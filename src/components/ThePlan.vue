@@ -41,6 +41,62 @@ export default {
             tempTask: CreateDefaultTask(),
         }
     },
+    created() {
+        this.tasks.set(
+            "13",
+            {
+                id: "13",
+                description: "Familiarize self with VueJS- Perform Framework Overview",
+                mentalEffort: 85,
+                physicalEffort: 45,
+                temporalInvestment: 30,
+            });
+        this.tasks.set(
+            "17",
+            {
+                id: "17",
+                description: "Learn VueJS - do a programming project",
+                mentalEffort: 68,
+                physicalEffort: 92,
+                temporalInvestment: 63,
+            });
+        this.tasks.set(
+            "19",
+            {
+                id: "19",
+                description: "C# advanced review",
+                mentalEffort: 98,
+                physicalEffort: 60,
+                temporalInvestment: 57,
+            });
+        this.tasks.set(
+            "28",
+            {
+                id: "28",
+                description: "Design patterns overview",
+                mentalEffort: 50,
+                physicalEffort: 2,
+                temporalInvestment: 92,
+            });
+        this.tasks.set(
+            "33",
+            {
+                id: "33",
+                description: "Learn Design patterns - programming exercises",
+                mentalEffort: 67,
+                physicalEffort: 93,
+                temporalInvestment: 93,
+            });
+        this.tasks.set(
+            "38",
+            {
+                id: "38",
+                description: "Learn VueJS - advanced review",
+                mentalEffort: 73,
+                physicalEffort: 72,
+                temporalInvestment: 64,
+            });
+    },
     methods: {
         onSavePlanItemEdit() {
             const taskId = this.tempTask.id;
