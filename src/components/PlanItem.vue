@@ -1,14 +1,3 @@
-<script lang="ts">
-export default {
-    props: {
-        description: String,
-        mentalEffort: Number,
-        physicalEffort: Number,
-        temporalInvestment: Number,
-        id: String,
-    },
-}
-</script>
 <template>
     <v-card>
         <v-card-text>{{ description }}</v-card-text>
@@ -27,7 +16,17 @@ export default {
         </v-card-actions>
     </v-card>
 </template>
-
+<script lang="ts">
+export default {
+    props: {
+        description: String,
+        mentalEffort: Number,
+        physicalEffort: Number,
+        temporalInvestment: Number,
+        id: String,
+    },
+}
+</script>
 <style scoped>
 .v-card {
     padding: 1rem;

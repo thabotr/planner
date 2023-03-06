@@ -3,17 +3,16 @@
         <PlanItem v-for="task in tasks.values()" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
     </div>
     <v-col cols="auto">
-        <v-dialog transition="dialog-bottom-transition" width="50%" v-model="editingPlanItem">
-            <template v-slot:activator="parent">
-                <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus" color="green">
+        <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition">
+            <template v-slot:activator>
+                <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus">
                 </v-btn>
             </template>
             <template v-slot:default>
                 <v-card>
-                    <v-toolbar color="green" title="New Plan Item"></v-toolbar>
-                    <v-text-field label="Task Description"
-                        :rules="[ruleMinimumFiveChars]" required
-                        v-model="tempTask.description" type="input"></v-text-field>
+                    <v-toolbar title="New Plan Item" />
+                    <v-text-field label="Task Description" :rules="[ruleMinimumFiveChars]" required
+                        v-model="tempTask.description" type="input" />
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
                         <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
@@ -26,21 +25,6 @@
 
 <script lang="ts">
 import PlanItem from './PlanItem.vue';
-type TaskType = {
-    id: string,
-    description: string,
-    mentalEffort: number,
-    physicalEffort: number,
-    temporalInvestment: number
-};
-const GetDefaultTask = (): TaskType => ({
-    id: '',
-    description: '',
-    mentalEffort: -1,
-    physicalEffort: -1,
-    temporalInvestment: -1,
-});
-
 export default {
     components: {
         PlanItem: PlanItem
@@ -49,7 +33,7 @@ export default {
         return {
             tasks: new Map<string, TaskType>(),
             editingPlanItem: false,
-            tempTask: GetDefaultTask(),
+            tempTask: CreateDefaultTask(),
         }
     },
     methods: {
@@ -88,10 +72,24 @@ export default {
         },
         closeDialog() { this.editingPlanItem = false; },
         openDialog() { this.editingPlanItem = true; },
-        restoreTempTaskToDefault() { this.tempTask = GetDefaultTask(); },
+        restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
         ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
     }
-}
+};
+type TaskType = {
+    id: string,
+    description: string,
+    mentalEffort: number,
+    physicalEffort: number,
+    temporalInvestment: number
+};
+const CreateDefaultTask = (): TaskType => ({
+    id: '',
+    description: '',
+    mentalEffort: -1,
+    physicalEffort: -1,
+    temporalInvestment: -1,
+});
 </script>
 
 <style scoped>
@@ -105,5 +103,14 @@ export default {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+}
+
+.v-dialog {
+    width: 40%;
+}
+
+#create-plan-item,
+.v-toolbar {
+    background-color: rgba(0, 128, 0, 0.812);
 }
 </style>
