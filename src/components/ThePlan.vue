@@ -12,7 +12,7 @@
                 <v-card>
                     <v-toolbar color="green" title="New Plan Item"></v-toolbar>
                     <v-text-field label="Task Description"
-                        :rules="[value => (value || '').length >= 5 || 'Minimum 5 characters text']" required
+                        :rules="[ruleMinimumFiveChars]" required
                         v-model="tempTask.description" type="input"></v-text-field>
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
@@ -47,18 +47,17 @@ export default {
     },
     data() {
         return {
-            tasks: new Map<string,TaskType>(),
+            tasks: new Map<string, TaskType>(),
             editingPlanItem: false,
             tempTask: GetDefaultTask(),
         }
     },
     methods: {
         onSavePlanItemEdit() {
-            const oldTaskId = this.tempTask.id;
-            const isPlanItemUpdate = this.tasks.has(oldTaskId);
-            if(isPlanItemUpdate)
-            {
-                this.tasks.set(this.tempTask.id, this.tempTask);
+            const taskId = this.tempTask.id;
+            const creatingNewPlanItem = this.tasks.has(taskId);
+            if (!creatingNewPlanItem) {
+                this.tasks.set(taskId, this.tempTask);
             } else {
                 const newTaskId = new Date().getTime().toString();
                 const task = {
@@ -73,23 +72,24 @@ export default {
         onCreatePlanItem() {
             this.openDialog();
         },
-        onDeletePlanItem(itemId: string) {this.tasks.delete(itemId);},
+        onDeletePlanItem(itemId: string) { this.tasks.delete(itemId); },
         onEditPlanItem(itemId: string) {
             this.openDialog();
             const taskToOpen = this.tasks.get(itemId);
-            if(!taskToOpen) {
+            if (!taskToOpen) {
                 alert("Oops! task not found");
                 return;
             }
-            this.tempTask = {...taskToOpen};
+            this.tempTask = { ...taskToOpen };
         },
         onDiscardPlanItemEdit() {
             this.restoreTempTaskToDefault();
             this.closeDialog();
         },
-        closeDialog () {this.editingPlanItem = false;},
-        openDialog () {this.editingPlanItem = true;},
-        restoreTempTaskToDefault(){this.tempTask = GetDefaultTask();},
+        closeDialog() { this.editingPlanItem = false; },
+        openDialog() { this.editingPlanItem = true; },
+        restoreTempTaskToDefault() { this.tempTask = GetDefaultTask(); },
+        ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
     }
 }
 </script>
