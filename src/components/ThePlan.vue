@@ -3,7 +3,7 @@
         <PlanItem v-for="task in tasks.values()" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
     </div>
     <v-col cols="auto">
-        <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition">
+        <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition" persistent>
             <template v-slot:activator>
                 <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus">
                 </v-btn>
@@ -13,6 +13,9 @@
                     <v-toolbar title="New Plan Item" />
                     <v-text-field label="Task Description" :rules="[ruleMinimumFiveChars]" required
                         v-model="tempTask.description" type="input" />
+                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain"/>
+                    <v-slider v-model="tempTask.physicalEffort" id="physical-effort-slider" prepend-icon="mdi-account-hard-hat"/>
+                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider" prepend-icon="mdi-timer"/>
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
                         <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
@@ -39,8 +42,8 @@ export default {
     methods: {
         onSavePlanItemEdit() {
             const taskId = this.tempTask.id;
-            const creatingNewPlanItem = this.tasks.has(taskId);
-            if (!creatingNewPlanItem) {
+            const updatingOldTask = this.tasks.has(taskId);
+            if (updatingOldTask) {
                 this.tasks.set(taskId, this.tempTask);
             } else {
                 const newTaskId = new Date().getTime().toString();
@@ -58,13 +61,13 @@ export default {
         },
         onDeletePlanItem(itemId: string) { this.tasks.delete(itemId); },
         onEditPlanItem(itemId: string) {
-            this.openDialog();
             const taskToOpen = this.tasks.get(itemId);
             if (!taskToOpen) {
                 alert("Oops! task not found");
                 return;
             }
             this.tempTask = { ...taskToOpen };
+            this.openDialog();
         },
         onDiscardPlanItemEdit() {
             this.restoreTempTaskToDefault();
