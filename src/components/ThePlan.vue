@@ -89,9 +89,9 @@ type TaskType = {
 const CreateDefaultTask = (): TaskType => ({
     id: '',
     description: '',
-    mentalEffort: -1,
-    physicalEffort: -1,
-    temporalInvestment: -1,
+    mentalEffort: 0,
+    physicalEffort: 0,
+    temporalInvestment: 0,
 });
 </script>
 
