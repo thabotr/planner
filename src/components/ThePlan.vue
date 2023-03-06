@@ -12,12 +12,13 @@
                 <v-card>
                     <v-toolbar title="Plan Item" />
                     <v-text-field label="What task do you want to complete?" :rules="[ruleMinimumFiveChars]" required
-                        v-model="tempTask.description" type="input" />
-                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain" />
+                        v-model="tempTask.description" type="input" aria-multiline="true"/>
+                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain"
+                        color="green" track-color="purple" step="10" thumb-label />
                     <v-slider v-model="tempTask.physicalEffort" id="physical-effort-slider"
-                        prepend-icon="mdi-account-hard-hat" />
-                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider"
-                        prepend-icon="mdi-timer" />
+                        prepend-icon="mdi-account-hard-hat" color="green" step="10" thumb-label track-color="#EED202" />
+                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider" prepend-icon="mdi-timer"
+                        color="green" track-color="orange" thumb-color="orange" step="10" thumb-label />
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
                         <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
@@ -32,7 +33,7 @@
 import PlanItem from './PlanItem.vue';
 export default {
     components: {
-        PlanItem: PlanItem
+        PlanItem: PlanItem,
     },
     data() {
         return {
@@ -117,7 +118,10 @@ export default {
         onCreatePlanItem() {
             this.openDialog();
         },
-        onDeletePlanItem(itemId: string) { this.tasks.delete(itemId); },
+        onDeletePlanItem(itemId: string) {
+            const taskToDelete = this.tasks.get(itemId);
+            this.tasks.delete(itemId);
+        },
         onEditPlanItem(itemId: string) {
             const taskToOpen = this.tasks.get(itemId);
             if (!taskToOpen) {
@@ -173,5 +177,8 @@ const CreateDefaultTask = (): TaskType => ({
 #create-plan-item,
 .v-toolbar {
     background-color: rgba(0, 128, 0, 0.812);
+}
+.v-text-field {
+    margin: 1rem;
 }
 </style>

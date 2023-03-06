@@ -2,8 +2,8 @@
     <v-card>
         <v-card-text>{{ description }}</v-card-text>
         <div class="effort-field">
-            <v-btn><v-icon start icon="mdi-brain"></v-icon>{{ mentalEffort }}</v-btn>
-            <v-btn><v-icon start icon="mdi-account-hard-hat"></v-icon>{{ physicalEffort }}</v-btn>
+            <v-btn><v-icon start icon="mdi-brain"></v-icon>{{ mentalEffortScore }}</v-btn>
+            <v-btn><v-icon start icon="mdi-account-hard-hat"></v-icon>{{ physicalEffortScore }}</v-btn>
             <v-btn><v-icon start icon="mdi-timer"></v-icon>{{ temporalInvestment }}</v-btn>
         </div>
         <v-card-actions class="justify-space-between">
@@ -17,6 +17,7 @@
     </v-card>
 </template>
 <script lang="ts">
+import { toSubjectiveEffortScore } from '../middleware/calculator';
 export default {
     props: {
         description: String,
@@ -25,6 +26,14 @@ export default {
         temporalInvestment: Number,
         id: String,
     },
+    computed: {
+        mentalEffortScore() {
+            return toSubjectiveEffortScore(this.mentalEffort);
+        },
+        physicalEffortScore() {
+            return toSubjectiveEffortScore(this.physicalEffort);
+        }
+    }
 }
 </script>
 <style scoped>
