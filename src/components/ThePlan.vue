@@ -10,12 +10,14 @@
             </template>
             <template v-slot:default>
                 <v-card>
-                    <v-toolbar title="New Plan Item" />
-                    <v-text-field label="Task Description" :rules="[ruleMinimumFiveChars]" required
+                    <v-toolbar title="Plan Item" />
+                    <v-text-field label="What task do you want to complete?" :rules="[ruleMinimumFiveChars]" required
                         v-model="tempTask.description" type="input" />
-                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain"/>
-                    <v-slider v-model="tempTask.physicalEffort" id="physical-effort-slider" prepend-icon="mdi-account-hard-hat"/>
-                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider" prepend-icon="mdi-timer"/>
+                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain" />
+                    <v-slider v-model="tempTask.physicalEffort" id="physical-effort-slider"
+                        prepend-icon="mdi-account-hard-hat" />
+                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider"
+                        prepend-icon="mdi-timer" />
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
                         <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
