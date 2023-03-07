@@ -11,14 +11,16 @@
             <template v-slot:default>
                 <v-card>
                     <v-toolbar title="Plan Item" />
-                    <v-text-field label="What task do you want to complete?" :rules="[ruleMinimumFiveChars]" required
-                        v-model="tempTask.description" type="input" aria-multiline="true"/>
-                    <v-slider v-model="tempTask.mentalEffort" id="mental-effort-slider" prepend-icon="mdi-brain"
-                        color="green" track-color="purple" step="10" thumb-label />
-                    <v-slider v-model="tempTask.physicalEffort" id="physical-effort-slider"
-                        prepend-icon="mdi-account-hard-hat" color="green" step="10" thumb-label track-color="#EED202" />
-                    <v-slider v-model="tempTask.temporalInvestment" id="temporal-investment-slider" prepend-icon="mdi-timer"
-                        color="green" track-color="orange" thumb-color="orange" step="10" thumb-label />
+                    <v-text-field label="What task do you want to accomplish?" :rules="[ruleMinimumFiveChars]" required
+                        v-model="tempTask.description" type="input" aria-multiline="true" />
+                    <div class="padded">
+                        <Slider v-model="tempTask.mentalEffort" custom-color="purple" step="10" icon="mdi-brain"
+                            v-bind:human-readable-effort-value="tempMentalEffort" />
+                        <Slider v-model="tempTask.physicalEffort" custom-color="#EED202" step="10"
+                            icon="mdi-account-hard-hat" v-bind:human-readable-effort-value="tempPhysicalEffort" />
+                        <Slider v-model="tempTask.temporalInvestment" custom-color="red" icon="mdi-timer"
+                            v-bind:human-readable-effort-value="tempTemporalInvestment" />
+                    </div>
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
                         <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
@@ -30,10 +32,13 @@
 </template>
 
 <script lang="ts">
+import { toSubjectiveEffortScore, toTimeStamp } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
+import Slider from './Slider.vue';
 export default {
     components: {
         PlanItem: PlanItem,
+        Slider: Slider,
     },
     data() {
         return {
@@ -42,7 +47,19 @@ export default {
             tempTask: CreateDefaultTask(),
         }
     },
+    computed: {
+        tempMentalEffort() {
+            return toSubjectiveEffortScore(this.tempTask.mentalEffort);
+        },
+        tempPhysicalEffort() {
+            return toSubjectiveEffortScore(this.tempTask.physicalEffort);
+        },
+        tempTemporalInvestment() {
+            return toTimeStamp(this.tempTask.temporalInvestment);
+        }
+    },
     created() {
+        // insert fake data
         this.tasks.set(
             "13",
             {
@@ -115,13 +132,8 @@ export default {
             this.restoreTempTaskToDefault();
             this.closeDialog();
         },
-        onCreatePlanItem() {
-            this.openDialog();
-        },
-        onDeletePlanItem(itemId: string) {
-            const taskToDelete = this.tasks.get(itemId);
-            this.tasks.delete(itemId);
-        },
+        onCreatePlanItem() { this.openDialog(); },
+        onDeletePlanItem(itemId: string) { this.tasks.delete(itemId); },
         onEditPlanItem(itemId: string) {
             const taskToOpen = this.tasks.get(itemId);
             if (!taskToOpen) {
@@ -178,7 +190,12 @@ const CreateDefaultTask = (): TaskType => ({
 .v-toolbar {
     background-color: rgba(0, 128, 0, 0.812);
 }
+
 .v-text-field {
     margin: 1rem;
+}
+
+.padded {
+    padding: 1rem;
 }
 </style>
