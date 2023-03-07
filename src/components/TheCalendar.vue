@@ -1,10 +1,10 @@
 <template>
-    <v-calendar is-expanded show-weeknumbers />
+    <v-calendar is-expanded show-weeknumbers :attributes="attributes" />
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="editingCalendarItem" transition="dialog-bottom-transition" persistent>
         <div class="row">
             <div id="date-picker">
-                <v-date-picker v-model="range" is-range mode="dateTime" />
+                <v-date-picker v-model="range" is-range mode="dateTime" :attributes="attributes" />
             </div>
             <v-card class="row padded">
                 <Slider custom-color="purple" icon="mdi-brain" v-model="mentalEffort"
@@ -16,15 +16,22 @@
             </v-card>
         </div>
         <div class="row">
-            <v-btn prepend-icon="mdi-close" @click="closeDialog">Discard</v-btn>
-            <v-btn prepend-icon="mdi-progress-check" @click="closeDialog" color="green">Save</v-btn>
+            <v-btn prepend-icon="mdi-close" @click="discardEntry">Discard</v-btn>
+            <v-btn prepend-icon="mdi-progress-check" @click="saveAvailabilityEntry" color="green">Save</v-btn>
         </div>
     </v-dialog>
 </template>
 
 <script lang="ts">
-import { toSubjectiveEffortScore, toTimeStamp } from '@/middleware/helpers';
+import { toSubjectiveEffortScore, toTimeStamp, getRandomTime } from '@/middleware/helpers';
 import Slider from './Slider.vue';
+
+type AvailabilityType = {
+    mentalEffort: number,
+    physicalEffort: number,
+    temporalInvestment: number,
+    fromTime: number,
+};
 
 export default {
     components: {
@@ -32,7 +39,6 @@ export default {
     },
     data() {
         return {
-            date: new Date(),
             editingCalendarItem: false,
             range: {
                 start: new Date(),
@@ -40,12 +46,19 @@ export default {
             },
             mentalEffort: 0,
             physicalEffort: 0,
+            attributes: [
+                {
+                    key: "today",
+                    highlight: {
+                        fillMode: 'outline',
+                    },
+                    dates: new Date(),
+                },
+            ],
+            availability: [] as AvailabilityType[],
         }
     },
     computed: {
-        temporalInvestment() {
-            return 0;
-        },
         mentalEffortScore() { return toSubjectiveEffortScore(this.mentalEffort); },
         physicalEffortScore() { return toSubjectiveEffortScore(this.physicalEffort); },
         temporalInvestmentStamp() {
@@ -54,14 +67,53 @@ export default {
         }
     },
     methods: {
-        getNormalizedTimestamp() {
-            const diffInMs = this.range.end.getTime() - this.range.start.getTime();
-            const twelveMonthsMs = 31557600000;
-            return diffInMs / twelveMonthsMs * 100;
+        saveAvailabilityEntry() {
+            const timeInvestment = this.range.end.getTime() - this.range.start.getTime();
+            const availability = {
+                mentalEffort: this.mentalEffort,
+                physicalEffort: this.physicalEffort,
+                temporalInvestment: timeInvestment,
+                fromTime: this.range.start.getTime(),
+            };
+            this.availability.push(availability);
+            this.closeDialog();
+            this.restoreDefaults();
+        },
+        discardEntry() {
+            this.closeDialog();
+            this.restoreDefaults();
         },
         openDialog() { this.editingCalendarItem = true; },
-        closeDialog() { this.editingCalendarItem = false; }
-    }
+        closeDialog() { this.editingCalendarItem = false; },
+        restoreDefaults() {
+            this.range = {
+                start: new Date(),
+                end: new Date()
+            };
+            this.mentalEffort = 0;
+            this.physicalEffort = 0;
+        }
+    },
+    created() {
+        //add fake availability
+        this.availability.push(
+            {
+                mentalEffort: 3,
+                physicalEffort: 0,
+                temporalInvestment: getRandomTime(),
+                fromTime: new Date().getTime(),
+            }
+        );
+        const oneHourInMillis = 1_000 * 60 * 60;
+        this.availability.push(
+            {
+                mentalEffort: 8,
+                physicalEffort: 13,
+                temporalInvestment: getRandomTime(),
+                fromTime: new Date().getTime() + oneHourInMillis,
+            }
+        );
+    },
 }
 </script>
 

@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { toSubjectiveEffortScore, toTimeStamp } from '@/middleware/helpers';
+import { toSubjectiveEffortScore, getRandomTime } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
 import TimeInvestmentInput from './TimeInvestmentInput.vue';
@@ -66,7 +66,7 @@ export default {
                 description: "Familiarize self with VueJS- Perform Framework Overview",
                 mentalEffort: 85,
                 physicalEffort: 45,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
         this.tasks.set(
             "17",
@@ -75,7 +75,7 @@ export default {
                 description: "Learn VueJS - do a programming project",
                 mentalEffort: 68,
                 physicalEffort: 92,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
         this.tasks.set(
             "19",
@@ -84,7 +84,7 @@ export default {
                 description: "C# advanced review",
                 mentalEffort: 98,
                 physicalEffort: 60,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
         this.tasks.set(
             "28",
@@ -93,7 +93,7 @@ export default {
                 description: "Design patterns overview",
                 mentalEffort: 50,
                 physicalEffort: 2,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
         this.tasks.set(
             "33",
@@ -102,7 +102,7 @@ export default {
                 description: "Learn Design patterns - programming exercises",
                 mentalEffort: 67,
                 physicalEffort: 93,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
         this.tasks.set(
             "38",
@@ -111,7 +111,7 @@ export default {
                 description: "Learn VueJS - advanced review",
                 mentalEffort: 73,
                 physicalEffort: 72,
-                temporalInvestment: this.randomTime(),
+                temporalInvestment: getRandomTime(),
             });
     },
     methods: {
@@ -150,7 +150,6 @@ export default {
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
         ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
-        randomTime: () => Math.round(Math.random() * 1_000 * 60 * 60 * 24),
     }
 };
 type TaskType = {

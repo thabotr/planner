@@ -26,4 +26,6 @@ function toTimeStamp(diffInMs: number): string {
     return `${diffSecs}s`;
 }
 
-export { toSubjectiveEffortScore, toTimeStamp };
+const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
+
+export { toSubjectiveEffortScore, toTimeStamp, getRandomTime };
