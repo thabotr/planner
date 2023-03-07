@@ -9,28 +9,21 @@ function toSubjectiveEffortScore(percent?: number): number {
     return firstElevenPseudoFibonacciNumbers[intergralIndex];
 }
 
-function toTimeStamp(percent?: number): string {
-    if (percent === undefined) {
-        return "0s";
+function toTimeStamp(diffInMs: number): string {
+    const diffSecs = Math.floor(diffInMs / 1_000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHrs = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHrs / 24);
+    if (diffDays > 0) {
+        return `${diffDays}dy`;
     }
-    if (percent < 20) {
-        const mins = Math.round(60 * percent / 20);
-        return `${mins}m`;
+    if (diffHrs > 0) {
+        return `${diffHrs}h`;
     }
-    if (percent >= 20 && percent < 60) {
-        const hours = Math.floor(1 + 24 * (percent - 20) / (60 - 20));
-        return `${hours}h`;
+    if (diffMins > 0) {
+        return `${diffMins}m`;
     }
-    if (percent >= 60 && percent < 80) {
-        const days = Math.floor(1 + 7 * (percent - 60) / (80 - 60));
-        return `${days}dy`;
-    }
-    if (percent >= 80 && percent < 90) {
-        const weeks = Math.floor(1 + 4 * (percent - 80) / (90 - 80));
-        return `${weeks}wk`;
-    }
-    const months = Math.floor(1 + 12 * (percent - 90) / (100 - 90));
-    return `${months}mth`;
+    return `${diffSecs}s`;
 }
 
 export { toSubjectiveEffortScore, toTimeStamp };

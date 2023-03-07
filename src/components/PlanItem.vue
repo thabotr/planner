@@ -6,14 +6,14 @@
             <v-btn><v-icon start icon="mdi-account-hard-hat" color="#EED202"></v-icon>{{ physicalEffortScore }}</v-btn>
             <v-btn><v-icon start icon="mdi-timer" color="red"></v-icon>{{ temporalInvestmentStamp }}</v-btn>
         </div>
-        <!-- <v-card-actions class="justify-space-between">
+        <v-card-actions class="justify-space-between">
             <v-btn append-icon="mdi-delete" @click="$emit('onDelete', id)">
                 Delete
             </v-btn>
             <v-btn append-icon="mdi-pencil" @click="$emit('onEdit', id)">
                 Edit
             </v-btn>
-        </v-card-actions> -->
+        </v-card-actions>
     </v-card>
 </template>
 <script lang="ts">
@@ -33,9 +33,7 @@ export default {
         physicalEffortScore() {
             return toSubjectiveEffortScore(this.physicalEffort);
         },
-        temporalInvestmentStamp() {
-            return toTimeStamp(this.temporalInvestment);
-        }
+        temporalInvestmentStamp() { return toTimeStamp(this.temporalInvestment ?? 0); }
     }
 }
 </script>

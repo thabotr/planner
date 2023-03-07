@@ -5,7 +5,7 @@
     <v-col cols="auto">
         <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition" persistent>
             <template v-slot:activator>
-                <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus">
+                <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus" color="green">
                 </v-btn>
             </template>
             <template v-slot:default>
@@ -18,12 +18,12 @@
                             v-bind:human-readable-effort-value="tempMentalEffort" />
                         <Slider v-model="tempTask.physicalEffort" custom-color="#EED202" step="10"
                             icon="mdi-account-hard-hat" v-bind:human-readable-effort-value="tempPhysicalEffort" />
-                        <Slider v-model="tempTask.temporalInvestment" custom-color="red" icon="mdi-timer"
-                            v-bind:human-readable-effort-value="tempTemporalInvestment" />
+                        <TimeInvestmentInput :value=tempTask.temporalInvestment v-model="tempTask.temporalInvestment" />
                     </div>
                     <v-card-actions class="justify-end">
                         <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
-                        <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save">Save</v-btn>
+                        <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save"
+                            color="green">Save</v-btn>
                     </v-card-actions>
                 </v-card>
             </template>
@@ -35,10 +35,12 @@
 import { toSubjectiveEffortScore, toTimeStamp } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
+import TimeInvestmentInput from './TimeInvestmentInput.vue';
 export default {
     components: {
         PlanItem: PlanItem,
         Slider: Slider,
+        TimeInvestmentInput: TimeInvestmentInput,
     },
     data() {
         return {
@@ -54,9 +56,6 @@ export default {
         tempPhysicalEffort() {
             return toSubjectiveEffortScore(this.tempTask.physicalEffort);
         },
-        tempTemporalInvestment() {
-            return toTimeStamp(this.tempTask.temporalInvestment);
-        }
     },
     created() {
         // insert fake data
@@ -67,7 +66,7 @@ export default {
                 description: "Familiarize self with VueJS- Perform Framework Overview",
                 mentalEffort: 85,
                 physicalEffort: 45,
-                temporalInvestment: 30,
+                temporalInvestment: this.randomTime(),
             });
         this.tasks.set(
             "17",
@@ -76,7 +75,7 @@ export default {
                 description: "Learn VueJS - do a programming project",
                 mentalEffort: 68,
                 physicalEffort: 92,
-                temporalInvestment: 63,
+                temporalInvestment: this.randomTime(),
             });
         this.tasks.set(
             "19",
@@ -85,7 +84,7 @@ export default {
                 description: "C# advanced review",
                 mentalEffort: 98,
                 physicalEffort: 60,
-                temporalInvestment: 57,
+                temporalInvestment: this.randomTime(),
             });
         this.tasks.set(
             "28",
@@ -94,7 +93,7 @@ export default {
                 description: "Design patterns overview",
                 mentalEffort: 50,
                 physicalEffort: 2,
-                temporalInvestment: 92,
+                temporalInvestment: this.randomTime(),
             });
         this.tasks.set(
             "33",
@@ -103,7 +102,7 @@ export default {
                 description: "Learn Design patterns - programming exercises",
                 mentalEffort: 67,
                 physicalEffort: 93,
-                temporalInvestment: 93,
+                temporalInvestment: this.randomTime(),
             });
         this.tasks.set(
             "38",
@@ -112,7 +111,7 @@ export default {
                 description: "Learn VueJS - advanced review",
                 mentalEffort: 73,
                 physicalEffort: 72,
-                temporalInvestment: 64,
+                temporalInvestment: this.randomTime(),
             });
     },
     methods: {
@@ -151,6 +150,7 @@ export default {
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
         ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
+        randomTime: () => Math.round(Math.random() * 1_000 * 60 * 60 * 24),
     }
 };
 type TaskType = {
@@ -171,15 +171,16 @@ const CreateDefaultTask = (): TaskType => ({
 
 <style scoped>
 #create-plan-item {
-    position: fixed;
-    right: 3rem;
-    bottom: 3rem;
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
 }
 
 #plan-items-container {
-    display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .v-dialog {
