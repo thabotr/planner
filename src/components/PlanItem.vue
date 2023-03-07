@@ -2,22 +2,22 @@
     <v-card>
         <v-card-text>{{ description }}</v-card-text>
         <div class="effort-field">
-            <v-btn><v-icon start icon="mdi-brain"></v-icon>{{ mentalEffortScore }}</v-btn>
-            <v-btn><v-icon start icon="mdi-account-hard-hat"></v-icon>{{ physicalEffortScore }}</v-btn>
-            <v-btn><v-icon start icon="mdi-timer"></v-icon>{{ temporalInvestment }}</v-btn>
+            <v-btn><v-icon start icon="mdi-brain" color="purple"></v-icon>{{ mentalEffortScore }}</v-btn>
+            <v-btn><v-icon start icon="mdi-account-hard-hat" color="#EED202"></v-icon>{{ physicalEffortScore }}</v-btn>
+            <v-btn><v-icon start icon="mdi-timer" color="red"></v-icon>{{ temporalInvestmentStamp }}</v-btn>
         </div>
-        <v-card-actions class="justify-space-between">
-            <v-btn variant="text" append-icon="mdi-delete" @click="$emit('onDelete', id)">
+        <!-- <v-card-actions class="justify-space-between">
+            <v-btn append-icon="mdi-delete" @click="$emit('onDelete', id)">
                 Delete
             </v-btn>
-            <v-btn variant="text" append-icon="mdi-pencil" @click="$emit('onEdit', id)">
+            <v-btn append-icon="mdi-pencil" @click="$emit('onEdit', id)">
                 Edit
             </v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
     </v-card>
 </template>
 <script lang="ts">
-import { toSubjectiveEffortScore } from '../middleware/calculator';
+import { toSubjectiveEffortScore, toTimeStamp } from '../middleware/helpers';
 export default {
     props: {
         description: String,
@@ -32,6 +32,9 @@ export default {
         },
         physicalEffortScore() {
             return toSubjectiveEffortScore(this.physicalEffort);
+        },
+        temporalInvestmentStamp() {
+            return toTimeStamp(this.temporalInvestment);
         }
     }
 }
