@@ -2,23 +2,9 @@
     <v-calendar show-weeknumbers :attributes="attributes" />
     <v-card id="schedule-container" class="padded">
         <template v-slot:title>{{ new Date().toDateString() }}</template>
-        <v-card id="day-schedule" ref="schedule" class="vertical-scroll">
-            <div>
-                <v-list id="timeline" ref="timeline">
-                    <v-divider id="timeIndicator" ref="timeIndicator" :thickness="3" color="blue"
-                        style="z-index: 9999;"></v-divider>
-                    <li class="timeline-item" :min-start="0" :min-end="15">
-                        <span>00:00</span>
-                        <div class="event-placeholder"></div>
-                    </li>
-                    <li class="timeline-item" v-for="i in 95" :min-start="i * 15" :min-end="(i + 1) * 15">
-                        <span>
-                            {{ i / 4 < 10 ? `0${Math.floor(i / 4)}` : Math.floor(i / 4) }}:{{ ((i % 4) * 15) === 0 ? `00` : (i
-                                % 4) * 15 }} </span>
-                                <div class="event-placeholder"></div>
-                    </li>
-                </v-list>
-            </div>
+        <v-card id="day-schedule" ref="schedule" class="vertical-scroll padded">
+            <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
+            </canvas>
         </v-card>
     </v-card>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
@@ -78,6 +64,8 @@ export default {
                 },
             ],
             availability: [] as AvailabilityType[],
+            fifteenMinCellHeight: 60,
+            canvasWidth: 200,
         }
     },
     computed: {
@@ -86,6 +74,17 @@ export default {
         temporalInvestmentStamp() {
             const diffInMs = this.range.end.getTime() - this.range.start.getTime();
             return toTimeStamp(diffInMs);
+        },
+        canvasHeight() {
+            const minsInADay = 24 * 60;
+            const numberEventSlots = (minsInADay / 15);
+            return numberEventSlots * this.fifteenMinCellHeight;
+        },
+        currentDayCanvasOffset() {
+            const oneDayInMillis = 1_000 * 60 * 60 * 24;
+            const zoneOffset = 2 * 60 * 60 * 1_000;
+            const currentTimeMillis = (new Date().getTime() + zoneOffset) % oneDayInMillis;
+            return currentTimeMillis / oneDayInMillis * this.canvasHeight;
         }
     },
     methods: {
@@ -130,7 +129,7 @@ export default {
             return heightBelowTimelineItemTop + timelineItem.offsetTop;
         },
         scrollScheduleToTheCurrentTime() {
-            const currentIndicatorPositionBelowScheduleTop = this.getCurrentTimePositionBelowScheduleTop();
+            const currentIndicatorPositionBelowScheduleTop = this.currentDayCanvasOffset;
             const schedule: HTMLElement = (this.$refs.schedule as ComponentPublicInstance).$el;
             const halfScheduleClientHeight = schedule.clientHeight / 2;
             schedule.scrollTo({
@@ -147,6 +146,31 @@ export default {
         getMillisElapsedInLatestDay(timestampInMillis: number): number {
             const aDayInMillis = 1_000 * 60 * 60 * 24;
             return timestampInMillis % aDayInMillis;
+        },
+        zeroPad(num: number): string {
+            return num < 10 ? `0${num}` : num.toString();
+        },
+        drawCurrentTimeMarkerInSchedule(ctx: CanvasRenderingContext2D) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue';
+            ctx.moveTo(0, this.currentDayCanvasOffset);
+            ctx.lineTo(this.canvasWidth, this.currentDayCanvasOffset);
+            ctx.stroke();
+        },
+        drawScheduleTimeline(ctx: CanvasRenderingContext2D) {
+            const fifteenMinCellHeight = 60;
+            const numberOfIntervalsInAday = 4 * 24;
+            for (let i = 0; i < numberOfIntervalsInAday; ++i) {
+                ctx.strokeStyle = "gray";
+                ctx.moveTo(0, fifteenMinCellHeight * i);
+                ctx.lineTo(this.canvasWidth, fifteenMinCellHeight * i);
+                ctx.stroke();
+                const hours = Math.floor(i / 4);
+                const minutes = (i % 4) * 15;
+                const timeMarkString = [hours, minutes].map(this.zeroPad).join(':');
+                ctx.fillStyle = 'black';
+                ctx.fillText(timeMarkString, 0, fifteenMinCellHeight * i + 10);
+            }
         }
     },
     created() {
@@ -170,23 +194,27 @@ export default {
         );
     },
     mounted() {
-        this.moveTimeIndicatorToCurrentTimeInTheSchedule();
-        this.scrollScheduleToTheCurrentTime();
-        const aDayInMillis = 1_000 * 60 * 60 * 24;
+        const canvas = document.getElementById("timeline") as HTMLCanvasElement;
+        const ctx = canvas.getContext("2d");
+        if (ctx === null) {
+            console.log("Canvas has no context");
+            return;
+        }
 
-        // mark availability into calendar
+        this.drawScheduleTimeline(ctx);
+
+        // add availability
         const example = this.availability[0];
-        const millisStart = this.getMillisElapsedInLatestDay(example.fromTime);
-        const fromMins = Math.floor(millisStart / (1_000 * 60));
-        const minStart = fromMins - fromMins % 15;
-        const startEventSlot: HTMLElement | null = document.querySelector(`[min-start="${minStart}"] > .event-placeholder`);
-        if (startEventSlot === null) { return; }
-        const startOffsetTop = 60 * (millisStart % (15*1_000*60*60)) / aDayInMillis;
-        const temporalInvestmentTillMidnight = millisStart + example.temporalInvestment > aDayInMillis ? aDayInMillis - millisStart : example.temporalInvestment;
-        const availabilityHeight = this.getHeightRelativeToTheSchedule(temporalInvestmentTillMidnight);
-        startEventSlot.innerHTML = `
-                <div style="width: 0.5rem; height: ${availabilityHeight}px; top: ${startOffsetTop}px; background-color: orange; position: absolute; z-index: 99;">
-                    </div>`
+        const aDayInMillis = 1_000 * 60 * 60 * 24;
+        const availabilityStartInSchedule = (example.fromTime % aDayInMillis) / aDayInMillis * this.canvasHeight;
+        const span = example.temporalInvestment / aDayInMillis * this.canvasHeight;
+        const availabilitySpanInSchedule = span + availabilityStartInSchedule > this.canvasHeight ? this.canvasHeight - availabilityStartInSchedule : span;
+        ctx.beginPath();
+        ctx.fillStyle = "#1aff004f";
+        ctx.fillRect(0, availabilityStartInSchedule, this.canvasWidth, availabilitySpanInSchedule);
+
+        this.drawCurrentTimeMarkerInSchedule(ctx);
+        this.scrollScheduleToTheCurrentTime();
     },
 }
 </script>
