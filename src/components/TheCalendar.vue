@@ -1,31 +1,25 @@
 <template>
-    <v-calendar is-expanded show-weeknumbers :attributes="attributes" />
-    <v-card id="day-schedule" ref="schedule">
-        <div class="centered-content">
-            <strong>{{ new Date().toDateString() }}</strong>
-        </div>
-        <v-timeline side="end" ref="timeline">
-            <v-timeline-item hide-dot>
-                <div style="background-color: red; width: 3rem; height: 1rem;">
-
-                </div>
-                <template v-slot:opposite>
-                    00:00
-                </template>
-            </v-timeline-item>
-            <template v-for="i in 95">
-                <v-timeline-item dot-color="blue" icon="mdi-calendar" :hide-dot="i !== Math.round((new Date().getMinutes() / 60 + new Date().getHours()) * 4)">
-                    <template v-slot:opposite>
-                        {{ i / 4 < 10 ? `0${Math.floor(i / 4)}` : Math.floor(i / 4) }}:{{ ((i % 4) * 15) === 0 ? `00` : (i %
-                            4) * 15 }} </template>
-                </v-timeline-item>
-            </template>
-            <v-timeline-item hide-dot>
-                <template v-slot:opposite>
-                    00:00
-                </template>
-            </v-timeline-item>
-        </v-timeline>
+    <v-calendar show-weeknumbers :attributes="attributes" />
+    <v-card id="schedule-container" class="padded">
+        <template v-slot:title>{{ new Date().toDateString() }}</template>
+        <v-card id="day-schedule" ref="schedule" class="vertical-scroll">
+            <div>
+                <v-list id="timeline" ref="timeline">
+                    <v-divider id="timeIndicator" ref="timeIndicator" :thickness="3" color="blue"
+                        style="z-index: 9999;"></v-divider>
+                    <li class="timeline-item" :min-start="0" :min-end="15">
+                        <span>00:00</span>
+                        <div class="event-placeholder"></div>
+                    </li>
+                    <li class="timeline-item" v-for="i in 95" :min-start="i * 15" :min-end="(i + 1) * 15">
+                        <span>
+                            {{ i / 4 < 10 ? `0${Math.floor(i / 4)}` : Math.floor(i / 4) }}:{{ ((i % 4) * 15) === 0 ? `00` : (i
+                                % 4) * 15 }} </span>
+                                <div class="event-placeholder"></div>
+                    </li>
+                </v-list>
+            </div>
+        </v-card>
     </v-card>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="editingCalendarItem" transition="dialog-bottom-transition" persistent>
@@ -121,6 +115,39 @@ export default {
             this.mentalEffort = 0;
             this.physicalEffort = 0;
         },
+        moveTimeIndicatorToCurrentTimeInTheSchedule() {
+            const currentIndicatorPositionBelowScheduleTop = this.getCurrentTimePositionBelowScheduleTop();
+            const timeIndicator: HTMLElement = (this.$refs.timeIndicator as ComponentPublicInstance).$el;
+            timeIndicator.style.top = `${currentIndicatorPositionBelowScheduleTop}px`;
+        },
+        getCurrentTimePositionBelowScheduleTop() {
+            const currTimeInMins = new Date().getMinutes() + new Date().getHours() * 60;
+            const minStart = Math.floor(currTimeInMins / 15) * 15;
+            const timelineItem: HTMLElement | null = document.querySelector(`[min-start="${minStart}"]`);
+            if (timelineItem === null) { return 0; }
+            const proportionIntoTimelineItem = (currTimeInMins / 15) % 1;
+            const heightBelowTimelineItemTop = Math.round(proportionIntoTimelineItem * timelineItem.scrollHeight);
+            return heightBelowTimelineItemTop + timelineItem.offsetTop;
+        },
+        scrollScheduleToTheCurrentTime() {
+            const currentIndicatorPositionBelowScheduleTop = this.getCurrentTimePositionBelowScheduleTop();
+            const schedule: HTMLElement = (this.$refs.schedule as ComponentPublicInstance).$el;
+            const halfScheduleClientHeight = schedule.clientHeight / 2;
+            schedule.scrollTo({
+                top: currentIndicatorPositionBelowScheduleTop - halfScheduleClientHeight,
+                behavior: 'auto',
+            });
+        },
+        getHeightRelativeToTheSchedule(timeInMillis: number) {
+            const scheduleHeightInMillis = 1_000 * 60 * 60 * 24;
+            const proportionOfTimeWithinSchedule = timeInMillis / scheduleHeightInMillis;
+            const schedule: HTMLElement = (this.$refs.schedule as ComponentPublicInstance).$el;
+            return Math.floor(proportionOfTimeWithinSchedule * schedule.scrollHeight);
+        },
+        getMillisElapsedInLatestDay(timestampInMillis: number): number {
+            const aDayInMillis = 1_000 * 60 * 60 * 24;
+            return timestampInMillis % aDayInMillis;
+        }
     },
     created() {
         //add fake availability
@@ -143,26 +170,35 @@ export default {
         );
     },
     mounted() {
-        const timelineComponent = this.$refs.timeline as ComponentPublicInstance;
-        const element: HTMLElement = timelineComponent.$el;
-        const ratioOfMinsElapsedInDay = (new Date().getMinutes() + new Date().getHours() * 60) / (60 * 24);
-        const timelineOffsetHeight = ratioOfMinsElapsedInDay * element.scrollHeight;
-        const scheduleComponent = this.$refs.schedule as ComponentPublicInstance;
-        const scheduleElem: HTMLElement = scheduleComponent.$el;
-        const scheduleCenterOffset = scheduleElem.scrollHeight / 2;
-        const scrollDest = Math.max(0, timelineOffsetHeight - scheduleCenterOffset);
-        element.scrollTo({
-            top: scrollDest,
-            behavior: 'auto',
-        });
-    }
+        this.moveTimeIndicatorToCurrentTimeInTheSchedule();
+        this.scrollScheduleToTheCurrentTime();
+        const aDayInMillis = 1_000 * 60 * 60 * 24;
+
+        // mark availability into calendar
+        const example = this.availability[0];
+        const millisStart = this.getMillisElapsedInLatestDay(example.fromTime);
+        const fromMins = Math.floor(millisStart / (1_000 * 60));
+        const minStart = fromMins - fromMins % 15;
+        const startEventSlot: HTMLElement | null = document.querySelector(`[min-start="${minStart}"] > .event-placeholder`);
+        if (startEventSlot === null) { return; }
+        const startOffsetTop = 60 * (millisStart % (15*1_000*60*60)) / aDayInMillis;
+        const temporalInvestmentTillMidnight = millisStart + example.temporalInvestment > aDayInMillis ? aDayInMillis - millisStart : example.temporalInvestment;
+        const availabilityHeight = this.getHeightRelativeToTheSchedule(temporalInvestmentTillMidnight);
+        startEventSlot.innerHTML = `
+                <div style="width: 0.5rem; height: ${availabilityHeight}px; top: ${startOffsetTop}px; background-color: orange; position: absolute; z-index: 99;">
+                    </div>`
+    },
 }
 </script>
 
 <style scoped>
 #day-schedule {
-    width: 20rem;
+    width: 15rem;
     height: 20rem;
+}
+
+#schedule-container {
+    width: 17rem;
 }
 
 #create-availability {
@@ -182,11 +218,34 @@ export default {
     width: 50%;
 }
 
-.v-timeline {
+.vertical-scroll {
     overflow-y: scroll;
 }
 
 .padded {
     padding: 1rem;
+}
+
+.event-placeholder {
+    width: 10rem;
+    height: 60px;
+    border: 1px solid gray;
+}
+
+#timeline {
+    background-color: #79b2f479;
+}
+
+.timeline-item span {
+    margin-top: -0.8rem;
+}
+
+.timeline-item {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+#schedule-current-time-indicator {
+    top: 0px;
 }
 </style>
