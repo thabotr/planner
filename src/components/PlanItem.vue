@@ -5,10 +5,19 @@
             <v-chip color="primary" size="x-small">{{ id }}</v-chip>
         </div>
         <v-card-text>{{ description }}</v-card-text>
-        <div class="effort-field">
-            <v-btn><v-icon start icon="mdi-brain" color="purple"></v-icon>{{ mentalEffortScore }}</v-btn>
-            <v-btn><v-icon start icon="mdi-account-hard-hat" color="#EED202"></v-icon>{{ physicalEffortScore }}</v-btn>
-            <v-btn><v-icon start icon="mdi-timer" color="red"></v-icon>{{ temporalInvestmentStamp }}</v-btn>
+        <div class="effort-field centered-content">
+            <v-chip color="purple" label>
+                <v-icon start icon="mdi-brain"></v-icon>
+                {{ mentalEffortScore }}
+            </v-chip>
+            <v-chip color="#EED202" label>
+                <v-icon start icon="mdi-account-hard-hat"></v-icon>
+                {{ physicalEffortScore }}
+            </v-chip>
+            <v-chip color="red" label>
+                <v-icon start icon="mdi-timer" color="red"></v-icon>
+                {{ temporalInvestmentStamp }}
+            </v-chip>
         </div>
         <v-card-actions class="justify-space-between">
             <v-btn append-icon="mdi-delete" @click="$emit('onDelete', id)">
@@ -53,6 +62,7 @@ export default {
 </script>
 <style scoped>
 @import url(../assets/main.css);
+
 .v-card {
     padding: 1rem;
 }
