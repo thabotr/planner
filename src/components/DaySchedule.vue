@@ -17,6 +17,7 @@ type AvailabilityType = {
     temporalInvestment: number,
     fromTime: number,
 };
+
 export default {
     props: {
         availability: Array<AvailabilityType>,
@@ -42,7 +43,9 @@ export default {
         ctx() {
             const canvas = document.getElementById("timeline") as HTMLCanvasElement;
             const ctx = canvas.getContext("2d");
-            if (!ctx) throw new Error("Canvas has no context");
+            if (ctx === null) {
+                throw new Error("Canvas has no context");
+            }
             return ctx;
         }
     },
@@ -91,8 +94,9 @@ export default {
                     yield '#ffe1004f';
                 }
             })();
+            const zoneOffset = 2 * 60 * 60 * 1_000;
             for (const example of availability) {
-                const availabilityStartInSchedule = (example.fromTime % aDayInMillis) / aDayInMillis * this.canvasHeight;
+                const availabilityStartInSchedule = (zoneOffset + example.fromTime % aDayInMillis) / aDayInMillis * this.canvasHeight;
                 const span = example.temporalInvestment / aDayInMillis * this.canvasHeight;
                 const availabilitySpanInSchedule = span + availabilityStartInSchedule > this.canvasHeight ? this.canvasHeight - availabilityStartInSchedule : span;
                 ctx.beginPath();
@@ -104,22 +108,26 @@ export default {
                 ctx.fillText('55 mental EP', 30, availabilityStartInSchedule - 2);
                 ctx.fillStyle = "#EED202";
                 ctx.fillText('87 physical EP', this.canvasWidth * 0.6, availabilityStartInSchedule - 2);
+                const investedMins = Math.round(example.temporalInvestment / (1_000 * 60));
+                ctx.fillStyle = "red";
+                ctx.fillText(`${investedMins} minutes`, this.canvasWidth * 0.4, availabilityStartInSchedule + availabilitySpanInSchedule);
             }
         }
     },
     mounted() {
-        const canvas = document.getElementById("timeline") as HTMLCanvasElement;
-        const ctx = canvas.getContext("2d");
-        if (ctx === null) {
-            console.log("Canvas has no context");
-            return;
-        }
-        this.drawScheduleTimeline(ctx);
-        this.displayAvailability(ctx, this.availability ?? []);
-        this.drawCurrentTimeMarkerInSchedule(ctx);
+        this.drawScheduleTimeline(this.ctx);
+        this.displayAvailability(this.ctx, this.availability ?? []);
+        this.drawCurrentTimeMarkerInSchedule(this.ctx);
         this.scrollScheduleToTheCurrentTime();
     },
-
+    watch: {
+        availability: {
+            handler: function (updatedAvailability: Array<AvailabilityType>) {
+                this.displayAvailability(this.ctx, updatedAvailability);
+            },
+            deep: true,
+        },
+    }
 }
 </script>
 

@@ -101,25 +101,6 @@ export default {
             return timestampInMillis % aDayInMillis;
         },
     },
-    created() {
-        // this.availability.push(
-        //     {
-        //         mentalEffort: 3,
-        //         physicalEffort: 0,
-        //         temporalInvestment: getRandomTime(),
-        //         fromTime: new Date().getTime(),
-        //     }
-        // );
-        // const oneHourInMillis = 1_000 * 60 * 60;
-        // this.availability.push(
-        //     {
-        //         mentalEffort: 8,
-        //         physicalEffort: 13,
-        //         temporalInvestment: getRandomTime(),
-        //         fromTime: new Date().getTime() + oneHourInMillis,
-        //     }
-        // );
-    },
 }
 </script>
 
@@ -149,5 +130,4 @@ export default {
 .v-dialog {
     width: 50%;
 }
-
 </style>
