@@ -1,13 +1,13 @@
 <template>
     <div class="row">
-        <v-calendar show-weeknumbers :attributes="attributes" />
-        <DaySchedule :availability="availability" />
+        <v-calendar show-weeknumbers :attributes="attributes" @dayclick="dayOnView=$event.date" />
+        <DaySchedule :availability="availability" :dayOnView="dayOnView" />
     </div>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="editingCalendarItem" transition="dialog-bottom-transition" persistent>
         <div class="row">
             <div id="date-picker">
-                <v-date-picker v-model="range" is-range mode="dateTime" :attributes="attributes" />
+                <v-date-picker v-model="range" is-range mode="dateTime" />
             </div>
             <v-card class="row padded">
                 <Slider custom-color="purple" icon="mdi-brain" v-model="mentalEffort"
@@ -49,17 +49,9 @@ export default {
                 start: new Date(),
                 end: new Date()
             },
+            dayOnView: new Date(),
             mentalEffort: 0,
             physicalEffort: 0,
-            attributes: [
-                {
-                    key: "today",
-                    highlight: {
-                        fillMode: 'outline',
-                    },
-                    dates: new Date(),
-                },
-            ],
             availability: [] as AvailabilityType[],
         }
     },
@@ -70,6 +62,22 @@ export default {
             const diffInMs = this.range.end.getTime() - this.range.start.getTime();
             return toTimeStamp(diffInMs);
         },
+        attributes() {
+            return [
+                {
+                    key: "today",
+                    highlight: {
+                        fillMode: 'outline',
+                    },
+                    dates: new Date(),
+                },
+                {
+                    key: "dayOnView",
+                    highlight: true,
+                    dates: this.dayOnView,
+                }
+            ]
+        }
     },
     methods: {
         saveAvailabilityEntry() {
@@ -102,6 +110,9 @@ export default {
             const aDayInMillis = 1_000 * 60 * 60 * 24;
             return timestampInMillis % aDayInMillis;
         },
+        // setDateOnView({date} : {date: Date}) {
+        //     console.log(date);
+        // }
     },
 }
 </script>

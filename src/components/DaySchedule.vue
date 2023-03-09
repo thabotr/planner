@@ -1,6 +1,6 @@
 <template>
     <v-card id="schedule-container" class="padded">
-        <template v-slot:title>{{ new Date().toDateString() }}</template>
+        <template v-slot:title>{{ dayOnView.toDateString() }}</template>
         <v-card id="schedule" ref="schedule" class="vertical-scroll padded">
             <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
             </canvas>
@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts">
+import { throwStatement } from '@babel/types';
 import type { CreateComponentPublicInstance } from 'vue';
 
 type AvailabilityType = {
@@ -20,12 +21,21 @@ type AvailabilityType = {
 
 export default {
     props: {
-        availability: Array<AvailabilityType>,
+        availability: {
+            type: Array<AvailabilityType>,
+            required: true,
+        },
+        dayOnView: {
+            type: Date,
+            required: true,
+        },
     },
     data() {
         return {
             fifteenMinCellHeight: 60,
             canvasWidth: 200,
+            now: new Date().getTime(),
+            updaterInterval: -1,
         };
     },
     computed: {
@@ -37,7 +47,7 @@ export default {
         currentDayCanvasOffset() {
             const oneDayInMillis = 1_000 * 60 * 60 * 24;
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            const currentTimeMillis = (new Date().getTime() + zoneOffset) % oneDayInMillis;
+            const currentTimeMillis = (this.now + zoneOffset) % oneDayInMillis;
             return currentTimeMillis / oneDayInMillis * this.canvasHeight;
         },
         ctx() {
@@ -47,6 +57,15 @@ export default {
                 throw new Error("Canvas has no context");
             }
             return ctx;
+        },
+        availabilityForDayOnView() {
+            const todayStartTime = new Date(this.dayOnView.getFullYear(), this.dayOnView.getMonth(), this.dayOnView.getDate()).getTime();
+            const tomorrowStartDate = new Date(this.dayOnView.getFullYear(), this.dayOnView.getMonth(), this.dayOnView.getDate());
+            tomorrowStartDate.setDate(tomorrowStartDate.getDate() + 1);
+            const tomorrowStartTime = tomorrowStartDate.getTime();
+            const todaysAV = this.availability.filter(av => av.fromTime >= todayStartTime && av.fromTime < tomorrowStartTime);
+            console.log(tomorrowStartTime -todayStartTime);
+            return todaysAV;
         }
     },
     methods: {
@@ -73,6 +92,7 @@ export default {
             const fifteenMinCellHeight = 60;
             const numberOfIntervalsInAday = 4 * 24;
             for (let i = 0; i < numberOfIntervalsInAday; ++i) {
+                ctx.beginPath();
                 ctx.strokeStyle = "gray";
                 ctx.moveTo(0, fifteenMinCellHeight * i);
                 ctx.lineTo(this.canvasWidth, fifteenMinCellHeight * i);
@@ -80,12 +100,12 @@ export default {
                 const hours = Math.floor(i / 4);
                 const minutes = (i % 4) * 15;
                 const timeMarkString = [hours, minutes].map(this.zeroPad).join(':');
+                ctx.beginPath();
                 ctx.fillStyle = 'black';
                 ctx.fillText(timeMarkString, 0, fifteenMinCellHeight * i + 10);
             }
         },
-        displayAvailability(ctx: CanvasRenderingContext2D, availability: Array<AvailabilityType>) {
-            if (!availability) { return; }
+        displayAvailability(ctx: CanvasRenderingContext2D) {
             const aDayInMillis = 1_000 * 60 * 60 * 24;
             const getPlaceholderColor = (function* () {
                 while (true) {
@@ -95,7 +115,7 @@ export default {
                 }
             })();
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            for (const example of availability) {
+            for (const example of this.availabilityForDayOnView) {
                 const availabilityStartInSchedule = (zoneOffset + example.fromTime % aDayInMillis) / aDayInMillis * this.canvasHeight;
                 const span = example.temporalInvestment / aDayInMillis * this.canvasHeight;
                 const availabilitySpanInSchedule = span + availabilityStartInSchedule > this.canvasHeight ? this.canvasHeight - availabilityStartInSchedule : span;
@@ -112,20 +132,34 @@ export default {
                 ctx.fillStyle = "red";
                 ctx.fillText(`${investedMins} minutes`, this.canvasWidth * 0.4, availabilityStartInSchedule + availabilitySpanInSchedule);
             }
-        }
+        },
     },
     mounted() {
         this.drawScheduleTimeline(this.ctx);
-        this.displayAvailability(this.ctx, this.availability ?? []);
+        this.displayAvailability(this.ctx);
         this.drawCurrentTimeMarkerInSchedule(this.ctx);
         this.scrollScheduleToTheCurrentTime();
     },
     watch: {
         availability: {
-            handler: function (updatedAvailability: Array<AvailabilityType>) {
-                this.displayAvailability(this.ctx, updatedAvailability);
+            handler: function () {
+                this.displayAvailability(this.ctx);
             },
             deep: true,
+        },
+        dayOnView(currDayOnView: Date) {
+            const today = new Date();
+            const todayIsOnView = currDayOnView.getFullYear() === today.getFullYear() &&
+                currDayOnView.getMonth() === today.getMonth() && currDayOnView.getDate() === today.getDate();
+            // redraw all
+            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+            this.drawScheduleTimeline(this.ctx);
+            this.displayAvailability(this.ctx);
+            if (todayIsOnView) {
+                // enable current time indicator
+                this.drawCurrentTimeMarkerInSchedule(this.ctx);
+                this.scrollScheduleToTheCurrentTime();
+            }
         },
     }
 }
