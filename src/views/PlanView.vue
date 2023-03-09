@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheCalendar from '@/components/TheCalendar.vue';
+import ThePlanner from '@/components/ThePlanner.vue';
 import TheTasks from '../components/TheTasks.vue'
 </script>
 
@@ -9,7 +9,7 @@ import TheTasks from '../components/TheTasks.vue'
       <TheTasks />
     </div>
     <div id="the-calendar" class="padded">
-      <TheCalendar />
+      <ThePlanner />
     </div>
   </main>
 </template>

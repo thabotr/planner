@@ -17,7 +17,7 @@
     </v-card>
 </template>
 <script lang="ts">
-import { toSubjectiveEffortScore, toTimeStamp } from '../middleware/helpers';
+import { toSubjectiveEffortScore, verboseTimestamp } from '../middleware/helpers';
 export default {
     props: {
         description: String,
@@ -33,7 +33,7 @@ export default {
         physicalEffortScore() {
             return toSubjectiveEffortScore(this.physicalEffort);
         },
-        temporalInvestmentStamp() { return toTimeStamp(this.temporalInvestment ?? 0); }
+        temporalInvestmentStamp() { return verboseTimestamp(this.temporalInvestment ?? 0); }
     }
 }
 </script>

@@ -9,7 +9,7 @@ function toSubjectiveEffortScore(percent?: number): number {
     return firstElevenPseudoFibonacciNumbers[intergralIndex];
 }
 
-function toTimeStamp(diffInMs: number): string {
+function verboseTimestamp(diffInMs: number): string {
     const diffSecs = Math.floor(diffInMs / 1_000);
     const diffMins = Math.floor(diffSecs / 60);
     const diffHrs = Math.floor(diffMins / 60);
@@ -28,4 +28,4 @@ function toTimeStamp(diffInMs: number): string {
 
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
-export { toSubjectiveEffortScore, toTimeStamp, getRandomTime };
+export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime };
