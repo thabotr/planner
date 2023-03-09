@@ -1,6 +1,8 @@
 <template>
-    <v-calendar show-weeknumbers :attributes="attributes" />
-    <DaySchedule :availability="availability" />
+    <div class="row">
+        <v-calendar show-weeknumbers :attributes="attributes" />
+        <DaySchedule :availability="availability" />
+    </div>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="editingCalendarItem" transition="dialog-bottom-transition" persistent>
         <div class="row">
@@ -105,20 +107,11 @@ export default {
 </script>
 
 <style scoped>
-#day-schedule {
-    width: 15rem;
-    height: 20rem;
-}
-
-#schedule-container {
-    width: 17rem;
-}
-
 #create-availability {
     background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
     position: absolute;
-    right: 1rem;
-    bottom: 1rem;
+    left: 10%;
+    bottom: 10%;
 }
 
 .row {

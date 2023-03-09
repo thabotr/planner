@@ -139,6 +139,6 @@ export default {
 }
 
 #schedule {
-    height: 15rem;
+    height: 80vh;
 }
 </style>
