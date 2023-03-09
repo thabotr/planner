@@ -1,6 +1,7 @@
 <template>
     <div class="row">
-        <v-calendar show-weeknumbers :attributes="attributes" @dayclick="dayOnView = $event.date" />
+        <v-calendar show-weeknumbers :attributes="attributes" @dayclick="dayOnView = $event.date">
+        </v-calendar>
         <DaySchedule :availability="availability" :dayOnView="dayOnView" />
     </div>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
@@ -10,6 +11,7 @@
 </template>
 
 <script lang="ts">
+import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
 import AvailabilityEditor from './AvailabilityEditor.vue';
 import DaySchedule from './DaySchedule.vue';
 import Slider from './Slider.vue';
@@ -38,7 +40,7 @@ export default {
     },
     computed: {
         attributes() {
-            return [
+            const todayAndDayOnviewMarkers = [
                 {
                     key: "today",
                     highlight: {
@@ -51,7 +53,22 @@ export default {
                     highlight: true,
                     dates: this.dayOnView,
                 }
-            ]
+            ];
+            const availabilityPerDayMarkers = this.availability.map(av => {
+                const mEP = toSubjectiveEffortScore(av.mentalEffort);
+                const pEP = toSubjectiveEffortScore(av.physicalEffort);
+                const time = verboseTimestamp(av.temporalInvestment);
+                return {
+                    key: av.fromTime.toString(),
+                    dates: av.fromTime,
+                    popover: {
+                        label: `xx/${mEP} mEP yy/${pEP} pEP tt/${time} T [scheduled/available]`,
+                    },
+                    bar: "red",
+                }
+            });
+            const allAttributes = [...todayAndDayOnviewMarkers, ...availabilityPerDayMarkers];
+            return allAttributes;
         }
     },
     methods: {

@@ -1,5 +1,5 @@
 <template>
-    <v-card id="schedule-container" class="padded">
+    <v-card id="schedule-container" class="padded" @drop="onDropTask" @dragover.prevent @dragenter.prevent>
         <template v-slot:title>{{ dayOnView.toDateString() }}</template>
         <v-card id="schedule" ref="schedule" class="vertical-scroll padded">
             <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
@@ -64,11 +64,15 @@ export default {
             tomorrowStartDate.setDate(tomorrowStartDate.getDate() + 1);
             const tomorrowStartTime = tomorrowStartDate.getTime();
             const todaysAV = this.availability.filter(av => av.fromTime >= todayStartTime && av.fromTime < tomorrowStartTime);
-            console.log(tomorrowStartTime -todayStartTime);
+            console.log(tomorrowStartTime - todayStartTime);
             return todaysAV;
         }
     },
     methods: {
+        onDropTask(event: DragEvent) {
+            if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
+            console.log("item dropped ", event.dataTransfer.getData("id"));
+        },
         scrollScheduleToTheCurrentTime() {
             const currentIndicatorPositionBelowScheduleTop = this.currentDayCanvasOffset;
             const schedule: HTMLElement = (this.$refs.schedule as CreateComponentPublicInstance).$el;

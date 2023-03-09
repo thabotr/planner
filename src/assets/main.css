@@ -40,3 +40,8 @@ a,
 .vertical-scroll {
   overflow-y: scroll;
 }
+
+.justify-space-between {
+  display: flex;
+  justify-content: space-between;
+}
