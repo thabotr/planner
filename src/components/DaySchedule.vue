@@ -2,14 +2,17 @@
     <v-card id="schedule-container" class="padded" @drop="onDropTask" @dragover.prevent @dragenter.prevent>
         <template v-slot:title>{{ dayOnView.toDateString() }}</template>
         <v-card id="schedule" ref="schedule" class="vertical-scroll padded">
-            <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
-            </canvas>
+            <div>
+                <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
+                </canvas>
+            </div>
+            <div id="items-holder" :style="{ height: canvasHeight + 'px' }">
+            </div>
         </v-card>
     </v-card>
 </template>
 
 <script lang="ts">
-import { throwStatement } from '@babel/types';
 import type { CreateComponentPublicInstance } from 'vue';
 
 type AvailabilityType = {
@@ -33,7 +36,7 @@ export default {
     data() {
         return {
             fifteenMinCellHeight: 60,
-            canvasWidth: 200,
+            canvasWidth: 30,
             now: new Date().getTime(),
             updaterInterval: -1,
         };
@@ -89,6 +92,9 @@ export default {
             ctx.beginPath();
             ctx.strokeStyle = 'blue';
             ctx.moveTo(0, this.currentDayCanvasOffset);
+            ctx.lineTo(this.canvasWidth, this.currentDayCanvasOffset);
+            ctx.lineTo(this.canvasWidth-8, this.currentDayCanvasOffset + 3);
+            ctx.lineTo(this.canvasWidth-8, this.currentDayCanvasOffset - 3);
             ctx.lineTo(this.canvasWidth, this.currentDayCanvasOffset);
             ctx.stroke();
         },
@@ -178,5 +184,10 @@ export default {
 
 #schedule {
     height: 80vh;
+    display: flex;
+}
+#items-holder {
+    flex: 1;
+    background-color: #79b2f437;
 }
 </style>
