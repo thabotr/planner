@@ -30,7 +30,7 @@
     </v-card>
 </template>
 <script lang="ts">
-import { toSubjectiveEffortScore, verboseTimestamp } from '../middleware/helpers';
+import { toSubjectiveEffortScore, verboseTimestamp, type TaskType} from '../middleware/helpers';
 export default {
     props: {
         description: String,
@@ -56,7 +56,13 @@ export default {
             }
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData('id', this.id ?? '');
+            const task: TaskType = {
+                length: this.temporalInvestment ?? -1,
+                mES: this.mentalEffort ?? -1,
+                pES: this.physicalEffort ?? -1,
+            };
+            const taskAsString = JSON.stringify(task);
+            event.dataTransfer.setData('task', taskAsString);
         }
     }
 }

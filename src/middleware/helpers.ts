@@ -28,10 +28,13 @@ function verboseTimestamp(diffInMs: number): string {
 
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
-type AvailabilityType = {
+type TaskType = {
     pES: number,    // mental effort score
     mES: number,    // mental effort score
     length: number,     // time investment in milliseconds
+}
+
+type AvailabilityType = TaskType & {
     from: number,       // start time in milliseconds
 };
 
@@ -75,4 +78,4 @@ class AvailabilityDS {
     static AMinuteInMillis = 1_000 * 60;
 }
 
-export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime, AvailabilityDS, type AvailabilityType };
+export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime, AvailabilityDS, type AvailabilityType, type TaskType };

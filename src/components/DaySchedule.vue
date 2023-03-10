@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
-import { AvailabilityDS } from '@/middleware/helpers';
+import { AvailabilityDS, type TaskType } from '@/middleware/helpers';
 
 type AvailabilityType = {
     mentalEffort: number,
@@ -87,7 +87,9 @@ export default {
     methods: {
         onDropTask(event: DragEvent) {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
-            console.log("item dropped ", event.dataTransfer.getData("id"));
+            const taskAsString = event.dataTransfer.getData('task');
+            const taskToSchedule: TaskType = JSON.parse(taskAsString);
+            console.log('todo schedule ', taskToSchedule);
         },
         scrollScheduleToTheCurrentTime() {
             const currentIndicatorPositionBelowScheduleTop = this.currentDayCanvasOffset;
