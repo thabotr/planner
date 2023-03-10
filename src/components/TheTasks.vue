@@ -157,7 +157,8 @@ type TaskType = {
     description: string,
     mentalEffort: number,
     physicalEffort: number,
-    temporalInvestment: number
+    temporalInvestment: number,
+    readonly?: boolean,
 };
 const CreateDefaultTask = (): TaskType => ({
     id: '',

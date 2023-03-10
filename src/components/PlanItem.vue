@@ -19,7 +19,7 @@
                 {{ temporalInvestmentStamp }}
             </v-chip>
         </div>
-        <v-card-actions class="justify-space-between">
+        <v-card-actions class="justify-space-between" v-show="!readonly">
             <v-btn append-icon="mdi-delete" @click="$emit('onDelete', id)">
                 Delete
             </v-btn>
@@ -38,6 +38,7 @@ export default {
         physicalEffort: Number,
         temporalInvestment: Number,
         id: String,
+        readonly: Boolean,
     },
     computed: {
         mentalEffortScore() {
