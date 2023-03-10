@@ -6,7 +6,20 @@
                 <canvas id="timeline" :width="canvasWidth" :height="canvasHeight">
                 </canvas>
             </div>
-            <div id="items-holder" :style="{ height: canvasHeight + 'px' }">
+            <div id="items-holder" ref="itemsHolder"
+                :style="{ height: canvasHeight + 'px', width: 200 - canvasWidth + 'px' }">
+                <template v-for="item in availabilityForDayOnView">
+                    <div id="scheduled-availability-item"
+                        :style="{ width: '100%', height: getHeightRelativeToSchedule(item), top: getHeightOfTimeIntoDay(item) }">
+                        <div class="availability-item-bg centered-content">
+                            {{ item.mentalEffort }} mEP {{ item.physicalEffort }} pEP {{
+                                Math.round(item.temporalInvestment / (1_000 * 60)) }} mins
+                        </div>
+                        <div id="scheduled-item">
+                            TODO add task card here
+                        </div>
+                    </div>
+                </template>
             </div>
         </v-card>
     </v-card>
@@ -14,6 +27,7 @@
 
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
+import { AvailabilityDS } from '@/middleware/helpers';
 
 type AvailabilityType = {
     mentalEffort: number,
@@ -67,7 +81,6 @@ export default {
             tomorrowStartDate.setDate(tomorrowStartDate.getDate() + 1);
             const tomorrowStartTime = tomorrowStartDate.getTime();
             const todaysAV = this.availability.filter(av => av.fromTime >= todayStartTime && av.fromTime < tomorrowStartTime);
-            console.log(tomorrowStartTime - todayStartTime);
             return todaysAV;
         }
     },
@@ -93,8 +106,8 @@ export default {
             ctx.strokeStyle = 'blue';
             ctx.moveTo(0, this.currentDayCanvasOffset);
             ctx.lineTo(this.canvasWidth, this.currentDayCanvasOffset);
-            ctx.lineTo(this.canvasWidth-8, this.currentDayCanvasOffset + 3);
-            ctx.lineTo(this.canvasWidth-8, this.currentDayCanvasOffset - 3);
+            ctx.lineTo(this.canvasWidth - 8, this.currentDayCanvasOffset + 3);
+            ctx.lineTo(this.canvasWidth - 8, this.currentDayCanvasOffset - 3);
             ctx.lineTo(this.canvasWidth, this.currentDayCanvasOffset);
             ctx.stroke();
         },
@@ -115,48 +128,21 @@ export default {
                 ctx.fillText(timeMarkString, 0, fifteenMinCellHeight * i + 10);
             }
         },
-        displayAvailability(ctx: CanvasRenderingContext2D) {
-            const aDayInMillis = 1_000 * 60 * 60 * 24;
-            const getPlaceholderColor = (function* () {
-                while (true) {
-                    yield '#ff00ff4f';
-                    yield '#1aff004f';
-                    yield '#ffe1004f';
-                }
-            })();
+        getHeightRelativeToSchedule(item: AvailabilityType): string {
+            return `${item.temporalInvestment / AvailabilityDS.ADayInMillis * this.canvasHeight}px`;
+        },
+        getHeightOfTimeIntoDay(item: AvailabilityType): string {
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            for (const example of this.availabilityForDayOnView) {
-                const availabilityStartInSchedule = (zoneOffset + example.fromTime % aDayInMillis) / aDayInMillis * this.canvasHeight;
-                const span = example.temporalInvestment / aDayInMillis * this.canvasHeight;
-                const availabilitySpanInSchedule = span + availabilityStartInSchedule > this.canvasHeight ? this.canvasHeight - availabilityStartInSchedule : span;
-                ctx.beginPath();
-                ctx.fillStyle = getPlaceholderColor.next().value;
-                ctx.fillRect(30, availabilityStartInSchedule, this.canvasWidth - 40, availabilitySpanInSchedule);
-
-                ctx.beginPath();
-                ctx.fillStyle = "purple";
-                ctx.fillText('55 mental EP', 30, availabilityStartInSchedule - 2);
-                ctx.fillStyle = "#EED202";
-                ctx.fillText('87 physical EP', this.canvasWidth * 0.6, availabilityStartInSchedule - 2);
-                const investedMins = Math.round(example.temporalInvestment / (1_000 * 60));
-                ctx.fillStyle = "red";
-                ctx.fillText(`${investedMins} minutes`, this.canvasWidth * 0.4, availabilityStartInSchedule + availabilitySpanInSchedule);
-            }
+            const availabilityStartInSchedule = (item.fromTime % AvailabilityDS.ADayInMillis + zoneOffset) / AvailabilityDS.ADayInMillis * this.canvasHeight;
+            return `${availabilityStartInSchedule}px`;
         },
     },
     mounted() {
         this.drawScheduleTimeline(this.ctx);
-        this.displayAvailability(this.ctx);
         this.drawCurrentTimeMarkerInSchedule(this.ctx);
         this.scrollScheduleToTheCurrentTime();
     },
     watch: {
-        availability: {
-            handler: function () {
-                this.displayAvailability(this.ctx);
-            },
-            deep: true,
-        },
         dayOnView(currDayOnView: Date) {
             const today = new Date();
             const todayIsOnView = currDayOnView.getFullYear() === today.getFullYear() &&
@@ -164,7 +150,6 @@ export default {
             // redraw all
             this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
             this.drawScheduleTimeline(this.ctx);
-            this.displayAvailability(this.ctx);
             if (todayIsOnView) {
                 // enable current time indicator
                 this.drawCurrentTimeMarkerInSchedule(this.ctx);
@@ -186,8 +171,28 @@ export default {
     height: 80vh;
     display: flex;
 }
+
 #items-holder {
     flex: 1;
     background-color: #79b2f437;
+}
+
+#scheduled-availability-item {
+    overflow-y: scroll;
+}
+
+.availability-item-bg {
+    color: rgba(0, 126, 0, 0.3);
+    background-image: repeating-linear-gradient(45deg, rgba(0, 126, 0, 0.258) 0, rgba(0, 126, 0, 0.258) 1px, rgba(0, 126, 0, 0.1) 0, rgba(0, 126, 0, 0.1) 5%);
+    height: 100%;
+    width: 100%;
+}
+
+#scheduled-item {
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 </style>
