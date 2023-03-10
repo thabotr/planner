@@ -53,6 +53,7 @@ export default {
             canvasWidth: 30,
             now: new Date().getTime(),
             updaterInterval: -1,
+            availabilityDS: new AvailabilityDS(),
         };
     },
     computed: {
@@ -88,8 +89,12 @@ export default {
         onDropTask(event: DragEvent) {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
             const taskAsString = event.dataTransfer.getData('task');
-            const taskToSchedule: TaskType = JSON.parse(taskAsString);
-            console.log('todo schedule ', taskToSchedule);
+            const task: TaskType = JSON.parse(taskAsString);
+            const availabilityContainingTask = this.availabilityDS.scheduleTask(task);
+            if (!availabilityContainingTask) {
+                throw new Error("Handle failed task scheduling");
+            }
+            // scroll to scheduled task in day scheduler
         },
         scrollScheduleToTheCurrentTime() {
             const currentIndicatorPositionBelowScheduleTop = this.currentDayCanvasOffset;

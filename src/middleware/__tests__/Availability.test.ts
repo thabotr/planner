@@ -1,59 +1,9 @@
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { AvailabilityDS, type AvailabilityType } from '../helpers';
+import { describe, it, expect, beforeEach, type Task } from 'vitest';
+import { AvailabilityDS, type AvailabilityType, type TaskType } from '../helpers';
 
 describe('AvailabilityDS Test', () => {
-    const avd = new AvailabilityDS();
     describe('getAvailabilityForDay', () => {
-        const anHourInMillis = 1_000 * 60 * 60;
-        const fiveAMThurs = getTime(2023, 1, 2, 5);
-        const sevenAMThurs = getTime(2023, 1, 2, 7);
-        const elevenAMThurs = getTime(2023, 1, 2, 11);
-        const elevenPMWed = getTime(2023, 1, 1, 23);
-        const onePMWed = getTime(2023, 1, 1, 13);
-        const twelveAMFri = getTime(2023, 1, 3);
-        const thursAvailability: Array<AvailabilityType> = [
-            {
-                mES: 10,
-                pES: 50,
-                length: anHourInMillis,
-                from: fiveAMThurs,
-            },
-            {
-                mES: 5,
-                pES: 75,
-                length: 2 * anHourInMillis,
-                from: sevenAMThurs,
-            },
-            {
-                mES: 89,
-                pES: 5,
-                length: 1.5 * anHourInMillis,
-                from: elevenAMThurs,
-            }
-        ];
-        const wedAvailability: Array<AvailabilityType> = [
-            {
-                mES: 34,
-                pES: 21,
-                length: 0.5 * anHourInMillis,
-                from: elevenPMWed,
-            },
-            {
-                mES: 2,
-                pES: 89,
-                length: 2 * anHourInMillis,
-                from: onePMWed,
-            },
-        ];
-        const friAvailability: Array<AvailabilityType> = [
-            {
-                mES: 89,
-                pES: 34,
-                length: 6 * anHourInMillis,
-                from: twelveAMFri,
-            }
-        ];
         it('returns an empty array given a day with no availability', () => {
             const aSaturdayWithNoAvailability = new Date(2023, 1, 4);
             const availability = avd.getAvailabilityForDay(aSaturdayWithNoAvailability)
@@ -70,18 +20,40 @@ describe('AvailabilityDS Test', () => {
 
             expect(availability).toStrictEqual(thursAvailability.sort(comparator));
         });
+        const fiveAMThurs = getTime(2023, 1, 2, 5);
+        const sevenAMThurs = getTime(2023, 1, 2, 7);
+        const elevenAMThurs = getTime(2023, 1, 2, 11);
+        const twelveAMFri = getTime(2023, 1, 3);
+        const friAvailability: Array<AvailabilityType> = [
+            {
+                mES: 89,
+                pES: 34,
+                length: 6 * AvailabilityDS.AnHourInMillis,
+                from: twelveAMFri,
+            }
+        ];
+        const thursAvailability: Array<AvailabilityType> = [
+            {
+                mES: 10,
+                pES: 50,
+                length: AvailabilityDS.AnHourInMillis,
+                from: fiveAMThurs,
+            },
+            {
+                mES: 5,
+                pES: 75,
+                length: 2 * AvailabilityDS.AnHourInMillis,
+                from: sevenAMThurs,
+            },
+            {
+                mES: 89,
+                pES: 5,
+                length: 1.5 * AvailabilityDS.AnHourInMillis,
+                from: elevenAMThurs,
+            }
+        ];
     });
     describe('addAvailability', () => {
-        const now = new Date().getTime();
-        const av: AvailabilityType = {
-            from: now,
-            length: AvailabilityDS.AnHourInMillis,
-            mES: 50,
-            pES: 50,
-        };
-        beforeEach(() => {
-            avd.clearAllAvailability();
-        });
         it('it stores the availability and returns a copy on success', () => {
             const result = avd.addAvailability(av);
 
@@ -104,7 +76,96 @@ describe('AvailabilityDS Test', () => {
 
             expect(result).toBeNull();
         });
+        const now = new Date().getTime();
+        const av: AvailabilityType = {
+            from: now,
+            length: AvailabilityDS.AnHourInMillis,
+            mES: 50,
+            pES: 50,
+        };
+        beforeEach(() => {
+            avd.clearAllAvailability();
+        });
     });
+    describe('scheduleTask', () => {
+        it("returns null if no availability can be found to satisfy the current task", () => {
+            const withInsatiableMES: TaskType = taskWith({ mES: maxMES + 1 });
+            expect(avd.scheduleTask(withInsatiableMES)).toBeNull();
+
+            const withInsatiablePES: TaskType = taskWith({ pES: maxPES + 1 });
+            expect(avd.scheduleTask(withInsatiablePES)).toBeNull();
+
+            const withInsatiableLength: TaskType = taskWith({ length: longestTime + 1 });
+            expect(avd.scheduleTask(withInsatiableLength)).toBeNull();
+        });
+        it("returns the next availability within which the task can be succesfully scheduled", () => {
+            const medianLength = (shortestTime + longestTime) / 2;
+            const withMedianLength: TaskType = taskWith({ length: medianLength });
+            const availabilityWithBiggestLength = wedAvailability[1];
+
+            const availabilitySatisfyingTaskWithMedianLength = avd.scheduleTask(withMedianLength);
+            expect(availabilitySatisfyingTaskWithMedianLength).toBe(availabilityWithBiggestLength);
+
+            const lessThanMinLength = shortestTime / 2;
+            const withLessThanMinLength: TaskType = taskWith({ length: lessThanMinLength });
+            const availabilityWithShortestLength = wedAvailability[0];
+
+            const availabilitySatisfyingTaskWithLengthLessThanMinLength = avd.scheduleTask(withLessThanMinLength);
+            expect(availabilitySatisfyingTaskWithLengthLessThanMinLength).toBe(availabilityWithShortestLength);
+        });
+        it("returns null if and only if the availability which could satisfy the task have been used", () => {
+            const maxLengthAv = wedAvailability[1];
+            avd.clearAllAvailability(); // to ensure the av doesn't conflict with any old avs
+            const biggerThanMaxLengthAV = {
+                ...maxLengthAv,
+                length: AvailabilityDS.AnHourInMillis + maxLengthAv.length,
+            };
+            const perfectFitTask: TaskType = {
+                ...biggerThanMaxLengthAV,
+            };
+            avd.addAvailability(biggerThanMaxLengthAV);
+
+            const resultBeforeAVIsUsed = avd.scheduleTask(perfectFitTask);
+            expect(resultBeforeAVIsUsed).toBe(biggerThanMaxLengthAV);
+
+            const aSimilarySizedTaskToPerfectFit: TaskType = {...perfectFitTask};
+            const resultAfterAVIsUsed = avd.scheduleTask(aSimilarySizedTaskToPerfectFit);
+            expect(resultAfterAVIsUsed).toBeNull();
+        });
+        beforeEach(() => {
+            avd.clearAllAvailability();
+            wedAvailability.forEach(av => {
+                const result = avd.addAvailability(av);
+                expect(av).toBe(result);
+            });
+        });
+        const taskWith = (overrides: Partial<TaskType>): TaskType => ({
+            pES: minPES,
+            mES: minMES,
+            length: shortestTime,
+            ...overrides,
+        });
+        const [minMES, maxMES] = wedAvailability.map(av => av.mES).sort();
+        const [minPES, maxPES] = wedAvailability.map(av => av.pES).sort();
+        const [shortestTime, longestTime] = wedAvailability.map(av => av.length).sort();
+    });
+    const avd = new AvailabilityDS();
+    const elevenPMWed = getTime(2023, 1, 1, 23);
+    const onePMWed = getTime(2023, 1, 1, 13);
+    const wedAvailability: Array<AvailabilityType> = [
+        {
+            mES: 34,
+            pES: 21,
+            length: 0.5 * AvailabilityDS.AnHourInMillis,
+            from: elevenPMWed,
+        },
+        {
+            mES: 55,
+            pES: 89,
+            length: 2 * AvailabilityDS.AnHourInMillis,
+            from: onePMWed,
+        },
+    ];
 });
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm

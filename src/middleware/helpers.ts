@@ -69,6 +69,10 @@ class AvailabilityDS {
         return this.list.filter(av => av.from >= dayStartTime && av.from < dayEndTime);
     }
 
+    scheduleTask(task: TaskType): AvailabilityType | null {
+        return this.list.find(av => av.length >= task.length && av.mES >= task.mES && av.pES >= task.pES) ?? null;
+    }
+
     clearAllAvailability() {
         this.list = [];
     }
