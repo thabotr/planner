@@ -8,15 +8,14 @@
             </div>
             <div id="items-holder" ref="itemsHolder"
                 :style="{ height: canvasHeight + 'px', width: 200 - canvasWidth + 'px' }">
-                <template v-for="item in availabilityForDayOnView">
+                <template v-for="{ timeslot, tasks } in items">
                     <div id="scheduled-availability-item"
-                        :style="{ width: '100%', height: getHeightRelativeToSchedule(item), top: getHeightOfTimeIntoDay(item) }">
+                        :style="{ width: '100%', height: getHeightRelativeToSchedule(timeslot), top: getHeightOfTimeIntoDay(timeslot) }">
                         <div class="availability-item-bg centered-content">
-                            {{ item.mentalEffort }} mEP {{ item.physicalEffort }} pEP {{
-                                Math.round(item.temporalInvestment / (1_000 * 60)) }} mins
+                            {{ timeslot.mES }} mEP {{ timeslot.pES }} pEP {{
+                                Math.round(timeslot.length / (1_000 * 60)) }} mins
                         </div>
                         <div id="scheduled-item">
-                            TODO add task card here
                         </div>
                     </div>
                 </template>
@@ -27,19 +26,14 @@
 
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
-import { type TaskType, Scheduler, TimeInMillis } from '@/middleware/helpers';
 
-type AvailabilityType = {
-    mentalEffort: number,
-    physicalEffort: number,
-    temporalInvestment: number,
-    fromTime: number,
-};
+import { Scheduler, TimeInMillis } from '@/middleware/helpers';
+import type { TaskType, ScheduleItemType, AvailabilityType as TimeslotType } from '@/middleware/helpers';
 
 export default {
     props: {
-        availability: {
-            type: Array<AvailabilityType>,
+        items: {
+            type: Array<ScheduleItemType>,
             required: true,
         },
         dayOnView: {
@@ -53,7 +47,6 @@ export default {
             canvasWidth: 30,
             now: new Date().getTime(),
             updaterInterval: -1,
-            availabilityDS: new Scheduler(),
         };
     },
     computed: {
@@ -76,24 +69,13 @@ export default {
             }
             return ctx;
         },
-        availabilityForDayOnView() {
-            const todayStartTime = new Date(this.dayOnView.getFullYear(), this.dayOnView.getMonth(), this.dayOnView.getDate()).getTime();
-            const tomorrowStartDate = new Date(this.dayOnView.getFullYear(), this.dayOnView.getMonth(), this.dayOnView.getDate());
-            tomorrowStartDate.setDate(tomorrowStartDate.getDate() + 1);
-            const tomorrowStartTime = tomorrowStartDate.getTime();
-            const todaysAV = this.availability.filter(av => av.fromTime >= todayStartTime && av.fromTime < tomorrowStartTime);
-            return todaysAV;
-        }
     },
     methods: {
         onDropTask(event: DragEvent) {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
             const taskAsString = event.dataTransfer.getData('task');
             const task: TaskType = JSON.parse(taskAsString);
-            const availabilityContainingTask = this.availabilityDS.schedule(task);
-            if (!availabilityContainingTask) {
-                throw new Error("Handle failed task scheduling");
-            }
+            // TODO emit new task schedule event
             // scroll to scheduled task in day scheduler
         },
         scrollScheduleToTheCurrentTime() {
@@ -135,12 +117,12 @@ export default {
                 ctx.fillText(timeMarkString, 0, fifteenMinCellHeight * i + 10);
             }
         },
-        getHeightRelativeToSchedule(item: AvailabilityType): string {
-            return `${item.temporalInvestment / TimeInMillis.Day * this.canvasHeight}px`;
+        getHeightRelativeToSchedule(timeslot: TimeslotType): string {
+            return `${timeslot.length / TimeInMillis.Day * this.canvasHeight}px`;
         },
-        getHeightOfTimeIntoDay(item: AvailabilityType): string {
+        getHeightOfTimeIntoDay(timeslot: TimeslotType): string {
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            const availabilityStartInSchedule = (item.fromTime % TimeInMillis.Day + zoneOffset) / TimeInMillis.Day * this.canvasHeight;
+            const availabilityStartInSchedule = (timeslot.from % TimeInMillis.Day + zoneOffset) / TimeInMillis.Day * this.canvasHeight;
             return `${availabilityStartInSchedule}px`;
         },
     },
@@ -182,10 +164,6 @@ export default {
 #items-holder {
     flex: 1;
     background-color: #79b2f437;
-}
-
-#scheduled-availability-item {
-    overflow-y: scroll;
 }
 
 .availability-item-bg {

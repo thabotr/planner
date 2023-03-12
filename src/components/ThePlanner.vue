@@ -2,7 +2,7 @@
     <div class="row">
         <v-calendar show-weeknumbers :attributes="attributes" @dayclick="dayOnView = $event.date">
         </v-calendar>
-        <DaySchedule :availability="availability" :dayOnView="dayOnView" />
+        <DaySchedule :items="dayScheduleItems" :dayOnView="dayOnView" />
     </div>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="addingAvailability" transition="dialog-bottom-transition" persistent>
@@ -11,17 +11,13 @@
 </template>
 
 <script lang="ts">
-import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
+import { Scheduler, toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
+import type { ScheduleItemType, AvailabilityType } from '@/middleware/helpers';
 import AvailabilityEditor from './AvailabilityEditor.vue';
 import DaySchedule from './DaySchedule.vue';
 import Slider from './Slider.vue';
 
-type AvailabilityType = {
-    mentalEffort: number,
-    physicalEffort: number,
-    temporalInvestment: number,
-    fromTime: number,
-};
+const scheduler = new Scheduler();
 
 export default {
     components: {
@@ -35,7 +31,7 @@ export default {
             dayOnView: new Date(),
             mentalEffort: 0,
             physicalEffort: 0,
-            availability: [] as AvailabilityType[],
+            dayScheduleItems: [] as ScheduleItemType[],
         }
     },
     computed: {
@@ -54,13 +50,13 @@ export default {
                     dates: this.dayOnView,
                 }
             ];
-            const availabilityPerDayMarkers = this.availability.map(av => {
-                const mEP = toSubjectiveEffortScore(av.mentalEffort);
-                const pEP = toSubjectiveEffortScore(av.physicalEffort);
-                const time = verboseTimestamp(av.temporalInvestment);
+            const availabilityPerDayMarkers = this.dayScheduleItems.map(({ timeslot }) => {
+                const mEP = toSubjectiveEffortScore(timeslot.mES);
+                const pEP = toSubjectiveEffortScore(timeslot.pES);
+                const time = verboseTimestamp(timeslot.length);
                 return {
-                    key: av.fromTime.toString(),
-                    dates: av.fromTime,
+                    key: timeslot.from.toString(),
+                    dates: timeslot.from,
                     popover: {
                         label: `xx/${mEP} mEP yy/${pEP} pEP tt/${time} T [scheduled/available]`,
                     },
@@ -74,10 +70,19 @@ export default {
     methods: {
         openDialog() { this.addingAvailability = true; },
         closeDialog() { this.addingAvailability = false; },
-        onAvailabilityCreated(createdAV: AvailabilityType) {
-            this.availability.push(createdAV);
+        onAvailabilityCreated(timeslot: AvailabilityType) {
+            // TODO error on overlap
+            scheduler.add(timeslot);
+            const now = new Date();
+            const todayStartTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            this.dayScheduleItems = scheduler.getScheduleOn(todayStartTime);
         }
     },
+    watch: {
+        dayOnView(newDay: Date) {
+            this.dayScheduleItems = scheduler.getScheduleOn(newDay);
+        }
+    }
 }
 </script>
 

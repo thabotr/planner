@@ -126,52 +126,22 @@ class Scheduler {
     #list: ScheduleItemType[] = [];
 }
 
-class AvailabilityDS {
-    // requirements
-    // can add availability
-    // cannot add availability if it intersects with already existing availability
-    // should be able to provide us with this conflicting availability
-
-    // can remove availability - should return it along with its scheduled contents else null
-
-    // can schedule contents over some given availability provided the availability has enough capacity
-    // can get scheduled contents and what part of the availability they consume
-
-    // can split availability
-
-    // can merge two adjacent availabilities else return false
-
-    // can get availability given a single day
-    list: Array<AvailabilityType> = [];
-    #advancedList: Array<{ availability: AvailabilityType, tasks: TaskType[] }> = [];
-
-    addAvailability(item: AvailabilityType): AvailabilityType | null {
-        const availabilityOverlapsWithItem = (av: AvailabilityType) => item.from >= av.from && item.from <= av.from + av.length;
-        if (this.list.some(availabilityOverlapsWithItem)) {
-            return null;
-        }
-        this.list.push(item);
-        return item;
-    }
-    getAvailabilityForDay(day: Date): Array<AvailabilityType> {
-        const dayStartTime = day.getTime();
-        const dayEndTime = dayStartTime + TimeInMillis.Day;
-        return this.list.filter(av => av.from >= dayStartTime && av.from < dayEndTime);
-    }
-
-    scheduleTask(task: TaskType): AvailabilityType | null {
-        return this.list.find(av => av.length >= task.length && av.mES >= task.mES && av.pES >= task.pES) ?? null;
-    }
-
-    clearAllAvailability() {
-        this.list = [];
-    }
-}
-
 enum TimeInMillis {
     Day = 1_000 * 60 * 60 * 24,
     Hour = 1_000 * 60 * 60,
     Minute = 1_000 * 60,
 };
 
-export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime, TimeInMillis, Scheduler, type ScheduleItemType, type AvailabilityType, type TaskType };
+export {
+    toSubjectiveEffortScore,
+    verboseTimestamp,
+    getRandomTime,
+    TimeInMillis,
+    Scheduler,
+};
+
+export type {
+    ScheduleItemType,
+    AvailabilityType,
+    TaskType,
+};
