@@ -56,10 +56,11 @@ export default {
             }
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
-            const task: TaskType = {
+            const task: TaskType & {id: String} = {
                 length: this.temporalInvestment ?? -1,
                 mES: this.mentalEffort ?? -1,
                 pES: this.physicalEffort ?? -1,
+                id: this.id ?? "-1",
             };
             const taskAsString = JSON.stringify(task);
             event.dataTransfer.setData('task', taskAsString);

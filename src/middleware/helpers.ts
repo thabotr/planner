@@ -51,7 +51,7 @@ class Scheduler {
         }
 
         const item: ScheduleItemType = {
-            timeslot: { ...tslot, id: this.#getId() },
+            timeslot: { ...tslot, id: Scheduler.getId() },
             tasks: [],
         };
 
@@ -121,8 +121,8 @@ class Scheduler {
         return newTslotStartContainedInTslot || newTslotEndContainedInTslot ||
             newTslotContainsTslot;
     }
-    #id = 0;
-    #getId() { ++this.#id; return this.#id - 1; }
+    static #id = 0;
+    static getId() { ++this.#id; return this.#id - 1; }
     #list: ScheduleItemType[] = [];
 }
 

@@ -2,7 +2,7 @@
     <div class="row">
         <v-calendar show-weeknumbers :attributes="attributes" @dayclick="dayOnView = $event.date">
         </v-calendar>
-        <DaySchedule :items="dayScheduleItems" :dayOnView="dayOnView" />
+        <DaySchedule :items="dayScheduleItems" :dayOnView="dayOnView" @requesttaskschedule="onRequestTaskSchedule" />
     </div>
     <v-btn id="create-availability" icon="mdi-timeline-plus" @click="openDialog" />
     <v-dialog v-model="addingAvailability" transition="dialog-bottom-transition" persistent>
@@ -73,6 +73,21 @@ export default {
         onAvailabilityCreated(timeslot: AvailabilityType) {
             // TODO error on overlap
             scheduler.add(timeslot);
+            this.updateDaySchedule();
+        },
+        onRequestTaskSchedule(task: AvailabilityType & {id: String}) {
+            // TODO schedule task over specified timeslot if any
+            const scheduleResult = scheduler.schedule(task);
+            if (!scheduleResult) {
+                alert("Could not schedule task");
+                return;
+            }
+            // TODO remove schedule task from pending tasks
+            // TODO scroll focus day schedule on schedule item
+            this.updateDaySchedule();
+            alert(`display task ${task.id} in day schedule`);
+        },
+        updateDaySchedule() {
             const now = new Date();
             const todayStartTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             this.dayScheduleItems = scheduler.getScheduleOn(todayStartTime);
