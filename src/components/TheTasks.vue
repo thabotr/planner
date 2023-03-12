@@ -1,6 +1,8 @@
 <template>
     <div id="plan-items-container">
-        <PlanItem v-for="task in tasks.values()" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
+        {{ unscheduledTasks.length }}
+        {{ tasks.size }}
+        <PlanItem v-for="task in unscheduledTasks" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
     </div>
     <v-col cols="auto">
         <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition" persistent>
@@ -36,6 +38,11 @@ import { toSubjectiveEffortScore, Scheduler } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
 import TimeInvestmentInput from './TimeInvestmentInput.vue';
+import { useScheduleItemsStore } from '../stores/scheduleItems';
+import { mapActions, mapState } from 'pinia';
+
+// const scheduleItemsStore = useScheduleItemsStore();
+
 export default {
     components: {
         PlanItem: PlanItem,
@@ -44,7 +51,7 @@ export default {
     },
     data() {
         return {
-            tasks: new Map<string, TaskType>(),
+            // tasks: new Map<string, TaskType>(),
             editingPlanItem: false,
             tempTask: CreateDefaultTask(),
         }
@@ -56,21 +63,28 @@ export default {
         tempPhysicalEffort() {
             return toSubjectiveEffortScore(this.tempTask.physicalEffort);
         },
+        ...mapState(useScheduleItemsStore, ['unscheduledTasks', 'tasks']),
     },
     methods: {
         onSavePlanItemEdit() {
             const taskId = this.tempTask.id;
             const updatingOldTask = this.tasks.has(taskId);
-            if (updatingOldTask) {
-                this.tasks.set(taskId, this.tempTask);
-            } else {
-                const newTaskId = Scheduler.getId().toString();
-                const task = {
-                    ...this.tempTask,
-                    id: newTaskId,
-                }
-                this.tasks.set(newTaskId, task);
-            }
+            // if (updatingOldTask) {
+            //     // this.tasks.set(taskId, this.tempTask);
+            // } else {
+            //     const newTaskId = Scheduler.getId().toString();
+            //     const task = {
+            //         ...this.tempTask,
+            //         id: newTaskId,
+            //     }
+            //     this.tasks.set(newTaskId, task);
+            this.addTask({
+                description: this.tempTask.description,
+                length: this.tempTask.temporalInvestment,
+                mES: this.tempTask.mentalEffort,
+                pES: this.tempTask.physicalEffort,
+            });
+            // }
             this.restoreTempTaskToDefault();
             this.closeDialog();
         },
@@ -82,7 +96,7 @@ export default {
                 alert("Oops! task not found");
                 return;
             }
-            this.tempTask = { ...taskToOpen };
+            // this.tempTask = { ...taskToOpen };
             this.openDialog();
         },
         onDiscardPlanItemEdit() {
@@ -93,6 +107,7 @@ export default {
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
         ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
+        ...mapActions(useScheduleItemsStore, ['addTask']),
     }
 };
 type TaskType = {

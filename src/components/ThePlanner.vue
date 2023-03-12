@@ -11,13 +11,16 @@
 </template>
 
 <script lang="ts">
-import { Scheduler, toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
+import { Scheduler, toSubjectiveEffortScore, verboseTimestamp, type TaskType } from '@/middleware/helpers';
 import type { ScheduleItemType, AvailabilityType } from '@/middleware/helpers';
 import AvailabilityEditor from './AvailabilityEditor.vue';
 import DaySchedule from './DaySchedule.vue';
 import Slider from './Slider.vue';
+import { useScheduleItemsStore } from '../stores/scheduleItems';
 
 const scheduler = new Scheduler();
+
+const scheduleItemsStore = useScheduleItemsStore();
 
 export default {
     components: {
@@ -82,9 +85,10 @@ export default {
                 );
                 return;
             }
+            scheduleItemsStore.addTimeslot(timeslot);
             this.updateDaySchedule();
         },
-        onRequestTaskSchedule(task: AvailabilityType) {
+        onRequestTaskSchedule(task: TaskType) {
             const scheduleResult = scheduler.schedule(task);
             if (scheduleResult === null) {
                 this.$emit(
@@ -97,7 +101,7 @@ export default {
                 return;
             }
             // TODO remove schedule task from pending tasks
-            // TODO scroll focus day schedule on schedule item
+            scheduleItemsStore.timeslotAddTask(scheduleResult.timeslot.id, task.id);
             this.updateDaySchedule();
         },
         updateDaySchedule() {

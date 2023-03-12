@@ -77,8 +77,6 @@ export default {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
             const taskAsString = event.dataTransfer.getData('task');
             const task: TaskType & {id: String} = JSON.parse(taskAsString);
-            // TODO emit new task schedule event
-            // scroll to scheduled task in day scheduler
             this.$emit("requesttaskschedule", task);
         },
         scrollScheduleToTheCurrentTime() {
