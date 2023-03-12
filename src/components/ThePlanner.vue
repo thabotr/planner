@@ -11,16 +11,13 @@
 </template>
 
 <script lang="ts">
-import { Scheduler, toSubjectiveEffortScore, verboseTimestamp, type TaskType } from '@/middleware/helpers';
+import { toSubjectiveEffortScore, verboseTimestamp, type TaskType } from '@/middleware/helpers';
 import type { ScheduleItemType, AvailabilityType } from '@/middleware/helpers';
 import AvailabilityEditor from './AvailabilityEditor.vue';
 import DaySchedule from './DaySchedule.vue';
 import Slider from './Slider.vue';
 import { useScheduleItemsStore } from '../stores/scheduleItems';
-
-const scheduler = new Scheduler();
-
-const scheduleItemsStore = useScheduleItemsStore();
+import { mapActions, mapState } from 'pinia';
 
 export default {
     components: {
@@ -53,7 +50,7 @@ export default {
                     dates: this.dayOnView,
                 }
             ];
-            const availabilityPerDayMarkers = this.dayScheduleItems.map(({ timeslot }) => {
+            const availabilityPerDayMarkers = Array.from(this.timeslots.values()).map(timeslot => {
                 const mEP = toSubjectiveEffortScore(timeslot.mES);
                 const pEP = toSubjectiveEffortScore(timeslot.pES);
                 const time = verboseTimestamp(timeslot.length);
@@ -63,19 +60,20 @@ export default {
                     popover: {
                         label: `xx/${mEP} mEP yy/${pEP} pEP tt/${time} T [scheduled/available]`,
                     },
-                    bar: "red",
+                    bar: "green",
                 }
             });
             const allAttributes = [...todayAndDayOnviewMarkers, ...availabilityPerDayMarkers];
             return allAttributes;
-        }
+        },
+        ...mapState(useScheduleItemsStore, ['timeslots']),
     },
     methods: {
         openDialog() { this.addingAvailability = true; },
         closeDialog() { this.addingAvailability = false; },
         onAvailabilityCreated(timeslot: AvailabilityType) {
-            const schedule = scheduler.add(timeslot);
-            if (schedule === null) {
+            const created = this.addTimeslot(timeslot);
+            if (!created) {
                 this.$emit(
                     "error",
                     {
@@ -85,12 +83,12 @@ export default {
                 );
                 return;
             }
-            scheduleItemsStore.addTimeslot(timeslot);
             this.updateDaySchedule();
         },
         onRequestTaskSchedule(task: TaskType) {
-            const scheduleResult = scheduler.schedule(task);
-            if (scheduleResult === null) {
+            // to do use correct task id
+            const scheduled = this.timeslotAddTask("1", task.id);
+            if (!scheduled) {
                 this.$emit(
                     "error",
                     {
@@ -101,21 +99,21 @@ export default {
                 return;
             }
             // TODO remove schedule task from pending tasks
-            scheduleItemsStore.timeslotAddTask(scheduleResult.timeslot.id, task.id);
             this.updateDaySchedule();
         },
         updateDaySchedule() {
             const now = new Date();
             const todayStartTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            this.dayScheduleItems = scheduler.getScheduleOn(todayStartTime);
-        }
+            this.dayScheduleItems = this.getScheduleOn(todayStartTime);
+        },
+        ...mapActions(useScheduleItemsStore, ['addTimeslot', 'getScheduleOn', 'timeslotAddTask']),
     },
     watch: {
         dayOnView(newDay: Date) {
-            this.dayScheduleItems = scheduler.getScheduleOn(newDay);
+            this.dayScheduleItems = this.getScheduleOn(newDay);
         }
     },
-    emits: ['error']
+    emits: ['error'],
 }
 </script>
 

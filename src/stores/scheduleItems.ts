@@ -1,5 +1,7 @@
-import type { TaskType, AvailabilityType } from "@/middleware/helpers";
+import { type TaskType, type AvailabilityType, Scheduler } from "@/middleware/helpers";
 import { defineStore } from "pinia";
+
+const scheduler = new Scheduler();
 
 export const useScheduleItemsStore = defineStore('scheduleItems', {
     state: () => ({
@@ -36,21 +38,33 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
         removeTask(taskId: string) {
             this.tasks.delete(taskId);
         },
-        timeslotAddTask(timeslotId: string, taskId: string) {
+        timeslotAddTask(timeslotId: string, taskId: string): boolean {
+            const task = this.$state.tasks.get(taskId);
+            if (task) {
+                const schRes = scheduler.schedule(task);
+                if (schRes === null) { return false; }
+            }
             this.taskIdsForTimeslots.get(timeslotId)?.add(taskId);
+            return true;
         },
         timeslotRemoveTask(timeslotId: string, taskId: string) {
             this.taskIdsForTimeslots.get(timeslotId)?.delete(taskId);
         },
-        addTimeslot(partialTimeslot: Omit<AvailabilityType, 'id'>) {
+        addTimeslot(partialTimeslot: Omit<AvailabilityType, 'id'>): boolean {
+            const addTslotRes = scheduler.add({...partialTimeslot, id: ""});
+            if (addTslotRes === null) {return false;}
             const _1 = this.nextId++;
             const tslotId = _1.toString();
             this.timeslots.set(tslotId, { ...partialTimeslot, id: tslotId });
             this.taskIdsForTimeslots.set(tslotId, new Set<string>());
+            return true;
         },
         removeTimeslot(timeslotId: string) {
             this.taskIdsForTimeslots.delete(timeslotId);
             this.timeslots.delete(timeslotId);
+        },
+        getScheduleOn(day: Date) {
+            return scheduler.getScheduleOn(day);
         }
     }
 })

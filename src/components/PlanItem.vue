@@ -8,11 +8,11 @@
         <div class="effort-field centered-content">
             <v-chip color="purple" label>
                 <v-icon start icon="mdi-brain"></v-icon>
-                {{ mentalEffortScore }}
+                {{ mentalEffortPoints }}
             </v-chip>
             <v-chip color="#EED202" label>
                 <v-icon start icon="mdi-account-hard-hat"></v-icon>
-                {{ physicalEffortScore }}
+                {{ physicalEffortPoints }}
             </v-chip>
             <v-chip color="red" label>
                 <v-icon start icon="mdi-timer" color="red"></v-icon>
@@ -34,19 +34,19 @@ import { toSubjectiveEffortScore, verboseTimestamp, type TaskType} from '../midd
 export default {
     props: {
         description: String,
-        mentalEffort: Number,
-        physicalEffort: Number,
-        temporalInvestment: Number,
+        mES: Number,
+        pES: Number,
+        length: Number,
         id: String,
     },
     computed: {
-        mentalEffortScore() {
-            return toSubjectiveEffortScore(this.mentalEffort);
+        mentalEffortPoints() {
+            return toSubjectiveEffortScore(this.mES);
         },
-        physicalEffortScore() {
-            return toSubjectiveEffortScore(this.physicalEffort);
+        physicalEffortPoints() {
+            return toSubjectiveEffortScore(this.pES);
         },
-        temporalInvestmentStamp() { return verboseTimestamp(this.temporalInvestment ?? 0); },
+        temporalInvestmentStamp() { return verboseTimestamp(this.length ?? 0); },
     },
     methods: {
         startDrag(event: DragEvent) {
@@ -56,9 +56,9 @@ export default {
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
             const task: TaskType = {
-                length: this.temporalInvestment ?? -1,
-                mES: this.mentalEffort ?? -1,
-                pES: this.physicalEffort ?? -1,
+                length: this.length ?? -1,
+                mES: this.mES ?? -1,
+                pES: this.pES ?? -1,
                 id: this.id ?? "-1",
                 description: this.description ?? "",
             };

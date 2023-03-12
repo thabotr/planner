@@ -1,7 +1,5 @@
 <template>
     <div id="plan-items-container">
-        {{ unscheduledTasks.length }}
-        {{ tasks.size }}
         <PlanItem v-for="task in unscheduledTasks" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
     </div>
     <v-col cols="auto">
@@ -34,14 +32,12 @@
 </template>
 
 <script lang="ts">
-import { toSubjectiveEffortScore, Scheduler } from '@/middleware/helpers';
+import { toSubjectiveEffortScore } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
 import TimeInvestmentInput from './TimeInvestmentInput.vue';
 import { useScheduleItemsStore } from '../stores/scheduleItems';
 import { mapActions, mapState } from 'pinia';
-
-// const scheduleItemsStore = useScheduleItemsStore();
 
 export default {
     components: {
@@ -51,7 +47,6 @@ export default {
     },
     data() {
         return {
-            // tasks: new Map<string, TaskType>(),
             editingPlanItem: false,
             tempTask: CreateDefaultTask(),
         }

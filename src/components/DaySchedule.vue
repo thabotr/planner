@@ -16,7 +16,7 @@
                                 Math.round(timeslot.length / (1_000 * 60)) }} mins
                         </div>
                         <div id="scheduled-items">
-                            <PlanItemInTimeslot v-for="task in tasks" :id="task.id" :mental-effort="task.mES" :physical-effort="task.pES" :temporal-investment="task.length" readonly/>
+                            <PlanItemInTimeslot v-for="task in tasks" v-bind="task" />
                         </div>
                     </div>
                 </template>
@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
-
 import { TimeInMillis } from '@/middleware/helpers';
 import type { TaskType, ScheduleItemType, AvailabilityType as TimeslotType } from '@/middleware/helpers';
 import PlanItemInTimeslot from './PlanItemInTimeslot.vue';
@@ -76,7 +75,7 @@ export default {
         onDropTask(event: DragEvent) {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
             const taskAsString = event.dataTransfer.getData('task');
-            const task: TaskType & {id: String} = JSON.parse(taskAsString);
+            const task: TaskType & { id: String } = JSON.parse(taskAsString);
             this.$emit("requesttaskschedule", task);
         },
         scrollScheduleToTheCurrentTime() {
