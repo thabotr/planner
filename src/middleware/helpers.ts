@@ -45,36 +45,23 @@ type ScheduleItemType = {
 
 class Scheduler {
     add(tslot: AvailabilityType): number | null {
+        const overlapsWithExtistingTimeslots = this.#list.some(((_, i) => this.#overlapsWithItemAt(tslot, i)));
+        if (overlapsWithExtistingTimeslots) {
+            return null;
+        }
+
         const item: ScheduleItemType = {
             timeslot: { ...tslot, id: this.#getId() },
             tasks: [],
         };
 
-        const listIsEmpty = this.#list.length === 0;
-        if (listIsEmpty) {
-            this.#list.push(item);
-            return item.timeslot.id;
-        }
+        this.#list.push(item);
 
-        let left = 0;
-        let right = this.#list.length - 1;
-
-        let middle: number;
-        while (right - left > 1) {
-            middle = Math.floor((right - left) / 2);
-            if (this.#overlapsWithItemAt(tslot, left)) { return null; }
-            if (this.#goesBeforeItemAt(tslot, middle)) { right = middle; }
-            else { left = middle; }
-        }
-
-        if (this.#overlapsWithItemAt(tslot, left)) { return null; }
-
-        if (this.#goesBeforeItemAt(tslot, left)) { this.#list.unshift(item); }
-        else { this.#list.push(item); }
+        this.#list.sort(({ timeslot: a }, { timeslot: b }) => a.from - b.from);
 
         return item.timeslot.id;
     }
-    schedule(task: TaskType): number | null {
+    schedule(task: TaskType): ScheduleItemType | null {
         for (let tslotIndex = 0; tslotIndex < this.#list.length; ++tslotIndex) {
             const scheduleTasks = this.#list[tslotIndex].tasks;
             const allTasks = scheduleTasks.concat(task);
@@ -89,7 +76,7 @@ class Scheduler {
 
             if (superTaskFitsIntoTimeslot) {
                 this.#list[tslotIndex].tasks = allTasks;
-                return tslotIndex;
+                return this.#list[tslotIndex];
             }
 
         }
@@ -98,7 +85,7 @@ class Scheduler {
     getScheduleOn(day: Date): ScheduleItemType[] {
         const dayMask: AvailabilityType = {
             from: day.getTime(),
-            length: AvailabilityDS.ADayInMillis,
+            length: TimeInMillis.Day,
             mES: 0,
             pES: 0,
         };
@@ -120,9 +107,8 @@ class Scheduler {
         }
         return null;
     }
-    #goesBeforeItemAt(tslot: AvailabilityType, index: number): boolean {
-        const { timeslot: tslotAtIndex } = this.#list[index];
-        return tslot.from < tslotAtIndex.from;
+    clear() {
+        this.#list = [];
     }
     #overlapsWithItemAt(newTslot: AvailabilityType, index: number): boolean {
         const { timeslot } = this.#list[index];
@@ -169,7 +155,7 @@ class AvailabilityDS {
     }
     getAvailabilityForDay(day: Date): Array<AvailabilityType> {
         const dayStartTime = day.getTime();
-        const dayEndTime = dayStartTime + AvailabilityDS.ADayInMillis;
+        const dayEndTime = dayStartTime + TimeInMillis.Day;
         return this.list.filter(av => av.from >= dayStartTime && av.from < dayEndTime);
     }
 
@@ -180,10 +166,12 @@ class AvailabilityDS {
     clearAllAvailability() {
         this.list = [];
     }
-
-    static ADayInMillis = 1_000 * 60 * 60 * 24;
-    static AnHourInMillis = 1_000 * 60 * 60;
-    static AMinuteInMillis = 1_000 * 60;
 }
 
-export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime, AvailabilityDS, Scheduler, type AvailabilityType, type TaskType };
+enum TimeInMillis {
+    Day = 1_000 * 60 * 60 * 24,
+    Hour = 1_000 * 60 * 60,
+    Minute = 1_000 * 60,
+};
+
+export { toSubjectiveEffortScore, verboseTimestamp, getRandomTime, TimeInMillis, Scheduler, type ScheduleItemType, type AvailabilityType, type TaskType };

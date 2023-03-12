@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
-import { AvailabilityDS, type TaskType } from '@/middleware/helpers';
+import { type TaskType, Scheduler, TimeInMillis } from '@/middleware/helpers';
 
 type AvailabilityType = {
     mentalEffort: number,
@@ -53,7 +53,7 @@ export default {
             canvasWidth: 30,
             now: new Date().getTime(),
             updaterInterval: -1,
-            availabilityDS: new AvailabilityDS(),
+            availabilityDS: new Scheduler(),
         };
     },
     computed: {
@@ -90,7 +90,7 @@ export default {
             if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
             const taskAsString = event.dataTransfer.getData('task');
             const task: TaskType = JSON.parse(taskAsString);
-            const availabilityContainingTask = this.availabilityDS.scheduleTask(task);
+            const availabilityContainingTask = this.availabilityDS.schedule(task);
             if (!availabilityContainingTask) {
                 throw new Error("Handle failed task scheduling");
             }
@@ -136,11 +136,11 @@ export default {
             }
         },
         getHeightRelativeToSchedule(item: AvailabilityType): string {
-            return `${item.temporalInvestment / AvailabilityDS.ADayInMillis * this.canvasHeight}px`;
+            return `${item.temporalInvestment / TimeInMillis.Day * this.canvasHeight}px`;
         },
         getHeightOfTimeIntoDay(item: AvailabilityType): string {
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            const availabilityStartInSchedule = (item.fromTime % AvailabilityDS.ADayInMillis + zoneOffset) / AvailabilityDS.ADayInMillis * this.canvasHeight;
+            const availabilityStartInSchedule = (item.fromTime % TimeInMillis.Day + zoneOffset) / TimeInMillis.Day * this.canvasHeight;
             return `${availabilityStartInSchedule}px`;
         },
     },

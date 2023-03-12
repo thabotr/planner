@@ -1,6 +1,6 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { AvailabilityDS, Scheduler, type AvailabilityType, type TaskType } from '../helpers';
+import { TimeInMillis, Scheduler, type ScheduleItemType, type AvailabilityType, type TaskType } from '../helpers';
 
 describe('AvailabilityDS Test', () => {
     describe('getScheduleOn', () => {
@@ -29,7 +29,7 @@ describe('AvailabilityDS Test', () => {
             {
                 mES: 89,
                 pES: 34,
-                length: 6 * AvailabilityDS.AnHourInMillis,
+                length: 6 * TimeInMillis.Hour,
                 from: twelveAMFri,
             }
         ];
@@ -37,107 +37,114 @@ describe('AvailabilityDS Test', () => {
             {
                 mES: 10,
                 pES: 50,
-                length: AvailabilityDS.AnHourInMillis,
+                length: TimeInMillis.Hour,
                 from: fiveAMThurs,
             },
             {
                 mES: 5,
                 pES: 75,
-                length: 2 * AvailabilityDS.AnHourInMillis,
+                length: 2 * TimeInMillis.Hour,
                 from: sevenAMThurs,
             },
             {
                 mES: 89,
                 pES: 5,
-                length: 1.5 * AvailabilityDS.AnHourInMillis,
+                length: 1.5 * TimeInMillis.Hour,
                 from: elevenAMThurs,
             }
         ];
     });
-    describe('addAvailability', () => {
-        it('it stores the availability and returns a copy on success', () => {
-            const result = avd.addAvailability(av);
+    describe('add', () => {
+        it('it returns null if and only if the added timeslot overlaps with an existing timeslot', () => {
+            const tslotId = scheduler.add(av);
+            expect(tslotId).not.toBeNull();
 
-            const hasStoredAv = avd.list.some(e => e.from === av.from);
-
-            expect(hasStoredAv).toBeTruthy();
-            expect(result).toBe(av);
-        });
-        it('it returns null when the added availability overlaps with an existing availability', () => {
-            avd.addAvailability(av);
-            const aMinuteFromNow = now + AvailabilityDS.AMinuteInMillis;
+            const aMinuteFromNow = now + TimeInMillis.Minute;
             const conflictingAv = {
                 from: aMinuteFromNow,
-                length: AvailabilityDS.AnHourInMillis,
+                length: TimeInMillis.Hour,
                 mES: 30,
                 pES: 70,
             };
-
-            const result = avd.addAvailability(conflictingAv);
+            const result = scheduler.add(conflictingAv);
 
             expect(result).toBeNull();
         });
         const now = new Date().getTime();
         const av: AvailabilityType = {
             from: now,
-            length: AvailabilityDS.AnHourInMillis,
+            length: TimeInMillis.Hour,
             mES: 50,
             pES: 50,
         };
         beforeEach(() => {
-            avd.clearAllAvailability();
+            scheduler.clear();
         });
     });
-    describe('scheduleTask', () => {
-        it("returns null if no availability can be found to satisfy the current task", () => {
+    describe('schedule', () => {
+        it("returns null if no timeslot can be found to satisfy the current task", () => {
             const withInsatiableMES: TaskType = taskWith({ mES: maxMES + 1 });
-            expect(avd.scheduleTask(withInsatiableMES)).toBeNull();
+            expect(scheduler.schedule(withInsatiableMES)).toBeNull();
 
             const withInsatiablePES: TaskType = taskWith({ pES: maxPES + 1 });
-            expect(avd.scheduleTask(withInsatiablePES)).toBeNull();
+            expect(scheduler.schedule(withInsatiablePES)).toBeNull();
 
             const withInsatiableLength: TaskType = taskWith({ length: longestTime + 1 });
-            expect(avd.scheduleTask(withInsatiableLength)).toBeNull();
+            expect(scheduler.schedule(withInsatiableLength)).toBeNull();
         });
-        it("returns the next availability within which the task can be succesfully scheduled", () => {
+        it("returns the schedule item within which the task task was added", () => {
             const medianLength = (shortestTime + longestTime) / 2;
             const withMedianLength: TaskType = taskWith({ length: medianLength });
-            const availabilityWithBiggestLength = wedAvailability[1];
+            const scheduleWLongestTimeslot: ScheduleItemType = {
+                timeslot: {
+                    ...wedAvailability[1],
+                    id: expect.any(Number),
+                },
+                tasks: expect.any(Array<TaskType>),
+            }
 
-            const availabilitySatisfyingTaskWithMedianLength = avd.scheduleTask(withMedianLength);
-            expect(availabilitySatisfyingTaskWithMedianLength).toBe(availabilityWithBiggestLength);
+            const medLenResult = scheduler.schedule(withMedianLength);
+            expect(medLenResult).toStrictEqual(scheduleWLongestTimeslot);
 
             const lessThanMinLength = shortestTime / 2;
             const withLessThanMinLength: TaskType = taskWith({ length: lessThanMinLength });
-            const availabilityWithShortestLength = wedAvailability[0];
+            const scheduleWShortestTimeslot: ScheduleItemType = {
+                timeslot: {
+                    ...wedAvailability[0],
+                    id: expect.any(Number),
+                },
+                tasks: expect.any(Array<TaskType>),
+            }
 
-            const availabilitySatisfyingTaskWithLengthLessThanMinLength = avd.scheduleTask(withLessThanMinLength);
-            expect(availabilitySatisfyingTaskWithLengthLessThanMinLength).toBe(availabilityWithShortestLength);
+            const shortLenResult = scheduler.schedule(withLessThanMinLength);
+            expect(shortLenResult).toStrictEqual(scheduleWShortestTimeslot);
         });
-        it.skip("returns null if and only if the availability which could satisfy the task have been used", () => {
-            const maxLengthAv = wedAvailability[1];
-            avd.clearAllAvailability(); // to ensure the av doesn't conflict with any old avs
-            const biggerThanMaxLengthAV = {
-                ...maxLengthAv,
-                length: AvailabilityDS.AnHourInMillis + maxLengthAv.length,
-            };
-            const perfectFitTask: TaskType = {
-                ...biggerThanMaxLengthAV,
-            };
-            avd.addAvailability(biggerThanMaxLengthAV);
+        it("returns null if the timeslot which could satisfy the task has been used", () => {
+            scheduler.clear(); // to ensure the av doesn't conflict with any old avs
+            const someTslot = wedAvailability[1];
+            scheduler.add(someTslot);
 
-            const resultBeforeAVIsUsed = avd.scheduleTask(perfectFitTask);
-            expect(resultBeforeAVIsUsed).toBe(biggerThanMaxLengthAV);
+            const aTaskWhichCompletelyFillsTslot: TaskType = {
+                ...someTslot,
+            };
 
-            const aSimilarySizedTaskToPerfectFit: TaskType = { ...perfectFitTask };
-            const resultAfterAVIsUsed = avd.scheduleTask(aSimilarySizedTaskToPerfectFit);
-            expect(resultAfterAVIsUsed).toBeNull();
+            const resultOnFirstTaskSchedule = scheduler.schedule(aTaskWhichCompletelyFillsTslot);
+            expect(resultOnFirstTaskSchedule).not.toBeNull();
+
+
+            const anotherTask: TaskType = {
+                length: 100,
+                mES: 10,
+                pES: 10,
+            };
+            const resultOnNoFreeTslot = scheduler.schedule(anotherTask);
+            expect(resultOnNoFreeTslot).toBeNull();
         });
         beforeEach(() => {
-            avd.clearAllAvailability();
+            scheduler.clear();
             wedAvailability.forEach(av => {
-                const result = avd.addAvailability(av);
-                expect(av).toBe(result);
+                const result = scheduler.add(av);
+                expect(result).not.toBeNull();
             });
         });
         const taskWith = (overrides: Partial<TaskType>): TaskType => ({
@@ -150,7 +157,6 @@ describe('AvailabilityDS Test', () => {
         const [minPES, maxPES] = wedAvailability.map(av => av.pES).sort();
         const [shortestTime, longestTime] = wedAvailability.map(av => av.length).sort();
     });
-    const avd = new AvailabilityDS();
     const scheduler = new Scheduler();
     const elevenPMWed = getTime(2023, 1, 1, 23);
     const onePMWed = getTime(2023, 1, 1, 13);
@@ -158,13 +164,13 @@ describe('AvailabilityDS Test', () => {
         {
             mES: 34,
             pES: 21,
-            length: 0.5 * AvailabilityDS.AnHourInMillis,
+            length: 0.5 * TimeInMillis.Hour,
             from: elevenPMWed,
         },
         {
             mES: 55,
             pES: 89,
-            length: 2 * AvailabilityDS.AnHourInMillis,
+            length: 2 * TimeInMillis.Hour,
             from: onePMWed,
         },
     ];
