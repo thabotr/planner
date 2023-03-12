@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { toSubjectiveEffortScore, getRandomTime } from '@/middleware/helpers';
+import { toSubjectiveEffortScore, Scheduler } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
 import TimeInvestmentInput from './TimeInvestmentInput.vue';
@@ -57,63 +57,6 @@ export default {
             return toSubjectiveEffortScore(this.tempTask.physicalEffort);
         },
     },
-    created() {
-        // insert fake data
-        this.tasks.set(
-            "13",
-            {
-                id: "13",
-                description: "Familiarize self with VueJS- Perform Framework Overview",
-                mentalEffort: 85,
-                physicalEffort: 45,
-                temporalInvestment: getRandomTime(),
-            });
-        this.tasks.set(
-            "17",
-            {
-                id: "17",
-                description: "Learn VueJS - do a programming project",
-                mentalEffort: 68,
-                physicalEffort: 92,
-                temporalInvestment: getRandomTime(),
-            });
-        this.tasks.set(
-            "19",
-            {
-                id: "19",
-                description: "C# advanced review",
-                mentalEffort: 98,
-                physicalEffort: 60,
-                temporalInvestment: getRandomTime(),
-            });
-        this.tasks.set(
-            "28",
-            {
-                id: "28",
-                description: "Design patterns overview",
-                mentalEffort: 50,
-                physicalEffort: 2,
-                temporalInvestment: getRandomTime(),
-            });
-        this.tasks.set(
-            "33",
-            {
-                id: "33",
-                description: "Learn Design patterns - programming exercises",
-                mentalEffort: 67,
-                physicalEffort: 93,
-                temporalInvestment: getRandomTime(),
-            });
-        this.tasks.set(
-            "38",
-            {
-                id: "38",
-                description: "Learn VueJS - advanced review",
-                mentalEffort: 73,
-                physicalEffort: 72,
-                temporalInvestment: getRandomTime(),
-            });
-    },
     methods: {
         onSavePlanItemEdit() {
             const taskId = this.tempTask.id;
@@ -121,7 +64,7 @@ export default {
             if (updatingOldTask) {
                 this.tasks.set(taskId, this.tempTask);
             } else {
-                const newTaskId = new Date().getTime().toString();
+                const newTaskId = Scheduler.getId().toString();
                 const task = {
                     ...this.tempTask,
                     id: newTaskId,

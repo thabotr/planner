@@ -72,10 +72,19 @@ export default {
         closeDialog() { this.addingAvailability = false; },
         onAvailabilityCreated(timeslot: AvailabilityType) {
             // TODO error on overlap
-            scheduler.add(timeslot);
+            const schedule = scheduler.add(timeslot);
+            if (schedule === null) {
+                this.$emit(
+                    "error",
+                    {
+                        type: "Timeslot creation failed",
+                        message: "The new timeslot should not overlap with an existing timeslot",
+                    }
+                );
+            }
             this.updateDaySchedule();
         },
-        onRequestTaskSchedule(task: AvailabilityType & {id: String}) {
+        onRequestTaskSchedule(task: AvailabilityType & { id: String }) {
             // TODO schedule task over specified timeslot if any
             const scheduleResult = scheduler.schedule(task);
             if (!scheduleResult) {
@@ -97,7 +106,8 @@ export default {
         dayOnView(newDay: Date) {
             this.dayScheduleItems = scheduler.getScheduleOn(newDay);
         }
-    }
+    },
+    emits: ['error']
 }
 </script>
 
