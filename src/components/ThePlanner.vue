@@ -84,7 +84,7 @@ export default {
             }
             this.updateDaySchedule();
         },
-        onRequestTaskSchedule(task: AvailabilityType & { id: String }) {
+        onRequestTaskSchedule(task: AvailabilityType) {
             const scheduleResult = scheduler.schedule(task);
             if (scheduleResult === null) {
                 this.$emit(
@@ -99,7 +99,6 @@ export default {
             // TODO remove schedule task from pending tasks
             // TODO scroll focus day schedule on schedule item
             this.updateDaySchedule();
-            alert(`display task ${task.id} in day schedule`);
         },
         updateDaySchedule() {
             const now = new Date();
@@ -119,9 +118,9 @@ export default {
 <style scoped>
 #create-availability {
     background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
-    position: absolute;
-    left: 10%;
-    bottom: 10%;
+    position: fixed;
+    left: 60%;
+    bottom: 5%;
 }
 
 .v-dialog {

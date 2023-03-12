@@ -29,6 +29,8 @@ function verboseTimestamp(diffInMs: number): string {
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
 type TaskType = {
+    id: string,
+    description: string,
     pES: number,    // mental effort score
     mES: number,    // mental effort score
     length: number,     // time investment in milliseconds
@@ -39,12 +41,12 @@ type AvailabilityType = TaskType & {
 };
 
 type ScheduleItemType = {
-    timeslot: AvailabilityType & { id: number },
+    timeslot: AvailabilityType,
     tasks: TaskType[],
 };
 
 class Scheduler {
-    add(tslot: AvailabilityType): number | null {
+    add(tslot: AvailabilityType): string | null {
         const overlapsWithExtistingTimeslots = this.#list.some(((_, i) => this.#overlapsWithItemAt(tslot, i)));
         if (overlapsWithExtistingTimeslots) {
             return null;
@@ -69,6 +71,8 @@ class Scheduler {
                 length: prev.length + curr.length,
                 mES: prev.mES + curr.mES,
                 pES: prev.pES + curr.pES,
+                description: "",
+                id: "",
             }));
             const timeslot = this.#list[tslotIndex].timeslot;
             const superTaskFitsIntoTimeslot = timeslot.length >= superTask.length &&
@@ -88,10 +92,12 @@ class Scheduler {
             length: TimeInMillis.Day,
             mES: 0,
             pES: 0,
+            description: "",
+            id: "",
         };
         return this.#list.filter((_, index) => this.#overlapsWithItemAt(dayMask, index));
     }
-    remove(timeslotId: number): TaskType[] | null {
+    remove(timeslotId: string): TaskType[] | null {
         let foundTslot2Rmv = false;
         for (const index in this.#list) {
             const { timeslot } = this.#list[index];
@@ -122,7 +128,7 @@ class Scheduler {
             newTslotContainsTslot;
     }
     static #id = 0;
-    static getId() { ++this.#id; return this.#id - 1; }
+    static getId() { ++this.#id; return (this.#id - 1).toString(); }
     #list: ScheduleItemType[] = [];
 }
 

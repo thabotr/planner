@@ -114,16 +114,15 @@ const CreateDefaultTask = (): TaskType => ({
 
 <style scoped>
 #create-plan-item {
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
+    position: fixed;
+    left: 40%;
+    bottom: 5%;
 }
 
 #plan-items-container {
     gap: 1rem;
     flex-wrap: wrap;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
 }
 
 .v-dialog {

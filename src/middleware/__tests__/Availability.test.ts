@@ -31,6 +31,8 @@ describe('AvailabilityDS Test', () => {
                 pES: 34,
                 length: 6 * TimeInMillis.Hour,
                 from: twelveAMFri,
+                description: expect.any(String),
+                id: expect.any(String),
             }
         ];
         const thursAvailability: Array<AvailabilityType> = [
@@ -39,18 +41,24 @@ describe('AvailabilityDS Test', () => {
                 pES: 50,
                 length: TimeInMillis.Hour,
                 from: fiveAMThurs,
+                description: expect.any(String),
+                id: expect.any(String),
             },
             {
                 mES: 5,
                 pES: 75,
                 length: 2 * TimeInMillis.Hour,
                 from: sevenAMThurs,
+                description: expect.any(String),
+                id: expect.any(String),
             },
             {
                 mES: 89,
                 pES: 5,
                 length: 1.5 * TimeInMillis.Hour,
                 from: elevenAMThurs,
+                                description: expect.any(String),
+                id: expect.any(String),
             }
         ];
     });

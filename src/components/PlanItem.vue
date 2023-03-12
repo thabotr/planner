@@ -19,7 +19,7 @@
                 {{ temporalInvestmentStamp }}
             </v-chip>
         </div>
-        <v-card-actions class="justify-space-between" v-show="!readonly">
+        <v-card-actions class="justify-space-between">
             <v-btn append-icon="mdi-delete" @click="$emit('onDelete', id)">
                 Delete
             </v-btn>
@@ -38,7 +38,6 @@ export default {
         physicalEffort: Number,
         temporalInvestment: Number,
         id: String,
-        readonly: Boolean,
     },
     computed: {
         mentalEffortScore() {
@@ -56,11 +55,12 @@ export default {
             }
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
-            const task: TaskType & {id: String} = {
+            const task: TaskType = {
                 length: this.temporalInvestment ?? -1,
                 mES: this.mentalEffort ?? -1,
                 pES: this.physicalEffort ?? -1,
                 id: this.id ?? "-1",
+                description: this.description ?? "",
             };
             const taskAsString = JSON.stringify(task);
             event.dataTransfer.setData('task', taskAsString);

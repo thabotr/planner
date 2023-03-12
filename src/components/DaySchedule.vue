@@ -15,7 +15,8 @@
                             {{ timeslot.mES }} mEP {{ timeslot.pES }} pEP {{
                                 Math.round(timeslot.length / (1_000 * 60)) }} mins
                         </div>
-                        <div id="scheduled-item">
+                        <div id="scheduled-items">
+                            <PlanItemInTimeslot v-for="task in tasks" :id="task.id" :mental-effort="task.mES" :physical-effort="task.pES" :temporal-investment="task.length" readonly/>
                         </div>
                     </div>
                 </template>
@@ -27,8 +28,9 @@
 <script lang="ts">
 import type { CreateComponentPublicInstance } from 'vue';
 
-import { Scheduler, TimeInMillis } from '@/middleware/helpers';
+import { TimeInMillis } from '@/middleware/helpers';
 import type { TaskType, ScheduleItemType, AvailabilityType as TimeslotType } from '@/middleware/helpers';
+import PlanItemInTimeslot from './PlanItemInTimeslot.vue';
 
 export default {
     props: {
@@ -146,6 +148,9 @@ export default {
                 this.scrollScheduleToTheCurrentTime();
             }
         },
+    },
+    components: {
+        PlanItemInTimeslot: PlanItemInTimeslot,
     }
 }
 </script>
@@ -174,11 +179,14 @@ export default {
     width: 100%;
 }
 
-#scheduled-item {
+#scheduled-items {
     position: absolute;
     z-index: 99;
     top: 0;
     left: 0;
     width: 100%;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
 }
 </style>
