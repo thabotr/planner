@@ -71,7 +71,6 @@ export default {
         openDialog() { this.addingAvailability = true; },
         closeDialog() { this.addingAvailability = false; },
         onAvailabilityCreated(timeslot: AvailabilityType) {
-            // TODO error on overlap
             const schedule = scheduler.add(timeslot);
             if (schedule === null) {
                 this.$emit(
@@ -81,14 +80,20 @@ export default {
                         message: "The new timeslot should not overlap with an existing timeslot",
                     }
                 );
+                return;
             }
             this.updateDaySchedule();
         },
         onRequestTaskSchedule(task: AvailabilityType & { id: String }) {
-            // TODO schedule task over specified timeslot if any
             const scheduleResult = scheduler.schedule(task);
-            if (!scheduleResult) {
-                alert("Could not schedule task");
+            if (scheduleResult === null) {
+                this.$emit(
+                    "error",
+                    {
+                        type: "Task scheduling failed",
+                        message: "No suitable timeslot was found to schedule this task",
+                    }
+                );
                 return;
             }
             // TODO remove schedule task from pending tasks

@@ -65,6 +65,6 @@ main {
 }
 
 .error {
-  color: red;
+  color: rgb(227, 52, 52);
 }
 </style>
