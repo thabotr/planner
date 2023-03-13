@@ -27,7 +27,7 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
             const idsForScheduledTasks: string[] = Array.from(state.taskIdsForTimeslots.values())
                 .flatMap(setOfIds => Array.from(setOfIds.values()));
             return Array.from(state.tasks.values()).filter(({ id }) => !idsForScheduledTasks.includes(id));
-        }
+        },
     },
     actions: {
         addTask(partialTask: Omit<TaskType, 'id'>) {
@@ -70,6 +70,12 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
         },
         getScheduleOn(day: Date): ScheduleItemType[] {
             return scheduler.getScheduleOn(day);
+        },
+        updateTask(task: TaskType) {
+            this.tasks.set(task.id, task);
+        },
+        getTask(taskId: string) {
+            return this.tasks.get(taskId);
         }
     }
 })

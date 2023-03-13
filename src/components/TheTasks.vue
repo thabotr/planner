@@ -8,7 +8,7 @@
                 <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus" color="green">
                 </v-btn>
             </template>
-            <TaskEditor v-model="tempTask" />
+            <TaskEditor v-model="tempTask" @discard="onDiscardPlanItemEdit" @update:model-value="onSavePlanItem"/>
         </v-dialog>
     </v-col>
 </template>
@@ -46,37 +46,28 @@ export default {
         ...mapState(useScheduleItemsStore, ['unscheduledTasks', 'tasks']),
     },
     methods: {
-        onSavePlanItemEdit() {
-            const taskId = this.tempTask.id;
-            const updatingOldTask = this.tasks.has(taskId);
-            // if (updatingOldTask) {
-            //     // this.tasks.set(taskId, this.tempTask);
-            // } else {
-            //     const newTaskId = Scheduler.getId().toString();
-            //     const task = {
-            //         ...this.tempTask,
-            //         id: newTaskId,
-            //     }
-            //     this.tasks.set(newTaskId, task);
-            this.addTask({
-                description: this.tempTask.description,
-                length: this.tempTask.length,
-                mES: this.tempTask.mES,
-                pES: this.tempTask.pES,
-            });
-            // }
+        onSavePlanItem(task: TaskType) {
+            const creating = task.id === '';
+            if (creating) {
+                this.addTask(task);
+            } else {
+                this.updateTask(task);
+            }
             this.restoreTempTaskToDefault();
             this.closeDialog();
         },
         onCreatePlanItem() { this.openDialog(); },
-        onDeletePlanItem(itemId: string) { this.tasks.delete(itemId); },
-        onEditPlanItem(itemId: string) {
-            const taskToOpen = this.tasks.get(itemId);
+        onDeletePlanItem(taskId: string) { this.removeTask(taskId); },
+        onEditPlanItem(taskId: string) {
+            const taskToOpen = this.getTask(taskId);
             if (!taskToOpen) {
-                alert("Oops! task not found");
+                this.$emit("error", {
+                    type: "Failed to open task",
+                    message: `Task ${taskId} not found`,
+                })
                 return;
             }
-            // this.tempTask = { ...taskToOpen };
+            this.tempTask = {...taskToOpen};
             this.openDialog();
         },
         onDiscardPlanItemEdit() {
@@ -86,7 +77,7 @@ export default {
         closeDialog() { this.editingPlanItem = false; },
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
-        ...mapActions(useScheduleItemsStore, ['addTask']),
+        ...mapActions(useScheduleItemsStore, ['addTask', 'getTask', 'removeTask', 'updateTask']),
     }
 };
 
