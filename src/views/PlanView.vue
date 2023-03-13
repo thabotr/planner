@@ -9,7 +9,7 @@ import TheTasks from '../components/TheTasks.vue'
       <TheTasks />
     </div>
     <div id="the-calendar" class="padded">
-      <ThePlanner @error="onError"/>
+      <ThePlanner @error="onError" />
     </div>
     <v-snackbar v-model="snackbar" vertical>
       <h2 class="centered-content error">{{ notification.type }}</h2>
@@ -62,9 +62,5 @@ main {
 
 .padded {
   padding: 1rem;
-}
-
-.error {
-  color: rgb(227, 52, 52);
 }
 </style>

@@ -38,26 +38,33 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
         removeTask(taskId: string) {
             this.tasks.delete(taskId);
         },
-        timeslotAddTask(taskId: string, timeslotId?: string): boolean {
+        timeslotAddTask(taskId: string): boolean {
             const task = this.$state.tasks.get(taskId);
             if (!task) {
                 throw new Error(`Task ${taskId} not found`);
             }
 
-            const schRes = scheduler.schedule(task);
-            if (!schRes) {
-                return false;
+            for (const timeslot of this.timeslots.values()) {
+                const tslotCapacity = this._timeslotGetRemainingCapacity(timeslot.id);
+                const taskFitsIntoTimeslot = this._taskFitsInRemainingCapacity(task, tslotCapacity);
+                if (!taskFitsIntoTimeslot) {
+                    continue;
+                }
+                const taskIdsForTimeslot = this.taskIdsForTimeslots.get(timeslot.id);
+                if (!taskIdsForTimeslot) {
+                    throw new Error(`no tasks for timeslot ${timeslot.id}`);
+                }
+                taskIdsForTimeslot.add(task.id);
+                return true;
             }
 
-            this.taskIdsForTimeslots.get(schRes.timeslotId)?.add(taskId);
-            return true;
+            return false;
         },
         timeslotRemoveTask(timeslotId: string, taskId: string) {
             this.taskIdsForTimeslots.get(timeslotId)?.delete(taskId);
         },
         addTimeslot(partialTimeslot: Omit<AvailabilityType, 'id'>): boolean {
-            const addTslotRes = scheduler.add({ ...partialTimeslot, id: "" });
-            if (addTslotRes === null) { return false; }
+            if (this._overlapsWithSomeTimeslot(partialTimeslot)) { return false; }
             const _1 = this.nextId++;
             const tslotId = _1.toString();
             this.timeslots.set(tslotId, { ...partialTimeslot, id: tslotId });
@@ -76,6 +83,58 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
         },
         getTask(taskId: string) {
             return this.tasks.get(taskId);
-        }
+        },
+        _overlapsWithSomeTimeslot(newTslot: Omit<AvailabilityType, 'id'>): boolean {
+            for (const timeslot of this.timeslots.values()) {
+                const newTslotStartContainedInTslot = timeslot.from <= newTslot.from &&
+                    newTslot.from <= timeslot.from + timeslot.length;
+                const newTslotEndContainedInTslot = timeslot.from <= newTslot.from + newTslot.length &&
+                    newTslot.from + newTslot.length <= timeslot.from + timeslot.length;
+                const newTslotContainsTslot = newTslot.from <= timeslot.from &&
+                    timeslot.from <= newTslot.from + newTslot.length;
+                const overlaps = newTslotStartContainedInTslot || newTslotEndContainedInTslot ||
+                    newTslotContainsTslot;
+                if (overlaps) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        _timeslotGetRemainingCapacity(timeslotId: string): TimeslotCapacityType {
+            const timeslot = this.timeslots.get(timeslotId);
+            if (!timeslot) {
+                return {
+                    length: 0,
+                    mES: 0,
+                    pES: 0,
+                };
+            }
+            const remainingCapacity: TimeslotCapacityType = {
+                ...timeslot,
+            };
+
+            const idsForTasks = this.taskIdsForTimeslots.get(timeslotId);
+            if (!idsForTasks) {
+                return remainingCapacity;
+            }
+
+            for (const taskId of idsForTasks) {
+                const task = this.tasks.get(taskId);
+                if (!task) {
+                    throw new Error(`timeslotGetRemainingCapacity: failed to get task ${taskId}`);
+                }
+                remainingCapacity.length -= task.length;
+                remainingCapacity.mES -= task.mES;
+                remainingCapacity.pES -= task.pES;
+            }
+
+            return remainingCapacity;
+        },
+        _taskFitsInRemainingCapacity(task: TaskType, capacity: TimeslotCapacityType): boolean {
+            return task.length <= capacity.length && task.mES <= capacity.mES &&
+                task.pES <= capacity.pES;
+        },
     }
 })
+
+type TimeslotCapacityType = Omit<AvailabilityType, 'id' | 'description' | 'from'>;
