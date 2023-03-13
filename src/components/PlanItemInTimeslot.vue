@@ -19,4 +19,8 @@ export default {
 .v-card {
     padding: 2px;
 }
+
+[draggable] {
+    cursor: pointer;
+}
 </style>

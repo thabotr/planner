@@ -8,42 +8,27 @@
                 <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus" color="green">
                 </v-btn>
             </template>
-            <template v-slot:default>
-                <v-card>
-                    <v-toolbar title="Plan Item" />
-                    <v-text-field label="What task do you want to accomplish?" :rules="[ruleMinimumFiveChars]" required
-                        v-model="tempTask.description" type="input" aria-multiline="true" />
-                    <div class="padded">
-                        <Slider v-model="tempTask.mentalEffort" custom-color="purple" step="10" icon="mdi-brain"
-                            v-bind:human-readable-effort-value="tempMentalEffort" />
-                        <Slider v-model="tempTask.physicalEffort" custom-color="#EED202" step="10"
-                            icon="mdi-account-hard-hat" v-bind:human-readable-effort-value="tempPhysicalEffort" />
-                        <TimeInvestmentInput :value=tempTask.temporalInvestment v-model="tempTask.temporalInvestment" />
-                    </div>
-                    <v-card-actions class="justify-end">
-                        <v-btn variant="text" @click="onDiscardPlanItemEdit" prepend-icon="mdi-close">Discard</v-btn>
-                        <v-btn @click="onSavePlanItemEdit" variant="text" prepend-icon="mdi-content-save"
-                            color="green">Save</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </template>
+            <TaskEditor v-model="tempTask" />
         </v-dialog>
     </v-col>
 </template>
 
 <script lang="ts">
 import { toSubjectiveEffortScore } from '@/middleware/helpers';
+import type { TaskType } from '@/middleware/helpers';
 import PlanItem from './PlanItem.vue';
 import Slider from './Slider.vue';
 import TimeInvestmentInput from './TimeInvestmentInput.vue';
 import { useScheduleItemsStore } from '../stores/scheduleItems';
 import { mapActions, mapState } from 'pinia';
+import TaskEditor from './TaskEditor.vue';
 
 export default {
     components: {
         PlanItem: PlanItem,
         Slider: Slider,
         TimeInvestmentInput: TimeInvestmentInput,
+        TaskEditor: TaskEditor,
     },
     data() {
         return {
@@ -53,10 +38,10 @@ export default {
     },
     computed: {
         tempMentalEffort() {
-            return toSubjectiveEffortScore(this.tempTask.mentalEffort);
+            return toSubjectiveEffortScore(this.tempTask.mES);
         },
         tempPhysicalEffort() {
-            return toSubjectiveEffortScore(this.tempTask.physicalEffort);
+            return toSubjectiveEffortScore(this.tempTask.pES);
         },
         ...mapState(useScheduleItemsStore, ['unscheduledTasks', 'tasks']),
     },
@@ -75,9 +60,9 @@ export default {
             //     this.tasks.set(newTaskId, task);
             this.addTask({
                 description: this.tempTask.description,
-                length: this.tempTask.temporalInvestment,
-                mES: this.tempTask.mentalEffort,
-                pES: this.tempTask.physicalEffort,
+                length: this.tempTask.length,
+                mES: this.tempTask.mES,
+                pES: this.tempTask.pES,
             });
             // }
             this.restoreTempTaskToDefault();
@@ -101,24 +86,16 @@ export default {
         closeDialog() { this.editingPlanItem = false; },
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
-        ruleMinimumFiveChars: (value: string) => (value || '').length >= 5 || 'Minimum 5 characters text',
         ...mapActions(useScheduleItemsStore, ['addTask']),
     }
 };
-type TaskType = {
-    id: string,
-    description: string,
-    mentalEffort: number,
-    physicalEffort: number,
-    temporalInvestment: number,
-    readonly?: boolean,
-};
+
 const CreateDefaultTask = (): TaskType => ({
     id: '',
     description: '',
-    mentalEffort: 0,
-    physicalEffort: 0,
-    temporalInvestment: 0,
+    mES: 0,
+    pES: 0,
+    length: 0,
 });
 </script>
 

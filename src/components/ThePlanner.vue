@@ -86,8 +86,7 @@ export default {
             this.updateDaySchedule();
         },
         onRequestTaskSchedule(task: TaskType) {
-            // to do use correct task id
-            const scheduled = this.timeslotAddTask("1", task.id);
+            const scheduled = this.timeslotAddTask(task.id);
             if (!scheduled) {
                 this.$emit(
                     "error",
@@ -98,7 +97,6 @@ export default {
                 );
                 return;
             }
-            // TODO remove schedule task from pending tasks
             this.updateDaySchedule();
         },
         updateDaySchedule() {

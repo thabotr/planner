@@ -53,7 +53,7 @@ class Scheduler {
         }
 
         const item: ScheduleItemType = {
-            timeslot: { ...tslot, id: Scheduler.getId() },
+            timeslot: tslot,
             tasks: [],
         };
 
@@ -61,9 +61,9 @@ class Scheduler {
 
         this.#list.sort(({ timeslot: a }, { timeslot: b }) => a.from - b.from);
 
-        return item.timeslot.id;
+        return tslot.id;
     }
-    schedule(task: TaskType): ScheduleItemType | null {
+    schedule(task: TaskType): {timeslotId: string, taskId: string} | null {
         for (let tslotIndex = 0; tslotIndex < this.#list.length; ++tslotIndex) {
             const scheduleTasks = this.#list[tslotIndex].tasks;
             const allTasks = scheduleTasks.concat(task);
@@ -80,7 +80,7 @@ class Scheduler {
 
             if (superTaskFitsIntoTimeslot) {
                 this.#list[tslotIndex].tasks = allTasks;
-                return this.#list[tslotIndex];
+                return {timeslotId: timeslot.id, taskId: task.id};
             }
 
         }
@@ -127,8 +127,6 @@ class Scheduler {
         return newTslotStartContainedInTslot || newTslotEndContainedInTslot ||
             newTslotContainsTslot;
     }
-    static #id = 0;
-    static getId() { ++this.#id; return (this.#id - 1).toString(); }
     #list: ScheduleItemType[] = [];
 }
 

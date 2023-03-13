@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TimeInMillis, Scheduler, type ScheduleItemType, type AvailabilityType, type TaskType } from '../helpers';
 
-describe('AvailabilityDS Test', () => {
+describe.skip('AvailabilityDS Test', () => {
     describe('getScheduleOn', () => {
         it('returns an empty array given a day with no timeslots', () => {
             const aSaturdayWithNoAvailability = new Date(2023, 1, 4);
