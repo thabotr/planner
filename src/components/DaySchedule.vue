@@ -16,7 +16,7 @@
                                 Math.round(timeslot.length / (1_000 * 60)) }} mins
                         </div>
                         <div id="scheduled-items">
-                            <PlanItemInTimeslot v-for="task in tasks" v-bind="task" />
+                            <PlanItemInTimeslot v-for="task in tasks" :task="task" />
                         </div>
                     </div>
                 </template>
@@ -184,6 +184,7 @@ export default {
     width: 100%;
     padding: 1rem;
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 </style>
