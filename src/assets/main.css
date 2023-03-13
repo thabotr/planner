@@ -45,3 +45,7 @@ a,
   display: flex;
   justify-content: space-between;
 }
+
+.error {
+  color: #B71C1C;
+}
