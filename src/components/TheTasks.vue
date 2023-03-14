@@ -1,5 +1,5 @@
 <template>
-    <div id="plan-items-container">
+    <div id="plan-items-container" aria-label="unscheduled tasks">
         <PlanItem class="plan-item" v-for="task in unscheduledTasks" v-bind="task" @on-delete="onDeletePlanItem"
             @on-edit="onEditPlanItem" />
         <GetGithubIssuesBtn></GetGithubIssuesBtn>

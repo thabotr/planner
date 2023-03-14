@@ -1,5 +1,5 @@
 <template>
-    <v-btn :loading="fetching" @click="doFetch">
+    <v-btn id="fetch-from-git" :loading="fetching" @click="doFetch">
         <v-icon icon="mdi-github"></v-icon>
         <div class="error" v-if="error">{{ error }}</div>
     </v-btn>

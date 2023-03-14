@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card :aria-label="`task ${id}`">
         <div class="justify-space-between">
             <v-icon :draggable="!isDirtyTask" icon="mdi-drag" @dragstart="startDrag"></v-icon>
             <v-chip color="red" v-show="isDirtyTask" size="x-small">Update Me!</v-chip>
