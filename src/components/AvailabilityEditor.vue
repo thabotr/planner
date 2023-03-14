@@ -54,6 +54,8 @@ export default {
                 pES: this.pES,
                 length: timeInvestment,
                 from: this.range.start.getTime(),
+                description: '',
+                id: '',
             };
         }
     },

@@ -1,6 +1,8 @@
 <template>
     <div id="plan-items-container">
-        <PlanItem v-for="task in unscheduledTasks" v-bind="task" @on-delete="onDeletePlanItem" @on-edit="onEditPlanItem" />
+        <PlanItem class="plan-item" v-for="task in unscheduledTasks" v-bind="task" @on-delete="onDeletePlanItem"
+            @on-edit="onEditPlanItem" />
+        <GetGithubIssuesBtn></GetGithubIssuesBtn>
     </div>
     <v-col cols="auto">
         <v-dialog v-model="editingPlanItem" transition="dialog-bottom-transition" persistent>
@@ -8,7 +10,7 @@
                 <v-btn id="create-plan-item" @click="onCreatePlanItem" icon="mdi-pen-plus" color="green">
                 </v-btn>
             </template>
-            <TaskEditor v-model="tempTask" @discard="onDiscardPlanItemEdit" @update:model-value="onSavePlanItem"/>
+            <TaskEditor v-model="tempTask" @discard="onDiscardPlanItemEdit" @update:model-value="onSavePlanItem" />
         </v-dialog>
     </v-col>
 </template>
@@ -22,6 +24,7 @@ import TimeInvestmentInput from './TimeInvestmentInput.vue';
 import { useScheduleItemsStore } from '../stores/scheduleItems';
 import { mapActions, mapState } from 'pinia';
 import TaskEditor from './TaskEditor.vue';
+import GetGithubIssuesBtn from './GetGithubIssuesBtn.vue';
 
 export default {
     components: {
@@ -29,6 +32,7 @@ export default {
         Slider: Slider,
         TimeInvestmentInput: TimeInvestmentInput,
         TaskEditor: TaskEditor,
+        GetGithubIssuesBtn
     },
     data() {
         return {
@@ -67,7 +71,7 @@ export default {
                 })
                 return;
             }
-            this.tempTask = {...taskToOpen};
+            this.tempTask = { ...taskToOpen };
             this.openDialog();
         },
         onDiscardPlanItemEdit() {
@@ -78,7 +82,10 @@ export default {
         openDialog() { this.editingPlanItem = true; },
         restoreTempTaskToDefault() { this.tempTask = CreateDefaultTask(); },
         ...mapActions(useScheduleItemsStore, ['addTask', 'getTask', 'removeTask', 'updateTask']),
-    }
+    },
+    mounted() {
+
+    },
 };
 
 const CreateDefaultTask = (): TaskType => ({
@@ -99,8 +106,15 @@ const CreateDefaultTask = (): TaskType => ({
 
 #plan-items-container {
     gap: 1rem;
-    flex-wrap: wrap;
     display: flex;
+    overflow-x: scroll;
+    flex-wrap: wrap;
+    height: 100vh;
+    padding: 1rem;
+}
+
+.plan-item {
+    max-width: 45%;
 }
 
 .v-dialog {
