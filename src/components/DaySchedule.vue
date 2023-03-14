@@ -74,9 +74,11 @@ export default {
     },
     methods: {
         onDropTask(event: DragEvent) {
-            if (!event.dataTransfer) throw new Error("DragEvent contains not data franster object on drop");
+            if (!event.dataTransfer) {
+                throw new Error("DragEvent contains not data franster object on drop");
+            }
             const taskAsString = event.dataTransfer.getData('task');
-            const task: TaskType & { id: String } = JSON.parse(taskAsString);
+            const task: TaskType = JSON.parse(taskAsString);
             this.$emit("requesttaskschedule", task);
         },
         scrollScheduleToTheCurrentTime() {
@@ -123,7 +125,8 @@ export default {
         },
         getHeightOfTimeIntoDay(timeslot: TimeslotType): string {
             const zoneOffset = 2 * 60 * 60 * 1_000;
-            const availabilityStartInSchedule = (timeslot.from % TimeInMillis.Day + zoneOffset) / TimeInMillis.Day * this.canvasHeight;
+            const availabilityStartInSchedule = (timeslot.from % TimeInMillis.Day + zoneOffset)
+                / TimeInMillis.Day * this.canvasHeight;
             return `${availabilityStartInSchedule}px`;
         },
     },
@@ -136,7 +139,8 @@ export default {
         dayOnView(currDayOnView: Date) {
             const today = new Date();
             const todayIsOnView = currDayOnView.getFullYear() === today.getFullYear() &&
-                currDayOnView.getMonth() === today.getMonth() && currDayOnView.getDate() === today.getDate();
+                currDayOnView.getMonth() === today.getMonth() &&
+                currDayOnView.getDate() === today.getDate();
             // redraw all
             this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
             this.drawScheduleTimeline(this.ctx);
