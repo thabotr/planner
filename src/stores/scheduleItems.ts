@@ -1,7 +1,6 @@
-import { type TaskType, type AvailabilityType, Scheduler, TimeInMillis, type ScheduleItemType } from "@/middleware/helpers";
+import { type TaskType, type AvailabilityType, TimeInMillis, type ScheduleItemType } from "@/middleware/helpers";
 import { defineStore } from "pinia";
 
-const scheduler = new Scheduler();
 
 export const useScheduleItemsStore = defineStore('scheduleItems', {
     state: () => ({
@@ -76,13 +75,44 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
             this.timeslots.delete(timeslotId);
         },
         getScheduleOn(day: Date): ScheduleItemType[] {
-            return scheduler.getScheduleOn(day);
+            const dayMask: AvailabilityType = {
+                from: day.getTime(),
+                length: TimeInMillis.Day,
+                mES: 0,
+                pES: 0,
+                description: "",
+                id: "",
+            };
+
+            const daysTimeslots = this._overlapingTslots(dayMask);
+            const schedule: ScheduleItemType[] = daysTimeslots.map(tslot => {
+                const tasks = this._getTimeslotTasks(tslot.id);
+                return {
+                    timeslot: tslot,
+                    tasks: tasks,
+                };
+            });
+
+            return schedule;
         },
         updateTask(task: TaskType) {
             this.tasks.set(task.id, task);
         },
         getTask(taskId: string) {
             return this.tasks.get(taskId);
+        },
+        _overlapingTslots(newTslot: AvailabilityType): AvailabilityType[] {
+            return Array.from(this.timeslots.values()).filter(timeslot => {
+                const newTslotStartContainedInTslot = timeslot.from <= newTslot.from &&
+                    newTslot.from <= timeslot.from + timeslot.length;
+                const newTslotEndContainedInTslot = timeslot.from <= newTslot.from + newTslot.length &&
+                    newTslot.from + newTslot.length <= timeslot.from + timeslot.length;
+                const newTslotContainsTslot = newTslot.from <= timeslot.from &&
+                    timeslot.from <= newTslot.from + newTslot.length;
+                const overlaps = newTslotStartContainedInTslot || newTslotEndContainedInTslot ||
+                    newTslotContainsTslot;
+                return overlaps;
+            });
         },
         _overlapsWithSomeTimeslot(newTslot: Omit<AvailabilityType, 'id'>): boolean {
             for (const timeslot of this.timeslots.values()) {
@@ -134,6 +164,18 @@ export const useScheduleItemsStore = defineStore('scheduleItems', {
             return task.length <= capacity.length && task.mES <= capacity.mES &&
                 task.pES <= capacity.pES;
         },
+        _getTimeslotTasks(timeslotId: string): TaskType[] {
+            const tasks: TaskType[] = [];
+            const idsForTasks = this.taskIdsForTimeslots.get(timeslotId);
+            if (!idsForTasks) {
+                throw new Error(`No task ids for timeslot ${timeslotId}`);
+            }
+            idsForTasks.forEach(taskId => {
+                const task = this.tasks.get(taskId);
+                task && tasks.push(task);
+            });
+            return tasks;
+        }
     }
 })
 
