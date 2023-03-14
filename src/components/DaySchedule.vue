@@ -14,6 +14,7 @@
                         <div class="availability-item-bg centered-content">
                             {{ timeslot.mES }} mEP {{ timeslot.pES }} pEP {{
                                 Math.round(timeslot.length / (1_000 * 60)) }} mins
+                            <v-chip color="green" size="x-large">{{ timeslot.id }}</v-chip>
                         </div>
                         <div id="scheduled-items">
                             <PlanItemInTimeslot v-for="task in tasks" :task="task" />
