@@ -6,17 +6,17 @@
             </div>
             <div>
                 <v-text-field v-model="minutes" v-on:update:model-value="$emit('update:model-value', milliseconds)" max="60"
-                    min="0" hide-details single-line density="compact" type="number" :error="!!error" />
+                    min="0" hide-details single-line density="compact" type="number" :error="!!error" aria-label="minutes" />
                 {{ minutes }} minutes
             </div>
             <div>
                 <v-text-field v-model="hours" v-on:update:model-value="$emit('update:model-value', milliseconds)" max="24"
-                    min="0" hide-details single-line density="compact" type="number" :error="!!error" />
+                    min="0" hide-details single-line density="compact" type="number" :error="!!error" aria-label="hours" />
                 {{ hours }} hours
             </div>
             <div>
                 <v-text-field v-model="days" v-on:update:model-value="$emit('update:model-value', milliseconds)" max="7"
-                    min="0" hide-details single-line density="compact" type="number" :error="!!error" />
+                    min="0" hide-details single-line density="compact" type="number" :error="!!error" aria-label="days"/>
                 {{ days }} days
             </div>
         </div>
