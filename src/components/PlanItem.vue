@@ -1,7 +1,8 @@
 <template>
     <v-card>
         <div class="justify-space-between">
-            <v-icon draggable="true" icon="mdi-drag" @dragstart="startDrag"></v-icon>
+            <v-icon :draggable="!isDirtyTask" icon="mdi-drag" @dragstart="startDrag"></v-icon>
+            <v-chip color="red" v-show="isDirtyTask" size="x-small">Update Me!</v-chip>
             <v-chip color="primary" size="x-small">{{ id }}</v-chip>
         </div>
         <v-card-text>{{ description }}</v-card-text>
@@ -47,6 +48,9 @@ export default {
             return toSubjectiveEffortScore(this.pES);
         },
         temporalInvestmentStamp() { return verboseTimestamp(this.length ?? 0); },
+        isDirtyTask() {
+            return this.length === 0;
+        }
     },
     methods: {
         startDrag(event: DragEvent) {

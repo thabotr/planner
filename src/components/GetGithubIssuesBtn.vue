@@ -1,12 +1,8 @@
 <template>
     <v-btn :loading="fetching" @click="doFetch">
         <v-icon icon="mdi-github"></v-icon>
+        <div class="error" v-if="error">{{ error }}</div>
     </v-btn>
-    <div v-if="error">Oops! Error encountered: {{ error }}</div>
-    <div v-else-if="data">
-        Data loaded:
-        <pre>{{ data }}</pre>
-    </div>
 </template>
 
 <script setup lang="ts">
@@ -14,7 +10,6 @@ import type { TaskType } from '@/middleware/helpers';
 import { useScheduleItemsStore } from '@/stores/scheduleItems';
 import { ref } from 'vue'
 
-const data = ref<string | null>(null);
 const error = ref<string | null>(null);
 const fetching = ref<boolean>(false);
 
@@ -22,6 +17,7 @@ const store = useScheduleItemsStore();
 
 function doFetch() {
     fetching.value = true;
+    error.value = null;
     fetch('https://api.github.com/repos/aws/copilot-cli/issues')
         .then((res) => res.json())
         .then((json: any[]) => {
@@ -45,3 +41,7 @@ function jsonObjToTask(json: any): TaskType {
     return task;
 }
 </script>
+
+<style scoped>
+@import url(../assets/main.css);
+</style>
