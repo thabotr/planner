@@ -27,17 +27,15 @@
 import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
 
 export default {
-    data() {
-        return {
-            mES: 0,
-            pES: 0,
-            length: 0,
-        };
+    props: {
+        mES: {type: Number, required: true},
+        pES: {type: Number, required: true},
+        length: {type: Number, required: true},
     },
     computed: {
         mEP() { return toSubjectiveEffortScore(this.mES); },
         pEP() { return toSubjectiveEffortScore(this.pES); },
-        time() { return verboseTimestamp(this.length); }
+        time() { return verboseTimestamp(this.length ?? 0); }
     }
 }
 </script>
@@ -46,9 +44,11 @@ export default {
 .v-list-item #i-mental {
     color: var(--color-brain);
 }
+
 .v-list-item #i-physical {
     color: var(--color-worker);
 }
+
 .v-list-item #i-time {
     color: var(--color-timer);
 }

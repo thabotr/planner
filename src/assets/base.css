@@ -112,3 +112,13 @@ body {
   box-sizing: border-box;
   border: 2px solid purple;
 }
+
+.flex-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-vertical {
+  display: flex;
+  flex-direction: column;
+}
