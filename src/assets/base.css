@@ -26,9 +26,9 @@
   --accent-dark: #A991B6;
   --highlight-dark: white;
 
-  --brain-purple: purple;
-  --timer-red: red;
-  --worker-orange: orange;
+  --color-brain: purple;
+  --color-timer: red;
+  --color-worker: orange;
 
   --tablet-width: 1024px;
   --large-mobile-width: 480px;
