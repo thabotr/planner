@@ -31,7 +31,7 @@
   --worker-orange: orange;
 
   --tablet-width: 1024px;
-  --large-mobile-width: 430px;
+  --large-mobile-width: 480px;
   --small-mobile-width: 320px;
 }
 
@@ -98,13 +98,17 @@ body {
   /* for inner border */
 }
 
-.htl-2 {
+.hlt-2 {
   border: 2px solid pink;
   box-sizing: border-box;
   /* for inner border */
 }
 
-.htl-3 {
+.hlt-3 {
   box-sizing: border-box;
-  border: 2px solid greenyellow;
+  border: 2px solid red;
+}
+.hlt-4 {
+  box-sizing: border-box;
+  border: 2px solid purple;
 }

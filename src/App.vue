@@ -14,7 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <button class="mobile-only">Nav Menu</button>
       <button class="mobile-only">Create Item Menu</button>
     </nav>
-    <div id="content" class="hlt-1">
+    <div id="content">
       <RouterView />
     </div>
   </main>
@@ -87,8 +87,8 @@ nav,
   }
 }
 
-/* --large-mobile-width: 430px; */
-@media(max-width: 430px) {
+/* --large-mobile-width: 480px; */
+@media(max-width: 480px) {
   .mobile-only {
     display: initial;
   }
