@@ -3,50 +3,64 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header>
-      <nav>
+  <main>
+    <header>
+      <!-- <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/plan">Plan</RouterLink>
-      </nav>
-  </header>
-  <div id="content">
-    <RouterView />
-  </div>
+        <RouterLink to="/plan/2">Plan2</RouterLink>
+      </nav> -->
+    </header>
+    <div id="content">
+      <RouterView />
+    </div>
+  </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+main {
   height: 100vh;
-  position: fixed;
+  width: 100vw;
+  border: 2px solid greenyellow;
   left: 0;
   top: 0;
+  position: absolute;
+  display: flex;
+}
+
+header {
+  box-sizing: border-box; /* for inner border */
+  border: 2px solid orange;
+  width: 6rem;
   height: 100%;
-  width: 6rem;
-  border-right: 2px solid green;
-  padding-block: 2rem;
-  width: 6rem;
 }
 
 #content {
-  position: fixed;
-  left: 6rem;
+  border: 2px solid pink;
+  box-sizing: border-box; /* for inner border */
+  flex: 1;
 }
 
-@media(min-width: 420px) {
-  #content {
-    position: relative;
+/* --tablet-width: 1024px; */
+@media (max-width: 1024px) {
+  main {
+    flex-direction: column;
   }
-}
-
-@media(max-width: 420px) {
   header {
-    display: none;
+    height: 6rem;
+    width: 100%;
   }
 }
 
-nav {
+/* --large-mobile-width: 430px; */
+@media(max-width: 430px) {
+  header {
+    height: 4rem;
+  }
+}
+
+/* nav {
   text-align: left;
   gap: 2rem;
   display: flex;
@@ -69,5 +83,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
+} */
 </style>

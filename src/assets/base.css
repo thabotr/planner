@@ -19,6 +19,10 @@
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+  --tablet-width: 1024px;
+  --large-mobile-width: 430px;
+  --small-mobile-width: 320px;
 }
 
 /* semantic color variables for this project */
@@ -55,14 +59,11 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
   font-weight: normal;
 }
 
 body {
-  min-height: 100vh;
+  /* min-height: 100vh; */
   color: var(--color-text);
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
