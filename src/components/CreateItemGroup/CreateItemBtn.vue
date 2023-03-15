@@ -16,9 +16,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-/* .v-btn {
-    background-color: var(--color-primary);
-} */
-</style>
