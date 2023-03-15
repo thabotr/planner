@@ -9,7 +9,7 @@
                 </div>
             </v-card>
             <div id="actions">
-                <v-chip>
+                <v-chip density="compact">
                     {{ id }}
                 </v-chip>
                 <slot name="actions"></slot>
