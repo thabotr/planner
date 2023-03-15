@@ -22,6 +22,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 @import url(./assets/base.css);
+
 main {
   height: 100vh;
   width: 100vw;
@@ -51,6 +52,9 @@ nav,
   background-color: var(--color-bg);
   display: grid;
   padding: 0 1rem 0 1rem;
+
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 }
 
 .mobile-only {
@@ -85,6 +89,11 @@ nav,
   #links {
     flex-direction: row;
   }
+
+  #content {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
 }
 
 /* --large-mobile-width: 430px; */
@@ -99,6 +108,10 @@ nav,
 
   nav {
     height: 4rem;
+  }
+
+  #content {
+    grid-template-columns: 1fr;
   }
 }
 
