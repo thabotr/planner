@@ -1,8 +1,8 @@
+
 <template>
     <div id="main-container">
         <div id="calendar-ctnr" class="hlt-1">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Alias velit suscipit eligendi rerum magnam architecto
-            modi porro? Nobis, eum aut.
+            
         </div>
         <div id="day-schedule-ctnr" class="hlt-2">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, hic.
@@ -13,8 +13,13 @@
         <div id="todo-ctnr" class="hlt-4">
 
         </div>
+        <CreateItemGroup class="fab"/>
     </div>
 </template>
+
+<script setup lang="ts">
+import CreateItemGroup from '@/components/CreateItemGroup.vue';
+</script>
 
 <style scoped>
 #main-container {
@@ -27,6 +32,7 @@
         "a a d c"
     ;
     gap: 1rem;
+    position: relative;
 }
 
 #unscheduled-tasks-ctnr {
@@ -67,10 +73,17 @@
             "a"
         ;
     }
+
     #day-schedule-ctnr,
     #calendar-ctnr {
         display: none;
         /* display these in a dialog using action from nav */
     }
+}
+
+.fab {
+    position: absolute;
+    right: 1%;
+    bottom: 2%;
 }
 </style>
