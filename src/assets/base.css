@@ -24,6 +24,7 @@
   --bg-dark: #3F3047;
   --secondary-dark: #9578A5;
   --accent-dark: #A991B6;
+  --highlight-dark: white;
 
   --brain-purple: purple;
   --timer-red: red;
@@ -52,6 +53,7 @@
   --color-bg: var(--bg-dark);
   --color-secondary: var(--secondary-dark);
   --color-accent: var(--accent-dark);
+  --color-highlight: var(--highlight-dark);
 
   overflow: hidden;
 }
@@ -88,4 +90,16 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.hlt-1 {
+  border: 2px solid orange;
+  box-sizing: border-box;
+  /* for inner border */
+}
+
+.htl-2 {
+  border: 2px solid pink;
+  box-sizing: border-box;
+  /* for inner border */
 }

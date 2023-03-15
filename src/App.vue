@@ -33,9 +33,6 @@ main {
 }
 
 nav {
-  box-sizing: border-box;
-  /* for inner border */
-  border: 2px solid orange;
   width: 6rem;
   height: 100%;
   background-color: var(--color-primary);
@@ -45,19 +42,22 @@ nav,
 #links {
   flex-direction: column;
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 #content {
-  border: 2px solid pink;
-  box-sizing: border-box;
-  /* for inner border */
   flex: 1;
   background-color: var(--color-bg);
 }
 
 .mobile-only {
   display: none;
+}
+
+@media (min-width: 1024px) {
+  nav {
+    padding-block: 6rem;
+  }
 }
 
 /* --tablet-width: 1024px; */
@@ -69,6 +69,7 @@ nav,
   nav {
     height: 6rem;
     width: 100%;
+    align-items: center;
   }
 
   nav,
@@ -93,7 +94,11 @@ nav,
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--color-highlight);
+}
+
+nav a:hover {
+  background-color: var(--color-bg);
 }
 
 nav a.router-link-exact-active:hover {
@@ -103,6 +108,8 @@ nav a.router-link-exact-active:hover {
 nav a {
   display: inline-block;
   padding: 0 1rem;
+  color: var(--color-secondary);
+  font-size: large;
 }
 
 nav a:first-of-type {
