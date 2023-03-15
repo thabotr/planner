@@ -21,6 +21,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
+@import url(./assets/base.css);
 main {
   height: 100vh;
   width: 100vw;
@@ -37,6 +38,7 @@ nav {
   border: 2px solid orange;
   width: 6rem;
   height: 100%;
+  background-color: var(--color-primary);
 }
 
 nav,
@@ -51,6 +53,7 @@ nav,
   box-sizing: border-box;
   /* for inner border */
   flex: 1;
+  background-color: var(--color-bg);
 }
 
 .mobile-only {

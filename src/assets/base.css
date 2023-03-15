@@ -20,6 +20,15 @@
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
+  --primary-dark: #2B2131;
+  --bg-dark: #3F3047;
+  --secondary-dark: #9578A5;
+  --accent-dark: #A991B6;
+
+  --brain-purple: purple;
+  --timer-red: red;
+  --worker-orange: orange;
+
   --tablet-width: 1024px;
   --large-mobile-width: 430px;
   --small-mobile-width: 320px;
@@ -38,6 +47,11 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --color-primary: var(--primary-dark);
+  --color-bg: var(--bg-dark);
+  --color-secondary: var(--secondary-dark);
+  --color-accent: var(--accent-dark);
 
   overflow: hidden;
 }
