@@ -4,14 +4,16 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <main>
-    <header>
-      <!-- <nav>
+    <nav>
+      <div id="links">
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/plan">Plan</RouterLink>
         <RouterLink to="/plan/2">Plan2</RouterLink>
-      </nav> -->
-    </header>
+      </div>
+      <button class="mobile-only">Nav Menu</button>
+      <button class="mobile-only">Create Item Menu</button>
+    </nav>
     <div id="content">
       <RouterView />
     </div>
@@ -29,17 +31,30 @@ main {
   display: flex;
 }
 
-header {
-  box-sizing: border-box; /* for inner border */
+nav {
+  box-sizing: border-box;
+  /* for inner border */
   border: 2px solid orange;
   width: 6rem;
   height: 100%;
 }
 
+nav,
+#links {
+  flex-direction: column;
+  display: flex;
+  gap: 1rem;
+}
+
 #content {
   border: 2px solid pink;
-  box-sizing: border-box; /* for inner border */
+  box-sizing: border-box;
+  /* for inner border */
   flex: 1;
+}
+
+.mobile-only {
+  display: none;
 }
 
 /* --tablet-width: 1024px; */
@@ -47,25 +62,31 @@ header {
   main {
     flex-direction: column;
   }
-  header {
+
+  nav {
     height: 6rem;
     width: 100%;
+  }
+
+  nav,
+  #links {
+    flex-direction: row;
   }
 }
 
 /* --large-mobile-width: 430px; */
 @media(max-width: 430px) {
-  header {
+  .mobile-only {
+    display: initial;
+  }
+
+  #links {
+    display: none;
+  }
+
+  nav {
     height: 4rem;
   }
-}
-
-/* nav {
-  text-align: left;
-  gap: 2rem;
-  display: flex;
-  flex-direction: column;
-  font-size: 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -83,5 +104,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-} */
+}
 </style>
