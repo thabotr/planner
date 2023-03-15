@@ -14,7 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <button class="mobile-only">Nav Menu</button>
       <button class="mobile-only">Create Item Menu</button>
     </nav>
-    <div id="content">
+    <div id="content" class="hlt-1">
       <RouterView />
     </div>
   </main>
@@ -49,6 +49,8 @@ nav,
 #content {
   flex: 1;
   background-color: var(--color-bg);
+  display: grid;
+  padding: 0 1rem 0 1rem;
 }
 
 .mobile-only {
@@ -58,6 +60,10 @@ nav,
 @media (min-width: 1024px) {
   nav {
     padding-block: 6rem;
+  }
+
+  #content {
+    padding: 4rem 6% 4rem 1rem;
   }
 }
 
