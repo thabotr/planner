@@ -25,7 +25,6 @@ import { RouterLink, RouterView } from 'vue-router'
 main {
   height: 100vh;
   width: 100vw;
-  border: 2px solid greenyellow;
   left: 0;
   top: 0;
   position: absolute;
@@ -33,9 +32,11 @@ main {
 }
 
 nav {
+  box-sizing: border-box;
   width: 6rem;
   height: 100%;
   background-color: var(--color-primary);
+  border-right: 2px solid var(--color-accent);
 }
 
 nav,
@@ -70,6 +71,8 @@ nav,
     height: 6rem;
     width: 100%;
     align-items: center;
+    border-bottom: 2px solid var(--color-accent);
+    border-right: none;
   }
 
   nav,
