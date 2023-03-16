@@ -48,14 +48,9 @@ export default {
                     event.dataTransfer?.setDragImage(document.createElement('div'), 0, 0);
                     break;
                 case 'drag':
-                    // assume we have set this card's topleft coord on creation
-                    // assume we have set this drag item's top left coord on creation
-                    // get current drag position
                     this._moveCard(event.clientX, event.clientY);
                     break;
-                // set this cards trasnform style to offset topleft post by difference between curr and and drag item's coords
                 case 'dragend':
-                    // reset tranfrom style
                     this._resetCardDrag();
             }
         },
