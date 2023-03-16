@@ -1,7 +1,7 @@
 import { TimeInMillis } from "@/middleware/helpers";
 import ItemType from "@/types/ItemType";
 import { describe, expect, it } from "vitest";
-import TimeslotPreviewVue from "../TimeslotPreview.vue";
+import TimeslotPreviewVue from "../TimeslotPreviewCard.vue";
 import { CustomVueWrapper } from "./utils";
 
 describe('TimeslotPreview', () => {
