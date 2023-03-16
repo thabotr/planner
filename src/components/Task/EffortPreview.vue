@@ -25,8 +25,7 @@
 
 <script lang="ts">
 import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
-import ItemType
- from '@/types/ItemType';
+import ItemType from '@/types/ItemType';
 export default {
     props: {
         item: {
