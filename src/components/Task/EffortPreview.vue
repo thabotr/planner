@@ -4,21 +4,21 @@
             <template v-slot:prepend>
                 <v-icon icon="mdi-brain" id="i-mental"></v-icon>
             </template>
-            <v-list-item-title>{{ mEP }} mental EP</v-list-item-title>
+            <v-list-item-title><slot name="before-mep"></slot>{{ mEP }} mental EP</v-list-item-title>
         </v-list-item>
 
         <v-list-item>
             <template v-slot:prepend>
                 <v-icon icon="mdi-account-hard-hat" id="i-physical"></v-icon>
             </template>
-            <v-list-item-title>{{ pEP }} physical EP</v-list-item-title>
+            <v-list-item-title><slot name="before-pep"></slot>{{ pEP }} physical EP</v-list-item-title>
         </v-list-item>
 
         <v-list-item>
             <template v-slot:prepend>
                 <v-icon icon="mdi-timer" id="i-time"></v-icon>
             </template>
-            <v-list-item-title>{{ time }}</v-list-item-title>
+            <v-list-item-title><slot name="before-time"></slot>{{ time }}</v-list-item-title>
         </v-list-item>
     </div>
 </template>
