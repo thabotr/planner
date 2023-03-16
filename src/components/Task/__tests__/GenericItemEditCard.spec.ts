@@ -2,7 +2,7 @@ import GenericItemEditCard from "@/components/Task/GenericItemEditCard.vue";
 import { TimeInMillis, toSubjectiveEffortScore, verboseTimestamp } from "@/middleware/helpers";
 import ItemType from "@/types/ItemType";
 import { beforeEach, describe, expect, it } from "vitest";
-import { CustomVueWrapper } from "../utils";
+import { CustomVueWrapper } from "../../__tests__/utils";
 
 describe('GenericItemEditCard', () => {
     const defaultItem = new ItemType(30 * TimeInMillis.Minute, 50, 50, "id");

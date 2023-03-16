@@ -1,7 +1,7 @@
 import GenericCardVue from "@/components/Task/GenericCard.vue";
 import ItemType from "@/types/ItemType";
 import { describe, expect, it } from "vitest";
-import { CustomVueWrapper } from "../utils";
+import { CustomVueWrapper } from "../../__tests__/utils";
 
 describe('Card', () => {
     const wrapper = new CustomVueWrapper(GenericCardVue, {

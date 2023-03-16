@@ -1,7 +1,7 @@
 import UnscheduledTaskCardVue from "@/components/Task/UnscheduledTaskCard.vue";
 import DescriptiveItemType from "@/types/DescriptiveItemType";
 import { beforeEach, describe, expect, it } from "vitest";
-import { CustomVueWrapper } from "../utils";
+import { CustomVueWrapper } from "../../__tests__/utils";
 
 describe('UnscheduledTaskCard', () => {
     let wrapper: CustomVueWrapper;
