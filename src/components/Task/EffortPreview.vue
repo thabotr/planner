@@ -25,17 +25,19 @@
 
 <script lang="ts">
 import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
-
+import ItemType
+ from '@/types/ItemType';
 export default {
     props: {
-        mES: {type: Number, required: true},
-        pES: {type: Number, required: true},
-        length: {type: Number, required: true},
+        item: {
+            type: ItemType,
+            required: true,
+        }
     },
     computed: {
-        mEP() { return toSubjectiveEffortScore(this.mES); },
-        pEP() { return toSubjectiveEffortScore(this.pES); },
-        time() { return verboseTimestamp(this.length ?? 0); }
+        mEP() { return toSubjectiveEffortScore(this.item.mES); },
+        pEP() { return toSubjectiveEffortScore(this.item.pES); },
+        time() { return verboseTimestamp(this.item.length); }
     }
 }
 </script>

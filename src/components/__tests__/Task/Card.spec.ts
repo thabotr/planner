@@ -1,14 +1,12 @@
 import GenericCardVue from "@/components/Task/GenericCard.vue";
+import ItemType from "@/types/ItemType";
 import { describe, expect, it } from "vitest";
 import { CustomVueWrapper } from "../utils";
 
 describe('Card', () => {
     const wrapper = new CustomVueWrapper(GenericCardVue, {
         props: {
-            id: "id",
-            mES: 19,
-            pES: 70,
-            length: 1_000_000,
+            item: new ItemType(1_000_000, 19, 70, "id"),
         },
         slots: {
             default: 'Default',

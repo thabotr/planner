@@ -1,19 +1,16 @@
 import UnscheduledTaskCardVue from "@/components/Task/UnscheduledTaskCard.vue";
-import { readFileSync } from "fs";
+import DescriptiveItemType from "@/types/DescriptiveItemType";
 import { beforeEach, describe, expect, it } from "vitest";
 import { CustomVueWrapper } from "../utils";
 
 describe('UnscheduledTaskCard', () => {
     let wrapper: CustomVueWrapper;
+    const item: DescriptiveItemType = new DescriptiveItemType(
+        "id", 1_000_000, 70, 19, "Lorem ipsum dolor sit amet consectetur adipisicing elit."
+    );
     beforeEach(() => {
         wrapper = new CustomVueWrapper(UnscheduledTaskCardVue, {
-            props: {
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-                id: "id",
-                mES: 19,
-                pES: 70,
-                length: 1_000_000,
-            },
+            props: { item: item, },
         });
     });
     it('renders correctly', () => {

@@ -1,7 +1,7 @@
 <template>
-    <Card :length="length" :p-e-s="pES" :id="id" :m-e-s="mES" ref="card">
+    <Card :item="item">
         <div class="centered-content">
-            {{ description }}
+            {{ item.description }}
         </div>
         <template #actions>
             <div class="centered-content flex-vertical" aria-label="actions">
@@ -18,14 +18,13 @@
 <script lang="ts">
 import Card from './GenericCard.vue';
 import type { CreateComponentPublicInstance } from 'vue';
-
+import DescriptiveItemType from '@/types/DescriptiveItemType';
 export default {
     props: {
-        description: { type: String, required: true, },
-        id: { type: String, required: true, },
-        pES: { type: Number, required: true, },
-        mES: { type: Number, required: true, },
-        length: { type: Number, required: true, },
+        item: {
+            type: DescriptiveItemType,
+            required: true,
+        }
     },
     data() {
         return {

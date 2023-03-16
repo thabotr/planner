@@ -4,13 +4,13 @@
             <v-card id="fg">
                 <slot></slot>
                 <div class="flex-horizontal">
-                    <EffortPreview :m-e-s="mES" :length="length" :p-e-s="pES" />
+                    <EffortPreview :item="item" />
                     <slot name="controls"></slot>
                 </div>
             </v-card>
             <div id="actions">
                 <v-chip density="compact">
-                    {{ id }}
+                    {{ item.id }}
                 </v-chip>
                 <slot name="actions"></slot>
             </div>
@@ -20,13 +20,13 @@
 
 <script lang="ts">
 import EffortPreview from './EffortPreview.vue';
-
+import ItemType from '@/types/ItemType';
 export default {
     props: {
-        id: { type: String, required: true },
-        mES: { type: Number, required: true },
-        pES: { type: Number, required: true },
-        length: { type: Number, required: true },
+        item: {
+            type: ItemType,
+            required: true,
+        }
     },
     components: { EffortPreview }
 }
