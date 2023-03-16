@@ -1,0 +1,109 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UnscheduledTaskCard > renders correctly 1`] = `
+"<div data-v-f39f1573=\\"\\">
+  <div data-v-f39f1573=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" id=\\"bg\\">
+    <!---->
+    <div class=\\"v-card__loader\\">
+      <div class=\\"v-progress-linear v-theme--light\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+        <!---->
+        <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+          <div class=\\"v-progress-linear__indeterminate\\">
+            <div class=\\"v-progress-linear__indeterminate long\\"></div>
+            <div class=\\"v-progress-linear__indeterminate short\\"></div>
+          </div>
+        </transition-stub>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!---->
+    <div data-v-f39f1573=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" id=\\"fg\\">
+      <!---->
+      <div class=\\"v-card__loader\\">
+        <div class=\\"v-progress-linear v-theme--light\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+          <!---->
+          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+            <div class=\\"v-progress-linear__indeterminate\\">
+              <div class=\\"v-progress-linear__indeterminate long\\"></div>
+              <div class=\\"v-progress-linear__indeterminate short\\"></div>
+            </div>
+          </transition-stub>
+          <!---->
+        </div>
+      </div>
+      <!---->
+      <!---->
+      <div class=\\"centered-content\\">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+      <div data-v-f39f1573=\\"\\" class=\\"flex-horizontal\\">
+        <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\">
+          <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
+            <!----><span class=\\"v-list-item__underlay\\"></span>
+            <div class=\\"v-list-item__prepend\\">
+              <!---->
+              <!----><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>
+            </div>
+            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+              <!---->
+              <!---->
+              <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">1 mental EP</div>
+            </div>
+            <!---->
+          </div>
+          <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
+            <!----><span class=\\"v-list-item__underlay\\"></span>
+            <div class=\\"v-list-item__prepend\\">
+              <!---->
+              <!----><i data-v-19720537=\\"\\" class=\\"mdi-account-hard-hat mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-physical\\"></i>
+            </div>
+            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+              <!---->
+              <!---->
+              <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">21 physical EP</div>
+            </div>
+            <!---->
+          </div>
+          <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
+            <!----><span class=\\"v-list-item__underlay\\"></span>
+            <div class=\\"v-list-item__prepend\\">
+              <!---->
+              <!----><i data-v-19720537=\\"\\" class=\\"mdi-timer mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-time\\"></i>
+            </div>
+            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+              <!---->
+              <!---->
+              <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">16m</div>
+            </div>
+            <!---->
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!----><span class=\\"v-card__underlay\\"></span>
+    </div>
+    <div data-v-f39f1573=\\"\\" id=\\"actions\\"><span data-v-f39f1573=\\"\\" class=\\"v-chip v-theme--light v-chip--density-compact v-chip--size-default v-chip--variant-tonal\\" draggable=\\"false\\"><!----><span class=\\"v-chip__underlay\\"></span>
+      <!---->
+      <!---->id
+      <!---->
+      <!----></span>
+      <div class=\\"centered-content flex-vertical\\" aria-label=\\"actions\\"><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" draggable=\\"true\\" aria-label=\\"drag\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+          <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-drag mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+          <!---->
+          <!---->
+        </button><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"delete\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+          <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-delete-forever mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+          <!---->
+          <!---->
+        </button><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"edit\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+          <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-pencil mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+          <!---->
+          <!---->
+        </button></div>
+    </div>
+    <!---->
+    <!----><span class=\\"v-card__underlay\\"></span>
+  </div>
+</div>"
+`;
