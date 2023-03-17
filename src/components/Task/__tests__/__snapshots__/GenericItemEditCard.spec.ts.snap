@@ -36,7 +36,7 @@ exports[`GenericItemEditCard > renders correctly 1`] = `
       </div>
       <!---->
       <!---->
-      <div data-v-9b7145d6=\\"\\"><span data-v-9b7145d6=\\"\\" class=\\"v-chip v-theme--light v-chip--density-compact v-chip--size-default v-chip--variant-tonal\\" draggable=\\"false\\"><!----><span class=\\"v-chip__underlay\\"></span>
+      <div data-v-9b7145d6=\\"\\" class=\\"flex-horizontal gapped-s\\"><span data-v-9b7145d6=\\"\\" class=\\"v-chip v-theme--light v-chip--density-compact v-chip--size-default v-chip--variant-tonal\\" draggable=\\"false\\"><!----><span class=\\"v-chip__underlay\\"></span>
         <!---->
         <!---->itemTypeGoesHere
         <!---->

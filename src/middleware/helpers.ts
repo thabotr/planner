@@ -26,6 +26,14 @@ function verboseTimestamp(diffInMs: number): string {
     return `${diffSecs}s`;
 }
 
+function dateToMs(date: Date): number {
+    return date.getTime();
+}
+
+function dateFromMs(ms: number): Date {
+    return new Date(ms);
+}
+
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
 type TaskType = {
@@ -63,7 +71,7 @@ class Scheduler {
 
         return tslot.id;
     }
-    schedule(task: TaskType): {timeslotId: string, taskId: string} | null {
+    schedule(task: TaskType): { timeslotId: string, taskId: string } | null {
         for (let tslotIndex = 0; tslotIndex < this.#list.length; ++tslotIndex) {
             const scheduleTasks = this.#list[tslotIndex].tasks;
             const allTasks = scheduleTasks.concat(task);
@@ -80,7 +88,7 @@ class Scheduler {
 
             if (superTaskFitsIntoTimeslot) {
                 this.#list[tslotIndex].tasks = allTasks;
-                return {timeslotId: timeslot.id, taskId: task.id};
+                return { timeslotId: timeslot.id, taskId: task.id };
             }
 
         }
@@ -142,6 +150,8 @@ export {
     getRandomTime,
     TimeInMillis,
     Scheduler,
+    dateToMs,
+    dateFromMs,
 };
 
 export type {

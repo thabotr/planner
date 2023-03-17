@@ -1,6 +1,6 @@
 <template>
     <GenericCard :item="tempItem">
-        <div>
+        <div class="flex-horizontal gapped-s">
             <v-chip density="compact">{{ itemType }}</v-chip>
             <slot name="header"></slot>
         </div>
@@ -56,18 +56,27 @@ export default {
             type: String,
             required: true,
         },
+        lowerBound: ItemType,
     },
     data() {
         return {
             tempItem: new ItemType(this.item.length, this.item.mES, this.item.pES, this.item.id),
-            incRate: 0,
         };
+    },
+    watch: {
+        lowerBound(lowerBound?: ItemType) {
+            const length = Math.max(lowerBound?.length ?? this.item.length, this.item.length);
+            const pES = Math.max(lowerBound?.pES ?? this.item.pES, this.item.pES);
+            const mES = Math.max(lowerBound?.mES ?? this.item.mES, this.item.mES);
+            this.tempItem = new ItemType(length, mES, pES, this.item.id);
+        }
     },
     components: { GenericCard },
     methods: {
         updateLen(op: 'inc' | 'dec') {
             const fiveMinutes = 5 * TimeInMillis.Minute;
             const sixHours = 6 * TimeInMillis.Hour;
+            const minTime = this.lowerBound?.length ?? 0;
             switch (op) {
                 case 'inc':
                     const increased = this.tempItem.length + fiveMinutes;
@@ -76,23 +85,24 @@ export default {
                     return;
                 case 'dec':
                     const descreased = this.tempItem.length - fiveMinutes;
-                    const decBoundedBy5mins = Math.max(descreased, fiveMinutes);
-                    this.tempItem.length = decBoundedBy5mins;
+                    const decBounded = Math.max(descreased, fiveMinutes, minTime);
+                    this.tempItem.length = decBounded;
             }
         },
         updateES(name: 'mES' | 'pES', op: 'inc' | 'dec') {
             switch (name) {
                 case 'mES':
-                    this.tempItem.mES = this.boundedSteppedUpdate(op, this.tempItem.mES);
+                    const minMES = Math.max(0, this.lowerBound?.mES ?? 0);
+                    this.tempItem.mES = this.boundedSteppedUpdate(op, this.tempItem.mES, minMES);
                     return;
                 default:
-                    this.tempItem.pES = this.boundedSteppedUpdate(op, this.tempItem.pES);
+                    const minPES = Math.max(0, this.lowerBound?.pES ?? 0);
+                    this.tempItem.pES = this.boundedSteppedUpdate(op, this.tempItem.pES, minPES);
                     return;
             }
         },
-        boundedSteppedUpdate(type: 'inc' | 'dec', value: number): number {
+        boundedSteppedUpdate(type: 'inc' | 'dec', value: number, effortScoreMin: number): number {
             const effortScoreMax = 100;
-            const effortScoreMin = 0;
             const effortScoreStep = 10;
             switch (type) {
                 case 'inc':
