@@ -39,6 +39,10 @@ nav {
   border-right: 2px solid var(--color-accent);
 }
 
+#links * {
+  font-weight: bold;
+}
+
 nav,
 #links {
   flex-direction: column;
