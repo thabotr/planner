@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^4.2.1",
     "pinia": "^2.0.32",
     "v-calendar": "^3.0.0-alpha.8",
     "vue": "^3.2.47",
