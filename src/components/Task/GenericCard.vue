@@ -37,7 +37,7 @@ export default {
 <style scoped>
 #bg {
     display: grid;
-    grid-template-columns: 90% 10%;
+    grid-template-columns: 1fr auto;
     background-color: var(--color-accent);
 }
 
