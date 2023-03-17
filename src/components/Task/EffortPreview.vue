@@ -1,25 +1,17 @@
 <template>
-    <div>
-        <v-list-item>
-            <template v-slot:prepend>
-                <v-icon icon="mdi-brain" id="i-mental"></v-icon>
-            </template>
-            <v-list-item-title><slot name="before-mep"></slot>{{ mEP }} mental EP</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item>
-            <template v-slot:prepend>
-                <v-icon icon="mdi-account-hard-hat" id="i-physical"></v-icon>
-            </template>
-            <v-list-item-title><slot name="before-pep"></slot>{{ pEP }} physical EP</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item>
-            <template v-slot:prepend>
-                <v-icon icon="mdi-timer" id="i-time"></v-icon>
-            </template>
-            <v-list-item-title><slot name="before-time"></slot>{{ time }}</v-list-item-title>
-        </v-list-item>
+    <div class="flex-vertical">
+        <div class="flex-horizontal">
+            <v-icon icon="mdi-brain" id="i-mental" />
+            <slot name="before-mep"></slot>{{ mEP }} mental EP
+        </div>
+        <div class="flex-horizontal">
+            <v-icon icon="mdi-account-hard-hat" id="i-physical" />
+            <slot name="before-pep"></slot>{{ pEP }} physical EP
+        </div>
+        <div class="flex-horizontal">
+            <v-icon icon="mdi-timer" id="i-time" />
+            <slot name="before-time"></slot>{{ time }}
+        </div>
     </div>
 </template>
 
@@ -42,15 +34,19 @@ export default {
 </script>
 
 <style scoped>
-.v-list-item #i-mental {
+.v-chip {
+    border-radius: 0.1rem;
+}
+
+#i-mental {
     color: var(--color-brain);
 }
 
-.v-list-item #i-physical {
+#i-physical {
     color: var(--color-worker);
 }
 
-.v-list-item #i-time {
+#i-time {
     color: var(--color-timer);
 }
 </style>

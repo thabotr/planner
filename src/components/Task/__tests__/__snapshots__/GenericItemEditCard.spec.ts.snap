@@ -43,49 +43,13 @@ exports[`GenericItemEditCard > renders correctly 1`] = `
           <!---->
           <!----></span>Some header content goes here
         </div>Default<div data-v-f39f1573=\\"\\" class=\\"flex-horizontal\\">
-          <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\">
-            <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
-              <!----><span class=\\"v-list-item__underlay\\"></span>
-              <div class=\\"v-list-item__prepend\\">
-                <!---->
-                <!----><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>
-              </div>
-              <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-                <!---->
-                <!---->
-                <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">8 mental EP</div>
-              </div>
-              <!---->
-            </div>
-            <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
-              <!----><span class=\\"v-list-item__underlay\\"></span>
-              <div class=\\"v-list-item__prepend\\">
-                <!---->
-                <!----><i data-v-19720537=\\"\\" class=\\"mdi-account-hard-hat mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-physical\\"></i>
-              </div>
-              <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-                <!---->
-                <!---->
-                <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">8 physical EP</div>
-              </div>
-              <!---->
-            </div>
-            <div data-v-19720537=\\"\\" class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text\\">
-              <!----><span class=\\"v-list-item__underlay\\"></span>
-              <div class=\\"v-list-item__prepend\\">
-                <!---->
-                <!----><i data-v-19720537=\\"\\" class=\\"mdi-timer mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-time\\"></i>
-              </div>
-              <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-                <!---->
-                <!---->
-                <div data-v-19720537=\\"\\" class=\\"v-list-item-title\\">30m</div>
-              </div>
-              <!---->
-            </div>
+          <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\" class=\\"flex-vertical\\">
+            <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>8 mental EP </div>
+            <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-account-hard-hat mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-physical\\"></i>8 physical EP </div>
+            <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-timer mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-time\\"></i>30m</div>
           </div>
           <div data-v-9b7145d6=\\"\\" id=\\"controls\\" class=\\"flex-vertical\\">
-            <div data-v-9b7145d6=\\"\\" id=\\"mes-control\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement mes\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+            <div data-v-9b7145d6=\\"\\" id=\\"mes-control\\" class=\\"flex-horizontal\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement mes\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
                 <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-minus mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
                 <!---->
                 <!---->
@@ -94,7 +58,7 @@ exports[`GenericItemEditCard > renders correctly 1`] = `
                 <!---->
                 <!---->
               </button></div>
-            <div data-v-9b7145d6=\\"\\" id=\\"pes-control\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement pes\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+            <div data-v-9b7145d6=\\"\\" id=\\"pes-control\\" class=\\"flex-horizontal\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement pes\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
                 <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-minus mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
                 <!---->
                 <!---->
@@ -103,7 +67,7 @@ exports[`GenericItemEditCard > renders correctly 1`] = `
                 <!---->
                 <!---->
               </button></div>
-            <div data-v-9b7145d6=\\"\\" id=\\"length-control\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement time\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+            <div data-v-9b7145d6=\\"\\" id=\\"length-control\\" class=\\"flex-horizontal\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"decrement time\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
                 <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-undo mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
                 <!---->
                 <!---->
@@ -123,7 +87,7 @@ exports[`GenericItemEditCard > renders correctly 1`] = `
       <!---->id
       <!---->
       <!----></span>
-      <div data-v-9b7145d6=\\"\\" class=\\"flex-vertical justify-space-between all-actions\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"delete\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+      <div data-v-9b7145d6=\\"\\" class=\\"flex-vertical all-actions justify-space-between\\"><button data-v-9b7145d6=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"delete\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
           <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-delete-forever mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
           <!---->
           <!---->
