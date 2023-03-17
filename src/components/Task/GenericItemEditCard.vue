@@ -18,19 +18,19 @@
         </template>
         <template #controls>
             <div id="controls" class="flex-vertical">
-                <div id="mes-control">
+                <div id="mes-control" class="flex-horizontal">
                     <v-btn icon="mdi-minus" aria-label="decrement mes" density="compact" flat
                         @click="updateES('mES', 'dec')"></v-btn>
                     <v-btn icon="mdi-plus" aria-label="increment mes" density="compact" flat
                         @click="updateES('mES', 'inc')"></v-btn>
                 </div>
-                <div id="pes-control">
+                <div id="pes-control" class="flex-horizontal">
                     <v-btn icon="mdi-minus" aria-label="decrement pes" density="compact" flat
                         @click="updateES('pES', 'dec')"></v-btn>
                     <v-btn icon="mdi-plus" aria-label="increment pes" density="compact" flat
                         @click="updateES('pES', 'inc')"></v-btn>
                 </div>
-                <div id="length-control">
+                <div id="length-control" class="flex-horizontal">
                     <v-btn icon="mdi-undo" aria-label="decrement time" density="compact" flat
                         @click="updateLen('dec')"></v-btn>
                     <v-btn icon="mdi-fast-forward-5" aria-label="increment time" density="compact" flat
