@@ -6,7 +6,7 @@
         </div>
         <slot></slot>
         <template #actions>
-            <div class="flex-vertical all-actions">
+            <div class="flex-vertical all-actions justify-space-between">
                 <v-btn aria-label="delete" @click="$emit('delete')" icon="mdi-delete-forever" density="compact"
                     flat></v-btn>
                 <div class="flex-vertical safe-actions">
@@ -127,7 +127,7 @@ export default {
 }
 
 .safe-actions {
-    gap: 0.2rem;
+    gap: 1rem;
 }
 
 #controls {
