@@ -23,7 +23,7 @@
                     {{ remainingEffort.pEP }} pEP
                 </v-chip>
                 <v-chip prepend-icon="mdi-timer" density="compact">
-                    ~{{ remainingEffort.time }}
+                    {{ remainingEffort.time }}
                 </v-chip>
             </v-chip-group>
         </div>
@@ -48,7 +48,7 @@ import GenericItemEditCard from './Task/GenericItemEditCard.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import ItemType from '@/types/ItemType';
-import { toSubjectiveEffortScore, verboseTimestamp, type TaskType, dateToMs, dateFromMs } from '@/middleware/helpers';
+import { toSubjectiveEffortScore, TimeInMillis, type TaskType, dateToMs, dateFromMs } from '@/middleware/helpers';
 
 export default {
     props: {
@@ -94,7 +94,7 @@ export default {
                 '',
             );
             return {
-                time: verboseTimestamp(effortDiff.length),
+                time: `${Math.floor(effortDiff.length/TimeInMillis.Minute)}mins`,
                 pEP: toSubjectiveEffortScore(effortDiff.pES),
                 mEP: toSubjectiveEffortScore(effortDiff.mES),
             };
