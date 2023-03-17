@@ -1,14 +1,16 @@
 <template>
     <div>
         <v-card id="bg">
-            <v-card id="fg">
-                <slot></slot>
-                <div class="flex-horizontal">
-                    <EffortPreview :item="item" />
-                    <slot name="controls"></slot>
-                </div>
-            </v-card>
-            <div id="actions">
+            <div>
+                <v-card id="fg">
+                    <slot></slot>
+                    <div class="flex-horizontal">
+                        <EffortPreview :item="item" />
+                        <slot name="controls"></slot>
+                    </div>
+                </v-card>
+            </div>
+            <div id="actions" class="padded-s">
                 <v-chip density="compact">
                     {{ item.id }}
                 </v-chip>
@@ -34,13 +36,14 @@ export default {
 
 <style scoped>
 #bg {
-    display: flex;
+    display: grid;
+    grid-template-columns: 90% 10%;
     padding-right: 0.5rem;
     background-color: var(--color-accent);
+    padding-right: 0.5rem;
 }
 
 #fg {
-    margin-right: 0.5rem;
     background-color: var(--color-secondary);
     padding: 1rem;
     flex: 1;
@@ -49,7 +52,6 @@ export default {
 #actions {
     height: 100%;
     width: 5rem;
-    padding-block: 0.5rem;
 }
 
 #actions .v-chip {

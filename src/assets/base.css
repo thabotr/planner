@@ -127,6 +127,10 @@ body {
   gap: 0.2rem;
 }
 
+.padded-s {
+  padding: 0.2rem;
+}
+
 .cursor-pointer:hover {
   cursor: pointer;
 }
