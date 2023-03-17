@@ -38,9 +38,7 @@ export default {
 #bg {
     display: grid;
     grid-template-columns: 90% 10%;
-    padding-right: 0.5rem;
     background-color: var(--color-accent);
-    padding-right: 0.5rem;
 }
 
 #fg {
@@ -50,8 +48,7 @@ export default {
 }
 
 #actions {
-    height: 100%;
-    width: 5rem;
+    padding-block: 1rem;
 }
 
 #actions .v-chip {
