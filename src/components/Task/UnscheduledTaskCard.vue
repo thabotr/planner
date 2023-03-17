@@ -6,7 +6,7 @@
         <template #actions>
             <div class="centered-content flex-vertical" aria-label="actions">
                 <v-btn icon="mdi-drag" density="compact" flat draggable="true" aria-label="drag" @dragstart="onDrag"
-                    @drag="onDrag" @dragend="onDrag" ref="drag"></v-btn>
+                    @drag="onDrag" @dragend="onDrag" ref="drag" class="cursor-drag"></v-btn>
                 <v-btn icon="mdi-delete-forever" density="compact" flat aria-label="delete"
                     @click="$emit('delete')"></v-btn>
                 <v-btn icon="mdi-pencil" density="compact" flat aria-label="edit" @click="$emit('edit')"></v-btn>
@@ -79,10 +79,6 @@ export default {
 <style scope>
 [aria-label='actions'] {
     gap: 1rem;
-}
-
-[aria-label="drag"] {
-    cursor: grab;
 }
 
 .v-btn {

@@ -122,3 +122,19 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.gapped-s {
+  gap: 0.2rem;
+}
+
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+
+.cursor-drag:hover {
+  cursor: grab;
+}
+
+.cursor-drag:active {
+  cursor: grabbing;
+}
