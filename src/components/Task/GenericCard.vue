@@ -49,6 +49,7 @@ export default {
 
 #actions {
     padding-block: 1rem;
+    display: grid;
 }
 
 #actions .v-chip {
