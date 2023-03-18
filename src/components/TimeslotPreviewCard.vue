@@ -44,7 +44,7 @@ export default {
 
 </script>
 
-<style style>
+<style scoped>
 .v-btn {
     background-color: transparent;
 }
