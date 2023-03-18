@@ -1,6 +1,6 @@
 <template>
-    <v-card class="fill-parent">
-        <div v-if="scheduledTask && dateTimeStrings" class="padded-s">
+    <v-card class="fill-parent" id="container">
+        <div v-if="scheduledTask && dateTimeStrings" class="padded-s gap-half flex-vertical">
             <v-list-item :title="`starts @ ${dateTimeStrings.startTime}`" :subtitle="dateTimeStrings.startDate">
                 <template v-if="alarmable" #append>
                     <v-btn :icon="alarm ? 'mdi-alarm-note' : 'mdi-alarm-plus'" density="comfortable" @click="alarm = !alarm"
@@ -89,4 +89,8 @@ export default {
 </script>
 
 <style scope>
+#container {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-accent);
+}
 </style>
