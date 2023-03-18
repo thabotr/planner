@@ -66,6 +66,7 @@ export default {
 
                 const card = this.$el as HTMLElement;
                 card.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                card.style.zIndex = '1';
                 this.prevLeftOffset = {
                     x: draggerX,
                     y: draggerY,
