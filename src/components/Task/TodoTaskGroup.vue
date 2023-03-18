@@ -1,19 +1,21 @@
 <template>
-    <div v-if="scheduledTask && dateTimeStrings" class="padded-s">
-        <v-list-item :title="`starts @ ${dateTimeStrings.startTime}`" :subtitle="dateTimeStrings.startDate">
-            <template v-if="alarmable" #append>
-                <v-btn :icon="alarm ? 'mdi-alarm-note' : 'mdi-alarm-plus'" density="comfortable" @click="alarm = !alarm"
-                    :aria-label="alarm ? 'disable reminder' : 'enable reminder'"></v-btn>
-            </template>
-        </v-list-item>
-        <ActiveTaskCard :task="scheduledTask"></ActiveTaskCard>
-        <v-list-item :title="`ends @ ${dateTimeStrings.endTime}`" :subtitle="dateTimeStrings.duration" />
-    </div>
-    <div v-else class="padded-s">
-        <h1 class="centered-content">
-            No upcoming scheduled tasks
-        </h1>
-    </div>
+    <v-card class="fill-parent">
+        <div v-if="scheduledTask && dateTimeStrings" class="padded-s">
+            <v-list-item :title="`starts @ ${dateTimeStrings.startTime}`" :subtitle="dateTimeStrings.startDate">
+                <template v-if="alarmable" #append>
+                    <v-btn :icon="alarm ? 'mdi-alarm-note' : 'mdi-alarm-plus'" density="comfortable" @click="alarm = !alarm"
+                        :aria-label="alarm ? 'disable reminder' : 'enable reminder'"></v-btn>
+                </template>
+            </v-list-item>
+            <ActiveTaskCard :task="scheduledTask"></ActiveTaskCard>
+            <v-list-item :title="`ends @ ${dateTimeStrings.endTime}`" :subtitle="dateTimeStrings.duration" />
+        </div>
+        <div v-else class="padded-s">
+            <h1 class="centered-content">
+                No upcoming scheduled tasks
+            </h1>
+        </div>
+    </v-card>
 </template>
 
 <script lang="ts">
@@ -86,4 +88,5 @@ export default {
 }
 </script>
 
-<style scope></style>
+<style scope>
+</style>
