@@ -34,6 +34,10 @@ function dateFromMs(ms: number): Date {
     return new Date(ms);
 }
 
+function nowInMs(): number {
+    return new Date().getTime();
+}
+
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
 type TaskType = {
@@ -152,6 +156,7 @@ export {
     Scheduler,
     dateToMs,
     dateFromMs,
+    nowInMs,
 };
 
 export type {
