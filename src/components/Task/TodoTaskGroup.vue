@@ -1,6 +1,6 @@
 <template>
     <v-card class="fill-parent" id="container">
-        <div v-if="scheduledTask && dateTimeStrings" class="padded-s gap-half flex-vertical">
+        <div v-if="scheduledTask && dateTimeStrings" class="padded-s gap-half flex-vertical fill-parent">
             <v-list-item :title="`starts @ ${dateTimeStrings.startTime}`" :subtitle="dateTimeStrings.startDate">
                 <template v-if="alarmable" #append>
                     <v-btn :icon="alarm ? 'mdi-alarm-note' : 'mdi-alarm-plus'" density="comfortable" @click="alarm = !alarm"
