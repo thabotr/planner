@@ -1,5 +1,5 @@
 <template>
-    <v-card class="fill-parent" id="container">
+    <v-card class="fill-parent" id="todo-task-group-container">
         <div v-if="scheduledTask && dateTimeStrings" class="padded-s gap-half flex-vertical fill-parent">
             <v-list-item :title="`starts @ ${dateTimeStrings.startTime}`" :subtitle="dateTimeStrings.startDate">
                 <template v-if="alarmable" #append>
@@ -89,7 +89,7 @@ export default {
 </script>
 
 <style scope>
-#container {
+#todo-task-group-container {
     background-color: var(--color-bg);
     border: 1px solid var(--color-accent);
 }
