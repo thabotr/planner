@@ -45,6 +45,7 @@ export default {
     background-color: var(--color-secondary);
     padding: 1rem;
     flex: 1;
+    height: 100%;
 }
 
 #actions {
