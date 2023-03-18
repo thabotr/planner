@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div id="create-item-group-container" class="flex-vertical">
         <CreateItemBtn name="Timeslot" icon="mdi-calendar" aria-label="create timeslot" v-if="expanded" @click="$emit('create-timeslot')" />
         <CreateItemBtn name="Task" icon="mdi-clipboard-edit" aria-label="create task" v-if="expanded" @click="$emit('create-task')"/>
         <v-btn icon :aria-label="controllerLabel" @click="expanded = !expanded">
@@ -30,15 +30,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .v-btn {
     background-color: var(--color-primary);
     color: var(--color-accent);
 }
 
-#container {
-    display: flex;
-    flex-direction: column;
+#create-item-group-container {
     align-items: flex-end;
     gap: 1rem;
 }
