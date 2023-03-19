@@ -21,7 +21,7 @@
 <script lang="ts">
 import { toSubjectiveEffortScore, verboseTimestamp } from '@/middleware/helpers';
 import ItemType from '@/types/ItemType';
-import EffortPreviewVue from './Task/EffortPreview.vue';
+import EffortPreviewVue from '../Task/EffortPreview.vue';
 export default {
     props: {
         timeslot: {

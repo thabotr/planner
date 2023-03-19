@@ -2,7 +2,7 @@ import { TimeInMillis } from "@/middleware/helpers";
 import ItemType from "@/types/ItemType";
 import { describe, expect, it } from "vitest";
 import TimeslotPreviewVue from "../TimeslotPreviewCard.vue";
-import { CustomVueWrapper } from "./utils";
+import { CustomVueWrapper } from "../../__tests__/utils";
 
 describe('TimeslotPreview', () => {
     const timeslot: ItemType = new ItemType(TimeInMillis.Day, 10, 20, "id");
