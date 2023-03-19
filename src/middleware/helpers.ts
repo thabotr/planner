@@ -38,6 +38,16 @@ function nowInMs(): number {
     return new Date().getTime();
 }
 
+function millisSinceStartOfDay(time?: number): number {
+    const today = dateFromMs(nowInMs());
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const startOfTodayInMillis = dateToMs(startOfToday);
+    if (time === undefined) {
+        return nowInMs() - startOfTodayInMillis;
+    }
+    return time - startOfTodayInMillis;
+}
+
 const getRandomTime = () => Math.round(Math.random() * 1_000 * 60 * 60 * 24);
 
 type TaskType = {
@@ -157,6 +167,7 @@ export {
     dateToMs,
     dateFromMs,
     nowInMs,
+    millisSinceStartOfDay,
 };
 
 export type {
