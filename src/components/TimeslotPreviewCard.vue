@@ -7,7 +7,7 @@
                     <template #before-pep>{{ consumedPEP }}/</template>
                     <template #before-time>{{ consumedTime }}/</template>
                 </EffortPreviewVue>
-                <div id="actions" class="flex-vertical justify-space-between">
+                <div id="timeslot-preview-card-actions" class="flex-vertical justify-space-between">
                     <v-chip density="compact">
                         {{ timeslot.id }}
                     </v-chip>
@@ -49,12 +49,13 @@ export default {
     background-color: transparent;
 }
 
-#actions .v-chip {
+#timeslot-preview-card-actions .v-chip {
     background-color: var(--color-secondary);
 }
 
-#actions {
+#timeslot-preview-card-actions {
     padding: 0.2rem;
+    align-items: center;
 }
 
 .v-btn {
