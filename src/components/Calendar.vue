@@ -1,36 +1,38 @@
 <template>
-    <div class="flex-horizontal">
-        <table class="table table-border">
-            <tr small-text=''>
-                <td class="text-align-center">M</td>
-                <td class="text-align-center">T</td>
-                <td class="text-align-center">W</td>
-                <td class="text-align-center">T</td>
-                <td class="text-align-center">F</td>
-                <td class="text-align-center">S</td>
-                <td class="text-align-center">S</td>
-            </tr>
-            <tr v-for="item in gridArray">
-                <td v-for="data in item" class="text-align-center">
-                    <div @click="$emit('click-date', data.date)" class="calendar-date"
-                        :is-month-day="data.isDayOfMonth ? undefined : ''" :is-today="data.isToday ? '' : undefined">
-                        {{ data.date.getDate() }}
-                    </div>
-                </td>
-            </tr>
-        </table>
-        <div class="flex-vertical justify-space-between">
-            <div class="text-align-center">
-                <a @click="previousMonth" wide="">{{ '↑' }}</a>
-            </div>
-            <div class="text-align-center vertical-text">
-                {{ currentMonthAndYear }}
-            </div>
-            <div class="text-align-center">
-                <a @click="nextMonth" wide="">{{ '↓' }}</a>
+    <v-card id="calendar">
+        <div class="flex-horizontal fill-parent centered-content">
+            <table class="table table-border">
+                <tr small-text=''>
+                    <td class="text-align-center">M</td>
+                    <td class="text-align-center">T</td>
+                    <td class="text-align-center">W</td>
+                    <td class="text-align-center">T</td>
+                    <td class="text-align-center">F</td>
+                    <td class="text-align-center">S</td>
+                    <td class="text-align-center">S</td>
+                </tr>
+                <tr v-for="item in gridArray">
+                    <td v-for="data in item" class="text-align-center">
+                        <div @click="$emit('click-date', data.date)" class="calendar-date"
+                            :is-month-day="data.isDayOfMonth ? undefined : ''" :is-today="data.isToday ? '' : undefined">
+                            {{ data.date.getDate() }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="flex-vertical justify-space-between">
+                <div class="text-align-center">
+                    <a @click="previousMonth" wide="">{{ '↑' }}</a>
+                </div>
+                <div class="text-align-center vertical-text">
+                    {{ currentMonthAndYear }}
+                </div>
+                <div class="text-align-center">
+                    <a @click="nextMonth" wide="">{{ '↓' }}</a>
+                </div>
             </div>
         </div>
-    </div>
+    </v-card>
 </template>
 
 <script lang="ts">
@@ -129,6 +131,12 @@ export default {
 
 [small-text] {
     font-size: xx-small;
+}
+
+#calendar {
+    width: 100%;
+    justify-content: center;
+    background-color: var(--color-secondary);
 }
 
 .calendar-date:hover,
