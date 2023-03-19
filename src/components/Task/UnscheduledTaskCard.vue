@@ -26,6 +26,9 @@ export default {
         onDrag(event: DragEvent) {
             const card = document.getElementById(
                 `unscheduled-task-card-${this.item.id}`) as HTMLElement;
+            if (!card) {
+                return;
+            }
             switch (event.type) {
                 case 'dragstart':
                     if (!event.dataTransfer) {

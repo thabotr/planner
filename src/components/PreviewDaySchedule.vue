@@ -111,9 +111,6 @@ export default {
 <style scoped>
 .v-card {
     background-color: transparent;
-    border: 1px solid var(--color-accent);
-    height: 80vh;
-    overflow-y: scroll;
 }
 
 li {
@@ -124,6 +121,8 @@ li {
 
 ul {
     position: relative;
+    height: 70vh;
+    overflow-y: scroll;
 }
 
 #current-time-marker {

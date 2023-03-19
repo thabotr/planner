@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`UnscheduledTaskCard > renders correctly 1`] = `
-"<div data-v-f39f1573=\\"\\">
+"<div data-v-f39f1573=\\"\\" data-v-b7f4701c=\\"\\" id=\\"unscheduled-task-card-id\\">
   <div data-v-f39f1573=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" id=\\"bg\\">
     <!---->
     <div class=\\"v-card__loader\\">
@@ -37,7 +37,7 @@ exports[`UnscheduledTaskCard > renders correctly 1`] = `
         </div>
         <!---->
         <!---->
-        <div class=\\"centered-content\\">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+        <div data-v-b7f4701c=\\"\\" class=\\"centered-content\\">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
         <div data-v-f39f1573=\\"\\" class=\\"flex-horizontal\\">
           <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\" class=\\"flex-vertical\\">
             <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>1 mental EP </div>
@@ -54,15 +54,15 @@ exports[`UnscheduledTaskCard > renders correctly 1`] = `
       <!---->id
       <!---->
       <!----></span>
-      <div class=\\"centered-content flex-vertical\\" aria-label=\\"actions\\"><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated cursor-drag\\" draggable=\\"true\\" aria-label=\\"drag\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+      <div data-v-b7f4701c=\\"\\" class=\\"centered-content flex-vertical\\" aria-label=\\"actions\\"><button data-v-b7f4701c=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated cursor-drag\\" draggable=\\"true\\" aria-label=\\"drag\\" id=\\"unscheduled-task-card-drag-id\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
           <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-drag mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
           <!---->
           <!---->
-        </button><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"delete\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        </button><button data-v-b7f4701c=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"delete\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
           <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-delete-forever mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
           <!---->
           <!---->
-        </button><button type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"edit\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        </button><button data-v-b7f4701c=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--flat v-btn--icon v-theme--light v-btn--density-compact v-btn--size-default v-btn--variant-elevated\\" aria-label=\\"edit\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
           <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><i class=\\"mdi-pencil mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
           <!---->
           <!---->
