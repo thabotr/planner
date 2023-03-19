@@ -1,12 +1,10 @@
 <template>
-    <v-card class="fill-parent">
+    <v-card class="fill-parent" @drop="onDrop" @dragover.prevent @dragenter.prevent>
         <template #title>Day Schedule</template>
         <template #subtitle>{{ dayOnViewString }}</template>
         <ul id="timeslot-container">
             <v-divider id="current-time-marker" thickness="5" ref="current-time-marker" />
-            <li v-for="i in 95">
-                {{ markerTime(i) }}
-            </li>
+            <li v-for="i in 96">{{ markerTime(i - 1) }}</li>
             <div v-for="tslot in timeslots" :id="`preview-day-schedule-timeslot-${tslot.id}`" class="timeslot">
                 <TimeslotPreviewCard :timeslot="tslot" :usage="getTimeslotUsage(tslot)" class="fill-parent"
                     @edit="$emit('edit', tslot)" />
@@ -21,9 +19,10 @@ import { dateFromMs, nowInMs, millisSinceStartOfDay, TimeInMillis } from '@/midd
 import type TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import TimeslotPreviewCard from './PreviewDaySchedule/TimeslotPreviewCard.vue';
 import ItemType from '@/types/ItemType';
+import type DescriptiveItemType from '@/types/DescriptiveItemType';
 
 export default {
-    emits: ['edit'],
+    emits: ['edit', 'schedule',],
     props: {
         timeslots: { type: Array<TimedItemTypeWithTasks>, required: true, },
     },
@@ -33,6 +32,15 @@ export default {
         }
     },
     methods: {
+        onDrop(event: DragEvent) {
+            if (!event.dataTransfer) {
+                return;
+            }
+            const unscheduledTask: DescriptiveItemType = JSON.parse(
+                event.dataTransfer.getData('unscheduledTask'),
+            );
+            this.$emit('schedule', unscheduledTask);
+        },
         getTimeslotUsage(timeslot: TimedItemTypeWithTasks): ItemType {
             const identityTask = new ItemType(0, 0, 0, '');
             const items = timeslot.scheduledTasks
