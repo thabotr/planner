@@ -1,7 +1,7 @@
 <template>
     <GenericItemEditCardVue :item="task" item-type="TASK" @save="onSave">
         <v-form ref="form" id="description">
-            <v-text-field v-model="tempDescription" aria-label="description" :rules="[descriptionGEQ5Chars]"
+            <v-textarea v-model="tempDescription" aria-label="description" :rules="[descriptionGEQ5Chars]"
                 label="What to do?" density="compact" clearable />
         </v-form>
     </GenericItemEditCardVue>
@@ -21,7 +21,7 @@ export default {
     },
     data() {
         return {
-            tempDescription: "",
+            tempDescription: this.task.description,
         };
     },
     methods: {

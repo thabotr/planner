@@ -44,10 +44,10 @@ exports[`TaskEditCard > renders correctly 1`] = `
           <!----></span>
         </div>
         <form data-v-bf677fdb=\\"\\" class=\\"v-form\\" novalidate=\\"\\" id=\\"description\\">
-          <div data-v-bf677fdb=\\"\\" class=\\"v-input v-input--horizontal v-input--density-compact v-text-field\\">
+          <div data-v-bf677fdb=\\"\\" class=\\"v-input v-input--horizontal v-input--density-compact v-input--dirty v-textarea v-text-field\\">
             <!---->
             <div class=\\"v-input__control\\">
-              <div class=\\"v-field v-field--appended v-field--variant-filled v-theme--light\\" role=\\"textbox\\">
+              <div class=\\"v-field v-field--active v-field--appended v-field--dirty v-field--variant-filled v-theme--light\\" role=\\"textbox\\">
                 <div class=\\"v-field__overlay\\"></div>
                 <div class=\\"v-field__loader\\">
                   <div class=\\"v-progress-linear v-theme--light\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
@@ -63,16 +63,17 @@ exports[`TaskEditCard > renders correctly 1`] = `
                   </div>
                 </div>
                 <!---->
-                <div class=\\"v-field__field\\" data-no-activator=\\"\\"><label class=\\"v-label v-field-label v-field-label--floating\\" aria-hidden=\\"true\\" for=\\"input-1\\">
+                <div class=\\"v-field__field\\" data-no-activator=\\"\\"><label class=\\"v-label v-field-label v-field-label--floating\\" aria-hidden=\\"true\\" for=\\"input-2\\">
                     <!---->What to do?
-                  </label><label class=\\"v-label v-field-label\\" for=\\"input-1\\">
+                  </label><label class=\\"v-label v-field-label\\" for=\\"input-2\\">
                     <!---->What to do?
                   </label>
-                  <!----><input size=\\"1\\" type=\\"text\\" id=\\"input-1\\" aria-describedby=\\"input-1-messages\\" aria-label=\\"description\\" class=\\"v-field__input\\">
+                  <!----><textarea class=\\"v-field__input\\" rows=\\"5\\" id=\\"input-2\\" aria-describedby=\\"input-2-messages\\" aria-label=\\"description\\"></textarea>
+                  <!---->
                   <!---->
                 </div>
                 <transition-stub name=\\"expand-x-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-                  <div class=\\"v-field__clearable\\" style=\\"display: none;\\"><i class=\\"mdi-close-circle mdi v-icon notranslate v-theme--light v-icon--size-default v-icon--clickable\\" role=\\"button\\" aria-hidden=\\"false\\" aria-label=\\"Clear What to do?\\"></i></div>
+                  <div class=\\"v-field__clearable\\"><i class=\\"mdi-close-circle mdi v-icon notranslate v-theme--light v-icon--size-default v-icon--clickable\\" role=\\"button\\" aria-hidden=\\"false\\" aria-label=\\"Clear What to do?\\"></i></div>
                 </transition-stub>
                 <div class=\\"v-field__append-inner\\">
                   <!---->
