@@ -41,7 +41,6 @@
 
 
 <script lang="ts">
-import type DescriptiveItemType from '@/types/DescriptiveItemType';
 import TimedItemType from '@/types/TimedItemType';
 import GenericItemEditCard from './Task/GenericItemEditCard.vue';
 
@@ -111,14 +110,15 @@ export default {
             const selectedTasks = this.tempMetaDataForTasks
                 .filter(item => item.selected)
                 .map(item => item.task);
-            const updatedTimeslot = new TimedItemType(
+            const updatedTimeslot = new TimedItemTypeWithTasks(
                 this.tempTimeSlot.id,
                 item.length,
                 item.pES,
                 item.mES,
                 dateToMs(this.startTimeDate),
+                selectedTasks,
             );
-            this.$emit('save', updatedTimeslot, selectedTasks);
+            this.$emit('save', updatedTimeslot);
         },
     },
     emits: ['save'],
