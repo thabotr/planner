@@ -7,7 +7,8 @@
                         :aria-label="alarm ? 'disable reminder' : 'enable reminder'"></v-btn>
                 </template>
             </v-list-item>
-            <ActiveTaskCard :task="scheduledTask"></ActiveTaskCard>
+            <ActiveTaskCard :task="scheduledTask" @unschedule="$emit('unschedule', scheduledTask)"
+                @done="$emit('done', scheduledTask)"></ActiveTaskCard>
             <v-list-item :title="`ends @ ${dateTimeStrings.endTime}`" :subtitle="dateTimeStrings.duration" />
         </div>
         <div v-else class="padded-s">
@@ -28,7 +29,7 @@ export default {
         scheduledTask: ScheduledDescriptiveItemType,
         alarmable: Boolean,
     },
-    emits: ['alarm'],
+    emits: ['alarm', 'unschedule', 'done'],
     data() {
         return {
             alarm: false,
