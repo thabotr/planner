@@ -1,7 +1,9 @@
 <template>
     <div id="create-item-group-container" class="flex-vertical">
-        <CreateItemBtn name="Timeslot" icon="mdi-calendar" aria-label="create timeslot" v-if="expanded" @click="$emit('create-timeslot')" />
-        <CreateItemBtn name="Task" icon="mdi-clipboard-edit" aria-label="create task" v-if="expanded" @click="$emit('create-task')"/>
+        <CreateItemBtn name="Timeslot" icon="mdi-calendar" aria-label="create timeslot" v-if="expanded"
+            @click="() => createItem('timeslot')" />
+        <CreateItemBtn name="Task" icon="mdi-clipboard-edit" aria-label="create task" v-if="expanded"
+            @click="() => createItem('task')" />
         <v-btn icon :aria-label="controllerLabel" @click="expanded = !expanded">
             <v-icon :icon="controllerIcon"></v-icon>
         </v-btn>
@@ -25,6 +27,13 @@ export default {
         },
         controllerIcon() {
             return this.expanded ? 'mdi-minus' : 'mdi-plus';
+        }
+    },
+    emits: ['create-timeslot', 'create-task'],
+    methods: {
+        createItem(type: 'timeslot' | 'task') {
+            this.expanded = false;
+            this.$emit(`create-${type}`);
         }
     }
 }
