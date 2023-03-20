@@ -1,37 +1,19 @@
 <template>
     <div id="main-container">
         <div id="calendar-ctnr">
-            <CalendarVue @click-date="drop" />
+            <CalendarVue @click-date="onChangeDayOnView" />
         </div>
         <div id="day-schedule-ctnr">
-            <PreviewDaySchedule @schedule="drop" :timeslots="[
-                new TimedItemTypeWithTasks(
-                    '19', 67 * TimeInMillis.Minute, 60, 80, new Date().getTime() - 9 * TimeInMillis.Minute, [
-                    new ScheduledDescriptiveItemType(
-                        '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime() - 9 * TimeInMillis.Minute,
-                    ),
-                ]
-                ),
-                new TimedItemTypeWithTasks(
-                    '21', 27 * TimeInMillis.Minute, 30, 70, new Date().getTime() + 90 * TimeInMillis.Minute, [
-                    new ScheduledDescriptiveItemType(
-                        '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime(),
-                    ),
-                ]
-                )
-            ]" />
+            <PreviewDaySchedule @schedule="scheduleTask" :timeslots="dayTimeslots" @edit="editTimeslot" />
         </div>
         <div id="unscheduled-tasks-ctnr">
-            <UnscheduledTaskCard v-for="task in unscheduledTasks" :item="task" />
+            <UnscheduledTaskCard v-for="task in unscheduledTasks" :item="task" @delete="() => onDelete(task)"
+                @edit="() => editTask(task)" />
         </div>
         <div id="todo-ctnr">
-            <TodoTaskGroup :scheduled-task="
-                new ScheduledDescriptiveItemType(
-                    'id', TimeInMillis.Hour, 10, 20, 'task desc', new Date().getTime() + 1 * TimeInMillis.Minute,
-                )
-            " />
+            <TodoTaskGroup :scheduled-task="activeTask" @unschedule="unscheduleTask" @done="markAsDone" />
         </div>
-        <CreateItemGroup class="fab" />
+        <CreateItemGroup class="fab" @create-task="() => newItem('task')" @create-timeslot="() => newItem('timeslot')" />
     </div>
 </template>
 
@@ -47,44 +29,82 @@ import TimedItemType from '@/types/TimedItemType';
 import PreviewDaySchedule from '@/components/PreviewDaySchedule.vue';
 import TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import CalendarVue from '@/components/Calendar.vue';
-const v = new TimedItemType("id", 10, 10, 10, 167_000_000);
+import type ItemType from '@/types/ItemType';
 
-// function onSave(event: DescriptiveItemType) {
-//     console.log("on save called", event);
-// }
+function onChangeDayOnView(date: Date) {
+    console.log('selected date', date);
+}
+
+function scheduleTask(unscheduledTask: DescriptiveItemType) {
+    console.log('schedule task', unscheduledTask);
+}
+
+function onDelete(item: ItemType) {
+    console.log('delete item', item);
+}
+
+function unscheduleTask(task: ItemType) {
+    console.log('unscheduled', task);
+}
+
+function markAsDone(task: ItemType) {
+    console.log('done with ', task);
+}
+
+function editTimeslot(tslot: TimedItemTypeWithTasks) {
+    console.log('editing timeslot', tslot);
+}
+
+function editTask(task: DescriptiveItemType) {
+    console.log('editing task', task);
+}
+
+function newItem(type: 'task' | 'timeslot') {
+    console.log('new', type);
+}
 
 const unscheduledTasks = ref<DescriptiveItemType[]>([
     new DescriptiveItemType('17', 15 * TimeInMillis.Minute, 10, 30, 'a description over here'),
     new DescriptiveItemType('27', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
     new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
+    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
+    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
+    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
 ]);
 
-function drop(t: any) {
-    console.log('schedule', t);
-}
+const activeTask = ref<ScheduledDescriptiveItemType | undefined>(new ScheduledDescriptiveItemType(
+    'id', TimeInMillis.Hour, 10, 20, 'task desc', new Date().getTime() + 1 * TimeInMillis.Minute,
+));
 
-function onDelete() {
-    console.log("on delete called");
-}
+const dayTimeslots = ref<TimedItemTypeWithTasks[]>(
+    [
+        new TimedItemTypeWithTasks(
+            '19', 67 * TimeInMillis.Minute, 60, 80, new Date().getTime() - 9 * TimeInMillis.Minute, [
+            new ScheduledDescriptiveItemType(
+                '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime() - 9 * TimeInMillis.Minute,
+            ),
+        ]
+        ),
+        new TimedItemTypeWithTasks(
+            '21', 27 * TimeInMillis.Minute, 30, 70, new Date().getTime() + 90 * TimeInMillis.Minute, [
+            new ScheduledDescriptiveItemType(
+                '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime(),
+            ),
+        ]
+        )
+    ]
+);
 </script>
 
 <style scoped>
-/* #cal {
-    width: 10rem;
-    height: 10rem;
-}
-
-#cal * {
-    width: 100%;
-    height: 100%;
-} */
-
 #main-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
     grid-template-areas:
         "a a b c"
+        "a a b c"
+        "a a d c"
         "a a d c"
         "a a d c"
     ;
@@ -94,6 +114,10 @@ function onDelete() {
 
 #unscheduled-tasks-ctnr {
     grid-area: a;
+    height: 80vh;
+    border: 1px solid black;
+    overflow-y: scroll;
+    border-radius: 0.5rem;
 }
 
 @media (min-width: 1024px) {
@@ -167,8 +191,4 @@ function onDelete() {
     left: 0;
     right: 0;
 }
-
-/* #active-task {
-    grid-area: b;
-} */
 </style>
