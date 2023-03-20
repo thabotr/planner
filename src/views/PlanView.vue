@@ -1,19 +1,28 @@
 <template>
     <div id="main-container">
         <div id="calendar-ctnr">
-            <CalendarVue @click-date="onChangeDayOnView" />
+            <CalendarVue @click-date="changeDayOnView" />
         </div>
         <div id="day-schedule-ctnr">
-            <PreviewDaySchedule @schedule="scheduleTask" :timeslots="dayTimeslots" @edit="editTimeslot" />
+            <PreviewDaySchedule @schedule="scheduleTask" :timeslots="dayTimeslots"
+                @edit="tslot => edit('timeslot', tslot)" />
         </div>
         <div id="unscheduled-tasks-ctnr">
             <UnscheduledTaskCard v-for="task in unscheduledTasks" :item="task" @delete="() => onDelete(task)"
-                @edit="() => editTask(task)" />
+                @edit="() => edit('task', task)" />
         </div>
         <div id="todo-ctnr">
             <TodoTaskGroup :scheduled-task="activeTask" @unschedule="unscheduleTask" @done="markAsDone" />
         </div>
         <CreateItemGroup class="fab" @create-task="() => newItem('task')" @create-timeslot="() => newItem('timeslot')" />
+        <v-dialog :model-value="!!itemInEdit" persistent>
+            <div class="flex-horizontal centered-content" v-if="itemInEdit">
+                <TimeslotEditCard v-if="itemInEdit.type === 'timeslot'" :timeslot="itemInEdit.item"
+                    @delete="() => itemInEdit && onDelete(itemInEdit.item)" @cancel="close" @save="saveEdit" />
+                <TaskEditCard v-else :task="itemInEdit.item" @delete="() => itemInEdit && onDelete(itemInEdit.item)"
+                    @cancel="close" @save="saveEdit" />
+            </div>
+        </v-dialog>
     </div>
 </template>
 
@@ -25,13 +34,14 @@ import UnscheduledTaskCard from '@/components/Task/UnscheduledTaskCard.vue';
 import { TimeInMillis } from '@/middleware/helpers';
 import DescriptiveItemType from '@/types/DescriptiveItemType';
 import ScheduledDescriptiveItemType from '@/types/ScheduledDescriptiveItemType';
-import TimedItemType from '@/types/TimedItemType';
 import PreviewDaySchedule from '@/components/PreviewDaySchedule.vue';
 import TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import CalendarVue from '@/components/Calendar.vue';
 import type ItemType from '@/types/ItemType';
+import TimeslotEditCard from '@/components/TimeslotEditCard.vue';
+import TaskEditCard from '@/components/Task/TaskEditCard.vue';
 
-function onChangeDayOnView(date: Date) {
+function changeDayOnView(date: Date) {
     console.log('selected date', date);
 }
 
@@ -40,7 +50,12 @@ function scheduleTask(unscheduledTask: DescriptiveItemType) {
 }
 
 function onDelete(item: ItemType) {
-    console.log('delete item', item);
+    console.log('delete', item);
+    close();
+}
+
+function close() {
+    itemInEdit.value = undefined;
 }
 
 function unscheduleTask(task: ItemType) {
@@ -51,46 +66,109 @@ function markAsDone(task: ItemType) {
     console.log('done with ', task);
 }
 
-function editTimeslot(tslot: TimedItemTypeWithTasks) {
-    console.log('editing timeslot', tslot);
+function saveEdit(item: DescriptiveItemType | TimedItemTypeWithTasks) {
+    console.log('saving ', item);
+    close();
 }
 
-function editTask(task: DescriptiveItemType) {
-    console.log('editing task', task);
+function edit(type: 'task' | 'timeslot', item: DescriptiveItemType | TimedItemTypeWithTasks) {
+    console.log('editing item', type, item);
+    switch (type) {
+        case 'task':
+            itemInEdit.value = {
+                type: 'task',
+                item: item as DescriptiveItemType,
+            };
+            break;
+        case 'timeslot':
+            itemInEdit.value = {
+                type: 'timeslot',
+                item: item as TimedItemTypeWithTasks,
+            };
+            break;
+    }
 }
 
 function newItem(type: 'task' | 'timeslot') {
     console.log('new', type);
 }
 
+const itemInEdit = ref<
+    { type: 'task', item: DescriptiveItemType } |
+    { type: 'timeslot', item: TimedItemTypeWithTasks } | undefined>();
+
 const unscheduledTasks = ref<DescriptiveItemType[]>([
-    new DescriptiveItemType('17', 15 * TimeInMillis.Minute, 10, 30, 'a description over here'),
-    new DescriptiveItemType('27', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
-    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
-    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
-    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
-    new DescriptiveItemType('11', 27 * TimeInMillis.Minute, 50, 20, 'another desc another desc another desc another desc another desc'),
+    new DescriptiveItemType(
+        '17',
+        15 * TimeInMillis.Minute, 10, 30,
+        'a description over here'),
+    new DescriptiveItemType(
+        '27',
+        27 * TimeInMillis.Minute, 50, 20,
+        'another desc another desc another desc another desc another desc',
+    ),
+    new DescriptiveItemType(
+        '11',
+        27 * TimeInMillis.Minute, 50, 20,
+        'another desc another desc another desc another desc another desc',
+    ),
+    new DescriptiveItemType(
+        '11',
+        27 * TimeInMillis.Minute, 50, 20,
+        'another desc another desc another desc another desc another desc',
+    ),
+    new DescriptiveItemType(
+        '11',
+        27 * TimeInMillis.Minute, 50, 20,
+        'another desc another desc another desc another desc another desc',
+    ),
+    new DescriptiveItemType(
+        '11',
+        27 * TimeInMillis.Minute, 50, 20,
+        'another desc another desc another desc another desc another desc',
+    ),
 ]);
 
-const activeTask = ref<ScheduledDescriptiveItemType | undefined>(new ScheduledDescriptiveItemType(
-    'id', TimeInMillis.Hour, 10, 20, 'task desc', new Date().getTime() + 1 * TimeInMillis.Minute,
-));
+const activeTask = ref<ScheduledDescriptiveItemType | undefined>(
+    new ScheduledDescriptiveItemType(
+        'id',
+        TimeInMillis.Hour,
+        10,
+        20,
+        'task desc', new Date().getTime() + 1 * TimeInMillis.Minute,
+    ),
+);
 
 const dayTimeslots = ref<TimedItemTypeWithTasks[]>(
     [
         new TimedItemTypeWithTasks(
-            '19', 67 * TimeInMillis.Minute, 60, 80, new Date().getTime() - 9 * TimeInMillis.Minute, [
-            new ScheduledDescriptiveItemType(
-                '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime() - 9 * TimeInMillis.Minute,
-            ),
-        ]
+            '19',
+            67 * TimeInMillis.Minute,
+            60,
+            80,
+            new Date().getTime() - 9 * TimeInMillis.Minute,
+            [
+                new ScheduledDescriptiveItemType(
+                    '17',
+                    TimeInMillis.Hour,
+                    10,
+                    10,
+                    'described here',
+                    new Date().getTime() - 9 * TimeInMillis.Minute,
+                ),
+            ],
         ),
         new TimedItemTypeWithTasks(
-            '21', 27 * TimeInMillis.Minute, 30, 70, new Date().getTime() + 90 * TimeInMillis.Minute, [
-            new ScheduledDescriptiveItemType(
-                '', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime(),
-            ),
-        ]
+            '21',
+            27 * TimeInMillis.Minute,
+            30,
+            70,
+            new Date().getTime() + 90 * TimeInMillis.Minute,
+            [
+                new ScheduledDescriptiveItemType(
+                    '11', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime(),
+                ),
+            ]
         )
     ]
 );
