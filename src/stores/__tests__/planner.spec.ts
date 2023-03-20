@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { usePlannerStore } from "../planner";
 import { faker } from '@faker-js/faker';
 import { setActivePinia, createPinia } from 'pinia'
+import TimedItemTypeWithTasks from "@/types/TimedItemTypeWithTasks";
 
 describe('Planner', () => {
     let planner: ReturnType<typeof usePlannerStore>;
@@ -28,5 +29,47 @@ describe('Planner', () => {
             expect(addedTask.description).toBe(partialTask.description);
             expect(addedTask.id).toMatch(/^\d+$/);
         });
+    });
+    describe('createTimeslot', () => {
+        beforeEach(() => {
+            planner = usePlannerStore();
+        });
+        it('given a timeslot which does not collide with others then it adds the ' +
+            'timeslot into the store, assigns it an id and returns true', () => {
+                const plannerHasNoTimeslots = planner.getTimeslots().length === 0;
+                expect(plannerHasNoTimeslots).toBeTruthy();
+
+                const partialTslot = new TimedItemTypeWithTasks('', TimeInMillis.Hour, 10, 10, TimeInMillis.Day, []);
+                const tslotCreated = planner.createTimeslot(partialTslot);
+                expect(tslotCreated).toBeTruthy();
+
+                const plannerOneNoTimeslot = () => planner.getTimeslots().length === 1;
+                expect(plannerOneNoTimeslot()).toBeTruthy();
+            },
+        );
+        it('given a timeslot which intersects with any existing timeslot then it should just ' +
+            'return false without adding the timeslot into the store', () => {
+                const existingTslotStart = 10;
+                const existingTslotSpan = 20;
+                const partialTslot = new TimedItemTypeWithTasks(
+                    '', existingTslotSpan, 10, 10, existingTslotStart, [],
+                );
+                const tslotCreated = planner.createTimeslot(partialTslot);
+                expect(tslotCreated).toBeTruthy();
+
+                const tslotStartCollide = new TimedItemTypeWithTasks(
+                    '', existingTslotSpan, 10, 10, existingTslotStart + existingTslotSpan / 2, [],
+                );
+                expect(planner.createTimeslot(tslotStartCollide)).toBeFalsy();
+                const tslotEndCollide = new TimedItemTypeWithTasks(
+                    '', existingTslotSpan, 10, 10, existingTslotStart - existingTslotSpan / 2, [],
+                );
+                expect(planner.createTimeslot(tslotEndCollide)).toBeFalsy();
+                const tslotBoundsAnotherTslot = new TimedItemTypeWithTasks(
+                    '', 2 * existingTslotSpan, 10, 10, existingTslotStart - existingTslotSpan / 2, [],
+                );
+                expect(planner.createTimeslot(tslotBoundsAnotherTslot)).toBeFalsy();
+            },
+        );
     });
 })
