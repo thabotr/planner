@@ -12,6 +12,26 @@ describe('Planner', () => {
         setActivePinia(createPinia());
         planner = usePlannerStore();
     });
+    describe('updateTask', () => {
+        it('updates the existing task', () => {
+            const partialTask = new DescriptiveItemType(
+                '', TimeInMillis.Hour, 10, 10, faker.hacker.phrase(),
+            );
+            planner.createTask(partialTask);
+
+            const plannerHasOneTask = () => planner.getTasks().length === 1;
+            expect(plannerHasOneTask()).toBeTruthy();
+
+            const task = planner.getTasks()[0];
+            const updatedTask = new DescriptiveItemType(
+                task.id, TimeInMillis.Minute, 20, 20, faker.hacker.phrase(),
+            );
+            planner.updateTask(updatedTask);
+            expect(plannerHasOneTask()).toBeTruthy();
+
+            expect(planner.getTasks()).toContain(updatedTask);
+        });
+    });
     describe('createTask', () => {
         it('adds a task into the store and assigns it an id', () => {
             const partialTask = new DescriptiveItemType(

@@ -18,6 +18,13 @@ export const usePlannerStore = defineStore('planner', () => {
         id.value++;
     }
 
+    function updateTask(existingTask: DescriptiveItemType) {
+        const index = tasks.value.findIndex(task => task.id === existingTask.id);
+        if (index > -1) {
+            tasks.value.splice(index, 1, existingTask);
+        }
+    }
+
     function createTimeslot(idLessTimeslot: TimedItemTypeWithTasks): boolean {
         const newTimeslot = { ...idLessTimeslot, id: id.value.toString() };
         for (let i = 0; i < timeslots.value.length; i++) {
@@ -40,5 +47,5 @@ export const usePlannerStore = defineStore('planner', () => {
         return timeslots.value;
     }
 
-    return { getTasks, createTask, createTimeslot, getTimeslots };
+    return { getTasks, createTask, createTimeslot, getTimeslots, updateTask };
 });
