@@ -6,10 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <main>
     <nav>
       <div id="links">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/plan">Plan</RouterLink>
-        <RouterLink to="/plan/2">Plan2</RouterLink>
+        <RouterLink to="/">Plan</RouterLink>
       </div>
       <button class="mobile-only">Nav Menu</button>
       <button class="mobile-only">Create Item Menu</button>
