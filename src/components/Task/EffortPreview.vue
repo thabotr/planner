@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-vertical">
+    <div class="flex-vertical justify-space-between">
         <div class="flex-horizontal">
             <v-icon icon="mdi-brain" id="i-mental" />
             <slot name="before-mep"></slot>{{ mEP }} mental EP

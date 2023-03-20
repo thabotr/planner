@@ -39,7 +39,7 @@ exports[`ActiveTaskCard > renders correctly 1`] = `
         <!---->
         <div data-v-89ba6e84=\\"\\" class=\\"centered-content padded-s\\">this is a task description </div>
         <div data-v-f39f1573=\\"\\" class=\\"flex-horizontal\\">
-          <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\" class=\\"flex-vertical\\">
+          <div data-v-19720537=\\"\\" data-v-f39f1573=\\"\\" class=\\"flex-vertical justify-space-between\\">
             <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>1 mental EP </div>
             <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-account-hard-hat mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-physical\\"></i>1 physical EP </div>
             <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-timer mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-time\\"></i>30m</div>

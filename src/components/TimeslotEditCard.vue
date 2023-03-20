@@ -1,7 +1,7 @@
 <template>
     <GenericItemEditCard :item="tempTimeSlot" item-type="TSLOT" :lower-bound="sumOfAllTaskEfforts" @save="onSave">
         <div>
-            <v-list v-if="tasks.length">
+            <v-list v-if="timeslot.scheduledTasks.length">
                 <v-list-item v-for="item in tempMetaDataForTasks" :selected="item.selected">
                     <div>
                         {{ item.task.description }}
@@ -15,7 +15,7 @@
                     </template>
                 </v-list-item>
             </v-list>
-            <v-chip-group v-if="tasks.length">
+            <v-chip-group v-if="timeslot.scheduledTasks.length">
                 <v-chip prepend-icon="mdi-brain" density="compact">
                     {{ remainingEffort.mEP }} mEP
                 </v-chip>
@@ -49,15 +49,12 @@ import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import ItemType from '@/types/ItemType';
 import { toSubjectiveEffortScore, TimeInMillis, type TaskType, dateToMs, dateFromMs } from '@/middleware/helpers';
+import TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 
 export default {
     props: {
         timeslot: {
-            type: TimedItemType,
-            required: true,
-        },
-        tasks: {
-            type: Array<DescriptiveItemType>,
+            type: TimedItemTypeWithTasks,
             required: true,
         },
     },
@@ -71,7 +68,7 @@ export default {
                 this.timeslot.mES,
                 this.timeslot.startTime
             ),
-            tempMetaDataForTasks: this.tasks.map(task => ({
+            tempMetaDataForTasks: this.timeslot.scheduledTasks.map(task => ({
                 task: task,
                 id: task.id,
                 selected: true,
@@ -94,7 +91,7 @@ export default {
                 '',
             );
             return {
-                time: `${Math.floor(effortDiff.length/TimeInMillis.Minute)}mins`,
+                time: `${Math.floor(effortDiff.length / TimeInMillis.Minute)}mins`,
                 pEP: toSubjectiveEffortScore(effortDiff.pES),
                 mEP: toSubjectiveEffortScore(effortDiff.mES),
             };

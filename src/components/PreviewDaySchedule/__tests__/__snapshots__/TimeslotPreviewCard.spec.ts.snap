@@ -20,7 +20,7 @@ exports[`TimeslotPreview > renders correctly 1`] = `
     <!---->
     <!---->
     <div data-v-200da138=\\"\\" class=\\"flex-horizontal\\">
-      <div data-v-19720537=\\"\\" data-v-200da138=\\"\\" class=\\"flex-vertical\\">
+      <div data-v-19720537=\\"\\" data-v-200da138=\\"\\" class=\\"flex-vertical justify-space-between\\">
         <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-brain mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-mental\\"></i>0/1 mental EP </div>
         <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-account-hard-hat mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-physical\\"></i>1/2 physical EP </div>
         <div data-v-19720537=\\"\\" class=\\"flex-horizontal\\"><i data-v-19720537=\\"\\" class=\\"mdi-timer mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" id=\\"i-time\\"></i>1h/1dy</div>
