@@ -10,6 +10,19 @@ export const usePlannerStore = defineStore('planner', () => {
     const tasks = ref<Array<DescriptiveItemType>>([]);
     const timeslots = ref<Array<TimedItemTypeWithTasks>>([]);
 
+    const unscheduledTasks = computed<Array<DescriptiveItemType>>(() => {
+        const scheduledTasks = timeslots.value.flatMap(
+            (timeslot) => timeslot.scheduledTasks
+        );
+        return tasks.value.filter(
+            (task) => !scheduledTasks.some((scheduledTask) => scheduledTask.id === task.id)
+        );
+    });
+
+    function scheduleTask(taskId: string): boolean {
+        return false;
+    }
+
     function getTasks(): Array<DescriptiveItemType> {
         return tasks.value;
     }
@@ -57,6 +70,8 @@ export const usePlannerStore = defineStore('planner', () => {
             return acc;
         }, new ItemType(0, 0, 0, ''));
 
+        // TODO factor in current time into this overflow calculation
+
         return (
             effortSum.length > timeslot.length ||
             effortSum.pES > timeslot.pES ||
@@ -65,6 +80,7 @@ export const usePlannerStore = defineStore('planner', () => {
     }
 
     function createTimeslot(idLessTimeslot: TimedItemTypeWithTasks): boolean {
+        // TODO prevent timeslots created before now()
         const newTimeslot = { ...idLessTimeslot, id: id.value.toString() };
         if (intersectsWithOtherTimeslots(newTimeslot)) {
             return false;
@@ -105,5 +121,7 @@ export const usePlannerStore = defineStore('planner', () => {
         updateTask,
         updateTimeslot,
         clearAll,
+        scheduleTask,
+        unscheduledTasks,
     };
 });

@@ -177,4 +177,61 @@ describe('Planner', () => {
             },
         );
     });
+    describe.skip('scheduleTask', () => {
+        it('returns false when the given id has no corresponding task in the store', () => {
+            const idForInexistentTask = '404';
+            const scheduled = planner.scheduleTask(idForInexistentTask);
+            expect(scheduled).toBeFalsy();
+        });
+        it('finds the nearest timeslot with enough capacity to schedule the task, ' +
+            'schedules it into that timeslot and returns true', () => {
+
+            },
+        );
+    });
+    describe('get => unscheduledTasks', () => {
+        it('returns all the tasks that are not scheduled in any timeslots', () => {
+            const allTasks = [
+                new DescriptiveItemType('', 10, 10, 10, 'desc 1'),
+                new DescriptiveItemType('', 10, 10, 10, 'desc 2'),
+                new DescriptiveItemType('', 10, 10, 10, 'desc 3'),
+            ];
+
+            allTasks.forEach(planner.createTask);
+            const allTasksCreated = planner.getTasks().length === allTasks.length;
+            expect(allTasksCreated).toBeTruthy();
+
+            const [_, oneOfUnscheduledTasks] = planner.getTasks();
+            expect(planner.unscheduledTasks).toContain(oneOfUnscheduledTasks);
+            
+            const tslotWithTaskCreated = planner.createTimeslot(
+                new TimedItemTypeWithTasks('', 100, 10, 10, 0, [
+                    new ScheduledDescriptiveItemType(
+                        oneOfUnscheduledTasks.id,
+                        oneOfUnscheduledTasks.length,
+                        oneOfUnscheduledTasks.pES,
+                        oneOfUnscheduledTasks.mES,
+                        oneOfUnscheduledTasks.description,
+                        0,
+                    ),
+                ]),
+            );
+            expect(tslotWithTaskCreated).toBeTruthy();
+
+            expect(planner.unscheduledTasks).not.toContain(oneOfUnscheduledTasks);
+        });
+    });
+    describe.skip('deleteTimeslot', () => {
+        it('removes the timeslot from the store', () => {
+
+        });
+        it('unschedules all the tasks in the deleted timeslot', () => {
+
+        });
+    });
+    describe.skip('deleteTask', () => {
+        it('removes the task from the store', () => {
+
+        });
+    });
 })
