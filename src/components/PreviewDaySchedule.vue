@@ -74,6 +74,11 @@ export default {
             const markerTopAtHeight = dayMillis / TimeInMillis.Day * tslotCntnrHeight;
 
             marker.style.top = `${markerTopAtHeight}px`;
+
+            timeslotContainer.scrollTo({
+                top: Math.max(markerTopAtHeight - timeslotContainer.clientHeight / 2, 0),
+                behavior: 'smooth',
+            });
         },
         containerRelativeHeight(millis: number): string {
             const timeslotContainer = document.getElementById('timeslot-container') as HTMLElement;
