@@ -42,13 +42,12 @@ export default {
             this.$emit('schedule', unscheduledTask);
         },
         getTimeslotUsage(timeslot: TimedItemTypeWithTasks): ItemType {
-            const identityTask = new ItemType(0, 0, 0, '');
-            const items = timeslot.scheduledTasks
-                .map(stask => new ItemType(stask.length, stask.mES, stask.pES, ''))
-                .concat(identityTask);
-            const totalUsage = items.reduce((a, b) => new ItemType(
-                a.length + b.length, a.mES + b.mES, a.pES + b.pES, '',
-            ));
+            const totalUsage = timeslot.scheduledTasks.reduce((acc, item) => {
+                acc.length += item.length;
+                acc.mES += item.mES;
+                acc.pES += item.pES;
+                return acc;
+            }, new ItemType(0, 0, 0, ''));
             return totalUsage;
         },
         markerTime(nth15minsInDay: number): string {
@@ -110,6 +109,10 @@ export default {
         this.sizeAndPlaceTimeslotsInCorrectPosition();
     },
     components: { TimeslotPreviewCard },
+    updated() {
+        this.placeCurrentTimeMarkerInCorrectPosition();
+        this.sizeAndPlaceTimeslotsInCorrectPosition();
+    }
 }
 </script>
 
