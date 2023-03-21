@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { toast, type ToastOptions } from 'vue3-toastify';
 import CreateItemGroup from '@/components/CreateItemGroup.vue';
 import TodoTaskGroup from '@/components/Task/TodoTaskGroup.vue';
 import UnscheduledTaskCard from '@/components/Task/UnscheduledTaskCard.vue';
@@ -78,9 +79,10 @@ const itemInEdit = ref<
 function changeDayOnView(date: Date) { dateOnView.value = date; }
 
 function scheduleTask(unscheduledTask: DescriptiveItemType) {
-    // console.log('schedule task', unscheduledTask);
     const scheduled = plannerScheduleTask(unscheduledTask.id);
-    // TODO handle scheduling error
+    if (!scheduled) {
+        toast.error('No timeslot available to schedule task', { autoClose: 2000, } as ToastOptions);
+    }
 }
 
 function onDelete(type: 'timeslot' | 'task', item: ItemType) {
