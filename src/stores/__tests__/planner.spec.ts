@@ -177,7 +177,7 @@ describe('Planner', () => {
             },
         );
     });
-    describe.skip('scheduleTask', () => {
+    describe('scheduleTask', () => {
         it('returns false when the given id has no corresponding task in the store', () => {
             const idForInexistentTask = '404';
             const scheduled = planner.scheduleTask(idForInexistentTask);
@@ -185,7 +185,25 @@ describe('Planner', () => {
         });
         it('finds the nearest timeslot with enough capacity to schedule the task, ' +
             'schedules it into that timeslot and returns true', () => {
+                const allTimeslots = [
+                    new TimedItemTypeWithTasks('', 100, 10, 10, 0, []),
+                    new TimedItemTypeWithTasks('', 100, 20, 20, 200, []),
+                ];
+                allTimeslots.forEach(planner.createTimeslot);
 
+                const allTimeslotsCreated = planner.getTimeslots().length === allTimeslots.length;
+                expect(allTimeslotsCreated).toBeTruthy();
+
+                const partialTaskToSchedule = new DescriptiveItemType('', 10, 10, 20, 'hello');
+                planner.createTask(partialTaskToSchedule);
+                const [taskToSchedule] = planner.getTasks();
+
+                expect(planner.unscheduledTasks).toContain(taskToSchedule);
+
+                const scheduled = planner.scheduleTask(taskToSchedule.id);
+                expect(scheduled).toBeTruthy();
+
+                expect(planner.unscheduledTasks).not.toContain(taskToSchedule);
             },
         );
     });
@@ -203,7 +221,7 @@ describe('Planner', () => {
 
             const [_, oneOfUnscheduledTasks] = planner.getTasks();
             expect(planner.unscheduledTasks).toContain(oneOfUnscheduledTasks);
-            
+
             const tslotWithTaskCreated = planner.createTimeslot(
                 new TimedItemTypeWithTasks('', 100, 10, 10, 0, [
                     new ScheduledDescriptiveItemType(

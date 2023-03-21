@@ -4,6 +4,7 @@ import type DescriptiveItemType from '@/types/DescriptiveItemType';
 import type TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import type TimedItemType from '@/types/TimedItemType';
 import ItemType from '@/types/ItemType';
+import ScheduledDescriptiveItemType from '@/types/ScheduledDescriptiveItemType';
 
 export const usePlannerStore = defineStore('planner', () => {
     const id = ref<number>(0);
@@ -20,8 +21,26 @@ export const usePlannerStore = defineStore('planner', () => {
     });
 
     function scheduleTask(taskId: string): boolean {
-        return false;
+        const task = tasks.value.find(tsk => tsk.id === taskId);
+        if (!task) { return false; }
+        const appropriateTslot = timeslots.value.find(tslot => !isInOverflow(tslot, task));
+        if (!appropriateTslot) { return false; }
+        const taskScheduledAt = appropriateTslot.startTime +
+            appropriateTslot.scheduledTasks
+                .map(tsk => tsk.length)
+                .reduce((a, b) => a + b, 0);
+        const scheduledTask = new ScheduledDescriptiveItemType(
+            task.id,
+            task.length,
+            task.pES,
+            task.mES,
+            task.description,
+            taskScheduledAt,
+        );
+        appropriateTslot.scheduledTasks.push(scheduledTask);
+        return true;
     }
+
 
     function getTasks(): Array<DescriptiveItemType> {
         return tasks.value;
@@ -62,13 +81,13 @@ export const usePlannerStore = defineStore('planner', () => {
         return false;
     }
 
-    function isInOverflow(timeslot: TimedItemTypeWithTasks): boolean {
+    function isInOverflow(timeslot: TimedItemTypeWithTasks, withTask?: ItemType): boolean {
         const effortSum = timeslot.scheduledTasks.reduce((acc: ItemType, task: ItemType) => {
             acc.length += task.length;
             acc.mES += task.mES;
             acc.pES += task.pES;
             return acc;
-        }, new ItemType(0, 0, 0, ''));
+        }, withTask ?? new ItemType(0, 0, 0, ''));
 
         // TODO factor in current time into this overflow calculation
 
