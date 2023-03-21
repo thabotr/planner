@@ -127,17 +127,21 @@ function saveEdit(
             createTask(item.task);
             break;
         case 'timeslot':
+            if (item.tslot.startTime < nowInMs() - TimeInMillis.Minute) {
+                showError('Timeslot should be in the future, not in the past.');
+                return;
+            }
             if (item.tslot.id) {
                 const updated = updateTimeslot(item.tslot);
                 if (!updated) {
-                    showError('Failed to update timeslot. Ensure it does not overlap with existing timeslots');
+                    showError("Ensure timeslot's start time and length do not overlap with existing timeslots");
                     return;
                 }
                 break;
             }
             const created = createTimeslot(item.tslot);
             if (!created) {
-                showError('Failed to create timeslot. Ensure it does not overlap with existing timeslots');
+                showError("Ensure timeslot's start time and length do not overlap with existing timeslots");
                 return;
             }
             break;

@@ -138,7 +138,6 @@ export const usePlannerStore = defineStore('planner', () => {
     }
 
     function createTimeslot(idLessTimeslot: TimedItemTypeWithTasks): boolean {
-        // TODO prevent timeslots created before now()
         const newTimeslot = { ...idLessTimeslot, id: id.value.toString() };
         if (intersectsWithOtherTimeslots(newTimeslot)) {
             return false;
