@@ -42,7 +42,7 @@ import type ItemType from '@/types/ItemType';
 import TimeslotEditCard from '@/components/TimeslotEditCard.vue';
 import TaskEditCard from '@/components/Task/TaskEditCard.vue';
 import { usePlannerStore } from '@/stores/planner';
-import { nowInMs } from '@/middleware/helpers';
+import { nowInMs, TimeInMillis } from '@/middleware/helpers';
 
 const plannerStore = usePlannerStore();
 const {
@@ -108,12 +108,18 @@ function unscheduleTask(task: ItemType) {
 
 function markAsDone(task: ItemType) { markTaskAsDone(task.id); }
 
+const showError = (err: string) => toast.error(err, { autoClose: 2000, } as ToastOptions,);
+
 function saveEdit(
     item: { type: 'task', task: DescriptiveItemType } |
     { type: 'timeslot', tslot: TimedItemTypeWithTasks },
 ) {
     switch (item.type) {
         case 'task':
+            if (item.task.length < 5 * TimeInMillis.Minute) {
+                showError('Task not created. Task time less than five minutes is too short.');
+                return;
+            }
             if (item.task.id) {
                 updateTask(item.task);
                 break;
@@ -122,12 +128,18 @@ function saveEdit(
             break;
         case 'timeslot':
             if (item.tslot.id) {
-                // TODO handle failures
-                updateTimeslot(item.tslot);
+                const updated = updateTimeslot(item.tslot);
+                if (!updated) {
+                    showError('Failed to update timeslot. Ensure it does not overlap with existing timeslots');
+                    return;
+                }
                 break;
             }
-            // TODO handle failures
-            createTimeslot(item.tslot);
+            const created = createTimeslot(item.tslot);
+            if (!created) {
+                showError('Failed to create timeslot. Ensure it does not overlap with existing timeslots');
+                return;
+            }
             break;
     }
     close();
