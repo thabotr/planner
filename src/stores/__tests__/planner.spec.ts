@@ -239,9 +239,18 @@ describe('Planner', () => {
             expect(planner.unscheduledTasks).not.toContain(oneOfUnscheduledTasks);
         });
     });
-    describe.skip('deleteTimeslot', () => {
+    describe('deleteTimeslot', () => {
         it('removes the timeslot from the store', () => {
-
+            expect(planner.getTimeslots().length).toBe(0);
+            
+            const particalTslot = new TimedItemTypeWithTasks('', 1000, 0, 100, 0, []);
+            planner.createTimeslot(particalTslot);
+            
+            const [timeslot] = planner.getTimeslots();
+            
+            planner.deleteTimeslot(timeslot.id);
+            
+            expect(planner.getTimeslots().length).toBe(0);
         });
     });
     describe('deleteTask', () => {

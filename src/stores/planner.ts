@@ -48,6 +48,13 @@ export const usePlannerStore = defineStore('planner', () => {
         }
     }
 
+    function deleteTimeslot(timeslotId: string) {
+        const index = timeslots.value.findIndex(tslot => tslot.id === timeslotId);
+        if (index > -1) {
+            timeslots.value.splice(index, 1);
+        }
+    }
+
     function getTasks(): Array<DescriptiveItemType> {
         return tasks.value;
     }
@@ -149,5 +156,6 @@ export const usePlannerStore = defineStore('planner', () => {
         scheduleTask,
         unscheduledTasks,
         deleteTask,
+        deleteTimeslot,
     };
 });
