@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type DescriptiveItemType from '@/types/DescriptiveItemType';
-import type TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
+import DescriptiveItemType from '@/types/DescriptiveItemType';
+import TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import type TimedItemType from '@/types/TimedItemType';
 import ItemType from '@/types/ItemType';
 import ScheduledDescriptiveItemType from '@/types/ScheduledDescriptiveItemType';
@@ -18,7 +18,7 @@ export const usePlannerStore = defineStore('planner', () => {
         );
         return tasks.value.filter(
             (task) => !scheduledTasks.some((scheduledTask) => scheduledTask.id === task.id)
-        );
+        ).map(task => new DescriptiveItemType(task.id, task.length, task.pES, task.mES, task.description));
     });
 
     const nearestScheduledTask = computed<ScheduledDescriptiveItemType | undefined>(() => {
@@ -27,6 +27,23 @@ export const usePlannerStore = defineStore('planner', () => {
             .filter(task => task.startsAtMillis >= nowInMs() && !task.done);
         return allScheduledTasksTodo.sort((a, b) => a.startsAtMillis - b.startsAtMillis)
             .find(_ => true);
+    });
+
+    const timeslotsInRange = computed<(start: number, end: number) => Array<TimedItemTypeWithTasks>>(() => {
+        return (start: number, end: number) => {
+            const timeslotsInRange = timeslots.value
+                .filter(tslot => start <= tslot.startTime && tslot.startTime <= end);
+            return timeslotsInRange.map(
+                tslot => new TimedItemTypeWithTasks(
+                    tslot.id,
+                    tslot.length,
+                    tslot.pES,
+                    tslot.mES,
+                    tslot.startTime,
+                    tslot.scheduledTasks,
+                ),
+            );
+        }
     });
 
     function scheduleTask(taskId: string): boolean {
@@ -55,10 +72,6 @@ export const usePlannerStore = defineStore('planner', () => {
         if (index > -1) {
             tasks.value.splice(index, 1);
         }
-    }
-
-    function getTimeslotsInRange(start: number, end: number): Array<TimedItemTypeWithTasks> {
-        return timeslots.value.filter(tslot => start <= tslot.startTime && tslot.startTime <= end);
     }
 
     function deleteTimeslot(timeslotId: string) {
@@ -179,12 +192,12 @@ export const usePlannerStore = defineStore('planner', () => {
         deleteTimeslot,
         getTasks,
         getTimeslots,
-        getTimeslotsInRange,
         nearestScheduledTask,
         scheduleTask,
         updateTask,
         updateTimeslot,
         unscheduledTasks,
         markTaskAsDone,
+        timeslotsInRange,
     };
 });

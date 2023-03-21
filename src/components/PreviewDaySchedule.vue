@@ -76,7 +76,7 @@ export default {
             marker.style.top = `${markerTopAtHeight}px`;
 
             timeslotContainer.scrollTo({
-                top: Math.max(markerTopAtHeight - timeslotContainer.clientHeight / 2, 0),
+                top: Math.max(markerTopAtHeight - timeslotContainer.clientHeight / 3, 0),
                 behavior: 'smooth',
             });
         },

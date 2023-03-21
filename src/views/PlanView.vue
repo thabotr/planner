@@ -8,49 +8,90 @@
                 @edit="tslot => edit('timeslot', tslot)" />
         </div>
         <div id="unscheduled-tasks-ctnr">
-            <UnscheduledTaskCard v-for="task in unscheduledTasks" :item="task" @delete="() => onDelete(task)"
+            <UnscheduledTaskCard v-for="task in unscheduledTasks" :item="task" @delete="() => onDelete('task', task)"
                 @edit="() => edit('task', task)" />
         </div>
         <div id="todo-ctnr">
-            <TodoTaskGroup :scheduled-task="activeTask" @unschedule="unscheduleTask" @done="markAsDone" />
+            <TodoTaskGroup :scheduled-task="nearestScheduledTask" @unschedule="unscheduleTask" @done="markAsDone" />
         </div>
         <CreateItemGroup class="fab" @create-task="() => newItem('task')" @create-timeslot="() => newItem('timeslot')" />
         <v-dialog :model-value="!!itemInEdit" persistent>
             <div class="flex-horizontal centered-content" v-if="itemInEdit">
                 <TimeslotEditCard v-if="itemInEdit.type === 'timeslot'" :timeslot="itemInEdit.item"
-                    @delete="() => itemInEdit && onDelete(itemInEdit.item)" @cancel="close" @save="saveEdit" />
-                <TaskEditCard v-else :task="itemInEdit.item" @delete="() => itemInEdit && onDelete(itemInEdit.item)"
-                    @cancel="close" @save="saveEdit" />
+                    @delete="() => itemInEdit && onDelete('timeslot', itemInEdit.item)" @cancel="close"
+                    @save="item => saveEdit({ type: 'timeslot', tslot: item })" />
+                <TaskEditCard v-else :task="itemInEdit.item" @delete="() => itemInEdit && onDelete('task', itemInEdit.item)"
+                    @cancel="close" @save="item => saveEdit({ type: 'task', task: item })" />
             </div>
         </v-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import CreateItemGroup from '@/components/CreateItemGroup.vue';
 import TodoTaskGroup from '@/components/Task/TodoTaskGroup.vue';
 import UnscheduledTaskCard from '@/components/Task/UnscheduledTaskCard.vue';
-import { TimeInMillis } from '@/middleware/helpers';
 import DescriptiveItemType from '@/types/DescriptiveItemType';
-import ScheduledDescriptiveItemType from '@/types/ScheduledDescriptiveItemType';
 import PreviewDaySchedule from '@/components/PreviewDaySchedule.vue';
 import TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import CalendarVue from '@/components/Calendar.vue';
 import type ItemType from '@/types/ItemType';
 import TimeslotEditCard from '@/components/TimeslotEditCard.vue';
 import TaskEditCard from '@/components/Task/TaskEditCard.vue';
+import { usePlannerStore } from '@/stores/planner';
+import { nowInMs } from '@/middleware/helpers';
 
-function changeDayOnView(date: Date) {
-    console.log('selected date', date);
-}
+const plannerStore = usePlannerStore();
+const {
+    deleteTask,
+    deleteTimeslot,
+    markTaskAsDone,
+    createTask,
+    createTimeslot,
+    updateTask,
+    updateTimeslot,
+    scheduleTask: plannerScheduleTask,
+} = plannerStore;
+
+const {
+    nearestScheduledTask,
+    timeslotsInRange,
+    unscheduledTasks,
+} = storeToRefs(plannerStore);
+
+const dateOnView = ref<Date>(new Date());
+const dayTimeslots = computed(() => {
+    const dayStart = new Date(
+        dateOnView.value.getFullYear(), dateOnView.value.getMonth(), dateOnView.value.getDate(),
+    ).getTime();
+    const dayEnd = new Date(
+        dateOnView.value.getFullYear(), dateOnView.value.getMonth(), dateOnView.value.getDate() + 1,
+    ).getTime();
+    return timeslotsInRange.value(dayStart, dayEnd);
+});
+const itemInEdit = ref<
+    { type: 'task', item: DescriptiveItemType } |
+    { type: 'timeslot', item: TimedItemTypeWithTasks } | undefined>();
+
+function changeDayOnView(date: Date) { dateOnView.value = date; }
 
 function scheduleTask(unscheduledTask: DescriptiveItemType) {
-    console.log('schedule task', unscheduledTask);
+    // console.log('schedule task', unscheduledTask);
+    const scheduled = plannerScheduleTask(unscheduledTask.id);
+    // TODO handle scheduling error
 }
 
-function onDelete(item: ItemType) {
-    console.log('delete', item);
+function onDelete(type: 'timeslot' | 'task', item: ItemType) {
+    switch (type) {
+        case 'task':
+            deleteTask(item.id);
+            break;
+        case 'timeslot':
+            deleteTimeslot(item.id);
+            break;
+    }
     close();
 }
 
@@ -59,15 +100,34 @@ function close() {
 }
 
 function unscheduleTask(task: ItemType) {
-    console.log('unscheduled', task);
+    // TODO re-calculate scheduled tasks starttime
+    // TODO implement planner unscheduleTask
 }
 
-function markAsDone(task: ItemType) {
-    console.log('done with ', task);
-}
+function markAsDone(task: ItemType) { markTaskAsDone(task.id); }
 
-function saveEdit(item: DescriptiveItemType | TimedItemTypeWithTasks) {
-    console.log('saving ', item);
+function saveEdit(
+    item: { type: 'task', task: DescriptiveItemType } |
+    { type: 'timeslot', tslot: TimedItemTypeWithTasks },
+) {
+    switch (item.type) {
+        case 'task':
+            if (item.task.id) {
+                updateTask(item.task);
+                break;
+            }
+            createTask(item.task);
+            break;
+        case 'timeslot':
+            if (item.tslot.id) {
+                // TODO handle failures
+                updateTimeslot(item.tslot);
+                break;
+            }
+            // TODO handle failures
+            createTimeslot(item.tslot);
+            break;
+    }
     close();
 }
 
@@ -90,88 +150,22 @@ function edit(type: 'task' | 'timeslot', item: DescriptiveItemType | TimedItemTy
 }
 
 function newItem(type: 'task' | 'timeslot') {
-    console.log('new', type);
+    switch (type) {
+        case 'task':
+            itemInEdit.value = {
+                type: 'task',
+                item: new DescriptiveItemType('', 0, 0, 0, ''),
+            };
+            return;
+        case 'timeslot':
+            itemInEdit.value = {
+                type: 'timeslot',
+                item: new TimedItemTypeWithTasks('', 0, 0, 0, nowInMs(), []),
+            };
+            return;
+    }
 }
 
-const itemInEdit = ref<
-    { type: 'task', item: DescriptiveItemType } |
-    { type: 'timeslot', item: TimedItemTypeWithTasks } | undefined>();
-
-const unscheduledTasks = ref<DescriptiveItemType[]>([
-    new DescriptiveItemType(
-        '17',
-        15 * TimeInMillis.Minute, 10, 30,
-        'a description over here'),
-    new DescriptiveItemType(
-        '27',
-        27 * TimeInMillis.Minute, 50, 20,
-        'another desc another desc another desc another desc another desc',
-    ),
-    new DescriptiveItemType(
-        '11',
-        27 * TimeInMillis.Minute, 50, 20,
-        'another desc another desc another desc another desc another desc',
-    ),
-    new DescriptiveItemType(
-        '11',
-        27 * TimeInMillis.Minute, 50, 20,
-        'another desc another desc another desc another desc another desc',
-    ),
-    new DescriptiveItemType(
-        '11',
-        27 * TimeInMillis.Minute, 50, 20,
-        'another desc another desc another desc another desc another desc',
-    ),
-    new DescriptiveItemType(
-        '11',
-        27 * TimeInMillis.Minute, 50, 20,
-        'another desc another desc another desc another desc another desc',
-    ),
-]);
-
-const activeTask = ref<ScheduledDescriptiveItemType | undefined>(
-    new ScheduledDescriptiveItemType(
-        'id',
-        TimeInMillis.Hour,
-        10,
-        20,
-        'task desc', new Date().getTime() + 1 * TimeInMillis.Minute,
-    ),
-);
-
-const dayTimeslots = ref<TimedItemTypeWithTasks[]>(
-    [
-        new TimedItemTypeWithTasks(
-            '19',
-            67 * TimeInMillis.Minute,
-            60,
-            80,
-            new Date().getTime() - 9 * TimeInMillis.Minute,
-            [
-                new ScheduledDescriptiveItemType(
-                    '17',
-                    TimeInMillis.Hour,
-                    10,
-                    10,
-                    'described here',
-                    new Date().getTime() - 9 * TimeInMillis.Minute,
-                ),
-            ],
-        ),
-        new TimedItemTypeWithTasks(
-            '21',
-            27 * TimeInMillis.Minute,
-            30,
-            70,
-            new Date().getTime() + 90 * TimeInMillis.Minute,
-            [
-                new ScheduledDescriptiveItemType(
-                    '11', TimeInMillis.Hour, 10, 10, 'described here', new Date().getTime(),
-                ),
-            ]
-        )
-    ]
-);
 </script>
 
 <style scoped>
