@@ -5,6 +5,7 @@ import type TimedItemTypeWithTasks from '@/types/TimedItemTypeWithTasks';
 import type TimedItemType from '@/types/TimedItemType';
 import ItemType from '@/types/ItemType';
 import ScheduledDescriptiveItemType from '@/types/ScheduledDescriptiveItemType';
+import { nowInMs } from '@/middleware/helpers';
 
 export const usePlannerStore = defineStore('planner', () => {
     const id = ref<number>(0);
@@ -18,6 +19,14 @@ export const usePlannerStore = defineStore('planner', () => {
         return tasks.value.filter(
             (task) => !scheduledTasks.some((scheduledTask) => scheduledTask.id === task.id)
         );
+    });
+
+    const nearestScheduledTask = computed<ScheduledDescriptiveItemType | undefined>(() => {
+        const allScheduledTasks = timeslots.value.flatMap(tslot => tslot.scheduledTasks);
+        const allScheduledTasksTodo = allScheduledTasks
+            .filter(task => task.startsAtMillis >= nowInMs() && !task.done);
+        return allScheduledTasksTodo.sort((a, b) => a.startsAtMillis - b.startsAtMillis)
+            .find(_ => true);
     });
 
     function scheduleTask(taskId: string): boolean {
@@ -149,18 +158,33 @@ export const usePlannerStore = defineStore('planner', () => {
         return timeslots.value;
     }
 
+    function markTaskAsDone(taskId: string) {
+        const tslotWithItsTaskIndices = timeslots.value
+            .flatMap((tslot, tslotIndex) => tslot.scheduledTasks
+                .map((task, taskIndex) => task.id === taskId && [tslotIndex, taskIndex]),
+            )
+            .filter(item => item).find(_ => true);
+        if (!tslotWithItsTaskIndices) {
+            return;
+        }
+        const [tslotIndex, taskIndex] = tslotWithItsTaskIndices;
+        timeslots.value[tslotIndex].scheduledTasks[taskIndex].done = true;
+    }
+
     return {
-        getTasks,
+        clearAll,
         createTask,
         createTimeslot,
-        getTimeslots,
-        updateTask,
-        updateTimeslot,
-        clearAll,
-        scheduleTask,
-        unscheduledTasks,
         deleteTask,
         deleteTimeslot,
+        getTasks,
+        getTimeslots,
         getTimeslotsInRange,
+        nearestScheduledTask,
+        scheduleTask,
+        updateTask,
+        updateTimeslot,
+        unscheduledTasks,
+        markTaskAsDone,
     };
 });
