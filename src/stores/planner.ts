@@ -48,6 +48,10 @@ export const usePlannerStore = defineStore('planner', () => {
         }
     }
 
+    function getTimeslotsInRange(start: number, end: number): Array<TimedItemTypeWithTasks> {
+        return timeslots.value.filter(tslot => start <= tslot.startTime && tslot.startTime <= end);
+    }
+
     function deleteTimeslot(timeslotId: string) {
         const index = timeslots.value.findIndex(tslot => tslot.id === timeslotId);
         if (index > -1) {
@@ -157,5 +161,6 @@ export const usePlannerStore = defineStore('planner', () => {
         unscheduledTasks,
         deleteTask,
         deleteTimeslot,
+        getTimeslotsInRange,
     };
 });
