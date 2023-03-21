@@ -81,8 +81,10 @@ function changeDayOnView(date: Date) { dateOnView.value = date; }
 function scheduleTask(unscheduledTask: DescriptiveItemType) {
     const scheduled = plannerScheduleTask(unscheduledTask.id);
     if (!scheduled) {
-        toast.error('No timeslot available to schedule task', { autoClose: 2000, } as ToastOptions);
+        showError('No timeslot available to schedule task');
+        return;
     }
+    toast.success(`Sheduled task ${unscheduledTask.id}`);
 }
 
 function onDelete(type: 'timeslot' | 'task', item: ItemType) {
