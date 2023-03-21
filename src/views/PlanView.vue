@@ -152,7 +152,6 @@ function saveEdit(
 }
 
 function edit(type: 'task' | 'timeslot', item: DescriptiveItemType | TimedItemTypeWithTasks) {
-    console.log('editing item', type, item);
     switch (type) {
         case 'task':
             itemInEdit.value = {

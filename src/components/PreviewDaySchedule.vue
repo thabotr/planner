@@ -29,6 +29,7 @@ export default {
     data() {
         return {
             dayOnView: nowInMs(),
+            interval: undefined as number | undefined,
         }
     },
     methods: {
@@ -58,7 +59,7 @@ export default {
             };
             return `${zeroPad(hours)}:${zeroPad(mins)}`;
         },
-        placeCurrentTimeMarkerInCorrectPosition() {
+        placeCurrentTimeMarkerInCorrectPosition(): { markerTopAtHeight: number, scheduleClientHeight: number } {
             const timeslotContainer = document.getElementById('timeslot-container') as HTMLElement;
             const marker = (
                 this.$refs['current-time-marker'] as CreateComponentPublicInstance
@@ -74,10 +75,10 @@ export default {
 
             marker.style.top = `${markerTopAtHeight}px`;
 
-            timeslotContainer.scrollTo({
-                top: Math.max(markerTopAtHeight - timeslotContainer.clientHeight / 3, 0),
-                behavior: 'smooth',
-            });
+            return {
+                markerTopAtHeight: markerTopAtHeight,
+                scheduleClientHeight: timeslotContainer.clientHeight,
+            };
         },
         containerRelativeHeight(millis: number): string {
             const timeslotContainer = document.getElementById('timeslot-container') as HTMLElement;
@@ -105,8 +106,19 @@ export default {
         }
     },
     mounted() {
-        this.placeCurrentTimeMarkerInCorrectPosition();
+        const offsets = this.placeCurrentTimeMarkerInCorrectPosition();
         this.sizeAndPlaceTimeslotsInCorrectPosition();
+        this.interval = setInterval(() => {
+            this.placeCurrentTimeMarkerInCorrectPosition();
+        }, TimeInMillis.Minute);
+        const timeslotContainer = document.getElementById('timeslot-container') as HTMLElement;
+        timeslotContainer.scrollTo({
+            top: Math.max(offsets.markerTopAtHeight - offsets.scheduleClientHeight / 3, 0),
+            behavior: 'smooth',
+        });
+    },
+    unmounted() {
+        clearInterval(this.interval);
     },
     components: { TimeslotPreviewCard },
     updated() {
