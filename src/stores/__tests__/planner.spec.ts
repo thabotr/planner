@@ -243,13 +243,19 @@ describe('Planner', () => {
         it('removes the timeslot from the store', () => {
 
         });
-        it('unschedules all the tasks in the deleted timeslot', () => {
-
-        });
     });
-    describe.skip('deleteTask', () => {
+    describe('deleteTask', () => {
         it('removes the task from the store', () => {
-
+            expect(planner.getTasks().length).toBe(0);
+            
+            const particalTask = new DescriptiveItemType('', 1000, 10, 10, 'description goes here');
+            planner.createTask(particalTask);
+            
+            const [task] = planner.getTasks();
+            
+            planner.deleteTask(task.id);
+            
+            expect(planner.getTasks().length).toBe(0);
         });
     });
 })

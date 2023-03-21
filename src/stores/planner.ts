@@ -41,6 +41,12 @@ export const usePlannerStore = defineStore('planner', () => {
         return true;
     }
 
+    function deleteTask(taskId: string) {
+        const index = tasks.value.findIndex(tsk => tsk.id === taskId);
+        if (index > -1) {
+            tasks.value.splice(index, 1);
+        }
+    }
 
     function getTasks(): Array<DescriptiveItemType> {
         return tasks.value;
@@ -142,5 +148,6 @@ export const usePlannerStore = defineStore('planner', () => {
         clearAll,
         scheduleTask,
         unscheduledTasks,
+        deleteTask,
     };
 });
