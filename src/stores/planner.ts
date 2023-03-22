@@ -128,10 +128,9 @@ export const usePlannerStore = defineStore('planner', () => {
             return acc;
         }, withTask ?? new ItemType(0, 0, 0, ''));
 
-        // TODO factor in current time into this overflow calculation
-
+        const usableLength = Math.min(timeslot.startTime - nowInMs(), timeslot.length);
         return (
-            effortSum.length > timeslot.length ||
+            effortSum.length > usableLength ||
             effortSum.pES > timeslot.pES ||
             effortSum.mES > timeslot.mES
         );
