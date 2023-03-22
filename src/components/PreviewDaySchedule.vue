@@ -50,7 +50,7 @@ export default {
                 return acc;
             }, new ItemType(0, 0, 0, ''));
             const unusableLength = Math.abs(Math.min(timeslot.startTime - nowInMs(), 0));
-            totalUsage.length = Math.max(totalUsage.length + unusableLength, timeslot.length);
+            totalUsage.length = Math.min(totalUsage.length + unusableLength, timeslot.length);
             return totalUsage;
         },
         markerTime(nth15minsInDay: number): string {
