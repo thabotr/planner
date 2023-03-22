@@ -49,6 +49,8 @@ export default {
                 acc.pES += item.pES;
                 return acc;
             }, new ItemType(0, 0, 0, ''));
+            const unusableLength = Math.min(timeslot.length - nowInMs(), 0);
+            totalUsage.length = Math.max(totalUsage.length - unusableLength, 0);
             return totalUsage;
         },
         markerTime(nth15minsInDay: number): string {
