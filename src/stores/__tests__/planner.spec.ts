@@ -1,11 +1,20 @@
 import { TimeInMillis } from "@/middleware/helpers";
 import DescriptiveItemType from "@/types/DescriptiveItemType";
-import { beforeEach, describe, expect, it, test } from "vitest";
+import { beforeEach, describe, expect, it, test, vitest } from "vitest";
 import { usePlannerStore } from "../planner";
 import { faker } from '@faker-js/faker';
 import { setActivePinia, createPinia } from 'pinia'
 import TimedItemTypeWithTasks from "@/types/TimedItemTypeWithTasks";
 import ScheduledDescriptiveItemType from "@/types/ScheduledDescriptiveItemType";
+import { nowInMs } from "@/middleware/helpers";
+
+vitest.mock('@/middleware/helpers', async () => {
+    const actual = await vitest.importActual('@/middleware/helpers') as Object;
+    return {
+        ...actual,
+        nowInMs: () => 0,
+    };
+});
 
 describe('Planner', () => {
     let planner: ReturnType<typeof usePlannerStore>;
@@ -114,7 +123,7 @@ describe('Planner', () => {
             planner.updateTask(updatedTask);
             expect(plannerHasOneTask()).toBeTruthy();
 
-            expect(planner.getTasks()).toContain(updatedTask);
+            expect(planner.getTasks()).toContainEqual(updatedTask);
         });
     });
     describe('createTask', () => {
@@ -198,7 +207,7 @@ describe('Planner', () => {
                 planner.createTask(partialTaskToSchedule);
                 const [taskToSchedule] = planner.getTasks();
 
-                expect(planner.unscheduledTasks).toContain(taskToSchedule);
+                expect(planner.unscheduledTasks).toContainEqual(taskToSchedule);
 
                 const scheduled = planner.scheduleTask(taskToSchedule.id);
                 expect(scheduled).toBeTruthy();
@@ -220,7 +229,8 @@ describe('Planner', () => {
             expect(allTasksCreated).toBeTruthy();
 
             const [_, oneOfUnscheduledTasks] = planner.getTasks();
-            expect(planner.unscheduledTasks).toContain(oneOfUnscheduledTasks);
+            console.log(planner.unscheduledTasks, ' with ', oneOfUnscheduledTasks);
+            expect(planner.unscheduledTasks).toContainEqual(oneOfUnscheduledTasks);
 
             const tslotWithTaskCreated = planner.createTimeslot(
                 new TimedItemTypeWithTasks('', 100, 10, 10, 0, [
@@ -242,28 +252,28 @@ describe('Planner', () => {
     describe('deleteTimeslot', () => {
         it('removes the timeslot from the store', () => {
             expect(planner.getTimeslots().length).toBe(0);
-            
+
             const particalTslot = new TimedItemTypeWithTasks('', 1000, 0, 100, 0, []);
             planner.createTimeslot(particalTslot);
-            
+
             const [timeslot] = planner.getTimeslots();
-            
+
             planner.deleteTimeslot(timeslot.id);
-            
+
             expect(planner.getTimeslots().length).toBe(0);
         });
     });
     describe('deleteTask', () => {
         it('removes the task from the store', () => {
             expect(planner.getTasks().length).toBe(0);
-            
+
             const particalTask = new DescriptiveItemType('', 1000, 10, 10, 'description goes here');
             planner.createTask(particalTask);
-            
+
             const [task] = planner.getTasks();
-            
+
             planner.deleteTask(task.id);
-            
+
             expect(planner.getTasks().length).toBe(0);
         });
     });

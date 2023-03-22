@@ -82,7 +82,13 @@ export const usePlannerStore = defineStore('planner', () => {
     }
 
     function getTasks(): Array<DescriptiveItemType> {
-        return tasks.value;
+        return tasks.value.map(task => new DescriptiveItemType(
+            task.id,
+            task.length,
+            task.pES,
+            task.mES,
+            task.description,
+        ));
     }
 
     function createTask(idLessTask: DescriptiveItemType) {
@@ -128,7 +134,7 @@ export const usePlannerStore = defineStore('planner', () => {
             return acc;
         }, withTask ?? new ItemType(0, 0, 0, ''));
 
-        const usableLength = Math.min(timeslot.startTime - nowInMs(), timeslot.length);
+        const usableLength = timeslot.length + Math.min(timeslot.startTime - nowInMs(), 0);
         return (
             effortSum.length > usableLength ||
             effortSum.pES > timeslot.pES ||
@@ -144,6 +150,10 @@ export const usePlannerStore = defineStore('planner', () => {
         timeslots.value.push(newTimeslot);
         id.value++;
         return true;
+    }
+
+    function unscheduleTask(taskId: string) {
+
     }
 
     function intersectsWithOtherTimeslots(newTimeslot: TimedItemType): boolean {
@@ -192,6 +202,7 @@ export const usePlannerStore = defineStore('planner', () => {
         getTimeslots,
         nearestScheduledTask,
         scheduleTask,
+        unscheduleTask,
         updateTask,
         updateTimeslot,
         unscheduledTasks,
