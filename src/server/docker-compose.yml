@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: aPassword
+      POSTGRES_DB: smart_plan
+    ports:
+      - 5432:5432
